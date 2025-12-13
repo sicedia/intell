@@ -27,6 +27,13 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Design System Tokens */
+    --success: 142 71% 45%;
+    --success-foreground: 144 70% 98%; 
+    --warning: 38 92% 50%;
+    --warning-foreground: 48 96% 89%;
+    --pending: 217 33% 17%; /* same as secondary for now, or specific */
   }
 
   .dark {
@@ -54,6 +61,12 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Design System Tokens */
+    --success: 142 70% 50%;
+    --success-foreground: 144 70% 10%;
+    --warning: 48 96% 89%;
+    --warning-foreground: 38 92% 50%;
   }
 }
 
