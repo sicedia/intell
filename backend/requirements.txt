@@ -4,6 +4,9 @@ Django>=6.0,<7.0
 # Django REST Framework
 djangorestframework>=3.16.0
 
+# API Documentation
+drf-spectacular>=0.29.0
+
 # CORS Headers
 django-cors-headers>=4.9.0
 

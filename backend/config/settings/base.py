@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third-party apps
     'rest_framework',
+    'drf_spectacular',
     'corsheaders',
     'channels',
     # Local apps
@@ -125,6 +126,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # CORS Configuration
@@ -242,6 +244,35 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [config('REDIS_URL', default='redis://localhost:6379/1')],
         },
+    },
+}
+
+# drf-spectacular settings for OpenAPI/Swagger documentation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Intelli API',
+    'DESCRIPTION': 'API para generación de gráficos y análisis de datos de patentes',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'COMPONENT_NO_READ_ONLY_REQUIRED': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'TAGS': [
+        {'name': 'Jobs', 'description': 'Operaciones relacionadas con trabajos de generación de gráficos'},
+        {'name': 'Image Tasks', 'description': 'Tareas de generación de imágenes de gráficos'},
+        {'name': 'Description Tasks', 'description': 'Tareas de generación de descripciones con IA'},
+        {'name': 'AI', 'description': 'Operaciones relacionadas con inteligencia artificial'},
+        {'name': 'Health', 'description': 'Endpoints de verificación de salud del sistema'},
+    ],
+    'CONTACT': {
+        'name': 'Intelli Team',
+    },
+    'LICENSE': {
+        'name': 'Proprietary',
+    },
+    'EXTENSIONS_INFO': {
+        'x-logo': {
+            'url': 'https://via.placeholder.com/200x50.png?text=Intelli',
+        }
     },
 }
 

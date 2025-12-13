@@ -1,142 +1,293 @@
-# Frontend - Next.js Application
+# Intell.AI Frontend
 
-Next.js frontend application for the Intelli monorepo with TypeScript, Tailwind CSS, React Query, and Zustand.
+Next.js application with TypeScript, App Router, and modern tooling for the Intell.AI platform.
 
-## Quick Start
+## Features
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
-
-2. **Start development server:**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- ⚡ **Next.js 16** with App Router
+- 🎨 **Tailwind CSS** + **shadcn/ui** components
+- 🌐 **i18n** (English/Spanish) with next-intl
+- 🌓 **Dark mode** with next-themes
+- 🔄 **TanStack Query** for server state
+- 🐻 **Zustand** for client state
+- 📝 **React Hook Form** + **Zod** for forms
+- 📊 **Excel upload** (react-dropzone + xlsx)
+- 🔌 **WebSocket client** utility
+- ✅ **Testing** (Vitest + Playwright)
+- 🎯 **Code quality** (ESLint + Prettier + Husky)
 
 ## Project Structure
 
 ```
 frontend/
-├── app/              # Next.js App Router
-│   ├── page.tsx      # Home page
-│   ├── layout.tsx    # Root layout
-│   └── globals.css   # Global styles
-├── public/           # Static files
-├── package.json      # Dependencies
-└── tsconfig.json     # TypeScript configuration
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── [locale]/           # Localized routes
+│   │   │   ├── dashboard/
+│   │   │   ├── generate/
+│   │   │   ├── images/
+│   │   │   ├── themes/
+│   │   │   ├── reports/
+│   │   │   └── settings/
+│   │   ├── layout.tsx          # Root layout
+│   │   └── globals.css         # Global styles
+│   ├── features/               # Feature modules (to be implemented)
+│   ├── shared/                 # Shared utilities and components
+│   │   ├── components/         # Reusable components
+│   │   │   ├── ui/             # shadcn/ui components
+│   │   │   ├── layout/         # Layout components
+│   │   │   └── providers/      # Context providers
+│   │   ├── lib/                # Utilities
+│   │   │   ├── api-client.ts   # API client
+│   │   │   ├── ws.ts           # WebSocket client
+│   │   │   ├── env.ts          # Environment validation
+│   │   │   └── utils.ts        # Helper functions
+│   │   └── store/              # Zustand stores
+│   ├── i18n/                   # Internationalization config
+│   └── test/                     # Test setup
+├── messages/                    # Translation files
+├── e2e/                        # Playwright e2e tests
+└── public/                     # Static assets
 ```
 
-## Technologies
+## Getting Started
 
-- **Next.js 16.0.6** - React framework with App Router
-- **React 19.2.0** - UI library
-- **TypeScript 5** - Static typing
-- **Tailwind CSS 4** - Utility-first CSS framework
-- **@tanstack/react-query 5.90.11** - Server state management
-- **Zustand 5.0.9** - Client state management
-- **Axios 1.13.2** - HTTP client
+### Prerequisites
 
-## API Integration
+- Node.js 18+ 
+- npm, yarn, or pnpm
 
-The frontend is configured to communicate with the Django backend at `http://localhost:8000/api`.
+### Installation
 
-### Example: Setting up API client
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Create `lib/api.ts`:
+2. **Set up environment variables:**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` with your configuration:
+   ```env
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+   NEXT_PUBLIC_WS_BASE_URL=ws://localhost:8000/ws
+   NEXT_PUBLIC_APP_ENV=development
+   ```
 
-```typescript
-import axios from 'axios';
+3. **Set up Git hooks (Husky):**
+   ```bash
+   npm run prepare
+   ```
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-export default api;
-```
-
-### Example: Using React Query
-
-```typescript
-import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
-
-function useItems() {
-  return useQuery({
-    queryKey: ['items'],
-    queryFn: async () => {
-      const { data } = await api.get('/items/');
-      return data;
-    },
-  });
-}
-```
-
-### Example: Using Zustand
-
-```typescript
-import { create } from 'zustand';
-
-interface Store {
-  count: number;
-  increment: () => void;
-}
-
-export const useStore = create<Store>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-}));
-```
-
-## Available Scripts
+### Development
 
 ```bash
-# Development server
+# Start development server
 npm run dev
 
-# Production build
+# Run linter
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Format code
+npm run format
+
+# Check formatting
+npm run format:check
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Building for Production
+
+```bash
+# Build the application
 npm run build
 
 # Start production server
 npm run start
-
-# Run linter
-npm run lint
 ```
 
-## Development
+## Testing
 
-- Pages and components are in the `app/` directory
-- Use the App Router (not Pages Router)
-- All components should use TypeScript
-- Styling is done with Tailwind CSS
-- Server state: React Query
-- Client state: Zustand
-- HTTP requests: Axios
+### Unit & Component Tests (Vitest)
+
+```bash
+# Run tests once
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+Tests are located in:
+- `src/**/*.test.tsx` - Component tests
+- `src/**/*.spec.tsx` - Unit tests
+
+### E2E Tests (Playwright)
+
+```bash
+# Run e2e tests
+npm run test:e2e
+
+# Run e2e tests with UI
+npm run test:e2e:ui
+```
+
+E2E tests are located in `e2e/`.
+
+## Code Quality
+
+### Pre-commit Hooks
+
+Husky is configured to run lint-staged before each commit:
+- ESLint checks and fixes
+- Prettier formatting
+- Test execution (if configured)
+
+### Linting & Formatting
+
+- **ESLint**: Configured with Next.js rules
+- **Prettier**: Code formatting with Tailwind plugin
+- **lint-staged**: Runs on staged files before commit
+
+## Configuration
+
+### Environment Variables
+
+All environment variables are validated using Zod in `src/shared/lib/env.ts`:
+
+- `NEXT_PUBLIC_API_BASE_URL` - Backend API base URL
+- `NEXT_PUBLIC_WS_BASE_URL` - WebSocket base URL
+- `NEXT_PUBLIC_APP_ENV` - Environment (development|staging|production)
+
+### API Client
+
+The API client is configured in `src/shared/lib/api-client.ts`:
+
+```typescript
+import { apiClient } from "@/shared/lib/api-client";
+
+// GET request
+const data = await apiClient.get<User[]>("/users/");
+
+// POST request
+const newUser = await apiClient.post<User>("/users/", { name: "John" });
+```
+
+### WebSocket Client
+
+WebSocket utility is in `src/shared/lib/ws.ts`:
+
+```typescript
+import { WSClient } from "@/shared/lib/ws";
+
+const ws = new WSClient("/jobs/123/", {
+  onMessage: (data) => {
+    console.log("Received:", data);
+  },
+  onError: (error) => {
+    console.error("Error:", error);
+  },
+});
+
+ws.connect();
+ws.send({ action: "subscribe" });
+ws.disconnect();
+```
+
+### Internationalization
+
+i18n is configured with next-intl. Translations are in `messages/`:
+
+```typescript
+import { useTranslations } from "next-intl";
+
+function MyComponent() {
+  const t = useTranslations("common");
+  return <h1>{t("appName")}</h1>;
+}
+```
+
+### Theme (Dark Mode)
+
+Theme is managed with next-themes:
+
+```typescript
+import { useTheme } from "next-themes";
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+      Toggle theme
+    </button>
+  );
+}
+```
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Fix ESLint issues |
+| `npm run format` | Format code with Prettier |
+| `npm run format:check` | Check code formatting |
+| `npm run test` | Run unit/component tests |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run test:e2e` | Run e2e tests |
+| `npm run test:e2e:ui` | Run e2e tests with UI |
+| `npm run prepare` | Set up Husky hooks |
+
+## Technologies
+
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Static typing
+- **Tailwind CSS** - Utility-first CSS
+- **shadcn/ui** - Component library
+- **TanStack Query** - Server state management
+- **Zustand** - Client state management
+- **React Hook Form** - Form handling
+- **Zod** - Schema validation
+- **next-intl** - Internationalization
+- **next-themes** - Theme management
+- **Vitest** - Unit testing
+- **Playwright** - E2E testing
+- **ESLint** - Linting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+
+## Development Guidelines
+
+1. **Feature-first structure**: Organize code by feature in `src/features/`
+2. **Shared code**: Put reusable code in `src/shared/`
+3. **TypeScript**: Use TypeScript for all components and utilities
+4. **Components**: Use shadcn/ui components from `src/shared/components/ui/`
+5. **State**: Use TanStack Query for server state, Zustand for client state
+6. **Forms**: Use React Hook Form with Zod validation
+7. **Styling**: Use Tailwind CSS classes
+8. **i18n**: All user-facing text should be translated
 
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Next.js App Router](https://nextjs.org/docs/app)
-- [React Query](https://tanstack.com/query/latest)
+- [TanStack Query](https://tanstack.com/query/latest)
 - [Zustand](https://zustand-demo.pmnd.rs/)
+- [shadcn/ui](https://ui.shadcn.com/)
 - [Tailwind CSS](https://tailwindcss.com/docs)
+- [next-intl](https://next-intl-docs.vercel.app/)
+- [React Hook Form](https://react-hook-form.com/)
+- [Zod](https://zod.dev/)
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private - Intell.AI Project

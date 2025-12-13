@@ -4,15 +4,17 @@ API views for jobs app.
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, JSONParser
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
 
 from .models import Job, ImageTask, DescriptionTask
 from .serializers import (
     JobCreateSerializer, JobDetailSerializer,
     ImageTaskSerializer, DescriptionTaskSerializer,
-    AIDescribeRequestSerializer
+    AIDescribeRequestSerializer,
+    JobCreateResponseSerializer, JobCancelResponseSerializer,
+    AIDescribeResponseSerializer, ErrorResponseSerializer
 )
 from apps.datasets.normalizers import normalize, normalize_from_excel
 from apps.ingestion.connectors import LensConnector
@@ -20,6 +22,76 @@ from apps.jobs.tasks import run_job
 from apps.ai_descriptions.tasks import generate_description_task
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary='Crear un nuevo trabajo',
+        description='Crea un nuevo trabajo de generación de gráficos. El trabajo puede obtener datos desde Lens API o desde un archivo Excel de Espacenet.',
+        tags=['Jobs'],
+        request=JobCreateSerializer,
+        responses={
+            201: JobCreateResponseSerializer,
+            200: JobCreateResponseSerializer,
+            400: ErrorResponseSerializer,
+            500: ErrorResponseSerializer,
+        },
+        examples=[
+            OpenApiExample(
+                'Ejemplo con Lens',
+                value={
+                    'source_type': 'lens',
+                    'source_params': {
+                        'query': 'artificial intelligence',
+                        'date_published': '2020-01-01',
+                    },
+                    'images': [
+                        {
+                            'algorithm_key': 'patent_trends_cumulative',
+                            'algorithm_version': '1.0',
+                            'params': {},
+                            'output_format': 'both'
+                        }
+                    ],
+                    'idempotency_key': 'unique-key-123'
+                },
+                request_only=True,
+            ),
+            OpenApiExample(
+                'Ejemplo con Excel',
+                value={
+                    'source_type': 'espacenet_excel',
+                    'source_data': '<archivo_excel>',
+                    'images': [
+                        {
+                            'algorithm_key': 'patent_evolution',
+                            'algorithm_version': '1.0',
+                            'params': {'year_range': [2020, 2023]},
+                            'output_format': 'png'
+                        }
+                    ]
+                },
+                request_only=True,
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        summary='Obtener detalles de un trabajo',
+        description='Obtiene los detalles completos de un trabajo, incluyendo todas sus tareas de imagen y descripción.',
+        tags=['Jobs'],
+        responses={
+            200: JobDetailSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    cancel=extend_schema(
+        summary='Cancelar un trabajo',
+        description='Cancela un trabajo en ejecución o pendiente.',
+        tags=['Jobs'],
+        responses={
+            200: JobCancelResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+)
 class JobViewSet(viewsets.ViewSet):
     """ViewSet for Job operations."""
     
@@ -137,6 +209,22 @@ class JobViewSet(viewsets.ViewSet):
         })
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary='Listar tareas de imagen',
+        description='Obtiene una lista paginada de todas las tareas de generación de imágenes.',
+        tags=['Image Tasks'],
+    ),
+    retrieve=extend_schema(
+        summary='Obtener detalles de una tarea de imagen',
+        description='Obtiene los detalles completos de una tarea de generación de imagen, incluyendo URLs de artefactos y datos del gráfico.',
+        tags=['Image Tasks'],
+        responses={
+            200: ImageTaskSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+)
 class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for ImageTask (read-only)."""
     queryset = ImageTask.objects.all()
@@ -147,12 +235,52 @@ class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
         return {'request': self.request}
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary='Listar tareas de descripción',
+        description='Obtiene una lista paginada de todas las tareas de generación de descripciones con IA.',
+        tags=['Description Tasks'],
+    ),
+    retrieve=extend_schema(
+        summary='Obtener detalles de una tarea de descripción',
+        description='Obtiene los detalles completos de una tarea de generación de descripción, incluyendo el texto generado y el prompt utilizado.',
+        tags=['Description Tasks'],
+        responses={
+            200: DescriptionTaskSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+)
 class DescriptionTaskViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for DescriptionTask (read-only)."""
     queryset = DescriptionTask.objects.all()
     serializer_class = DescriptionTaskSerializer
 
 
+@extend_schema_view(
+    create=extend_schema(
+        summary='Generar descripción con IA',
+        description='Crea una nueva tarea para generar una descripción de un gráfico usando inteligencia artificial. La tarea se procesa de forma asíncrona.',
+        tags=['AI'],
+        request=AIDescribeRequestSerializer,
+        responses={
+            201: AIDescribeResponseSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+        examples=[
+            OpenApiExample(
+                'Ejemplo básico',
+                value={
+                    'image_task_id': 1,
+                    'user_context': 'Este gráfico muestra tendencias de patentes en inteligencia artificial',
+                    'provider_preference': 'openai'
+                },
+                request_only=True,
+            ),
+        ],
+    ),
+)
 class AIDescribeView(viewsets.ViewSet):
     """View for AI description generation."""
     

@@ -9,16 +9,12 @@ This is a monorepo with Django backend and Next.js frontend. Follow these rules 
 - **Frontend**: `frontend/` - Next.js with TypeScript
 
 ## Code Conventions
-
+All in english
 
 
 ### Frontend (Next.js)
 - Use TypeScript for all components
-- Use Next.js App Router (not Pages Router)
-- Components in `frontend/app/`
-- Use React Query for server data
-- Use Zustand for global client state
-- Use Axios for HTTP calls (configure baseURL: 'http://localhost:8000/api')
+
 
 ## Development Flow
 
@@ -61,7 +57,7 @@ For local development, no additional environment variables are required. In prod
 
 ## Important Notes
 
-- The backend uses SQLite in development. In production, use PostgreSQL or another database.
+- The backend uses postgresql in development. In production, use PostgreSQL or another database.
 - The `SECRET_KEY` in settings.py is for development only.
 - Always verify that both servers are running before testing integration.
 - Use descriptive names for models, views, components, and functions.

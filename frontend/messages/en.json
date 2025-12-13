@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "Intell.AI",
+    "dashboard": "Dashboard",
+    "generate": "Generate",
+    "images": "Images",
+    "themes": "Themes",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to Intell.AI"
+  },
+  "generate": {
+    "title": "Generate",
+    "description": "Generate content using AI"
+  },
+  "images": {
+    "title": "Images",
+    "description": "Manage your images"
+  },
+  "themes": {
+    "title": "Themes",
+    "description": "Customize themes"
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "View and manage reports"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Application settings"
+  }
+}

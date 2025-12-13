@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "Intell.AI",
+    "dashboard": "Panel de Control",
+    "generate": "Generar",
+    "images": "Imágenes",
+    "themes": "Temas",
+    "reports": "Reportes",
+    "settings": "Configuración"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido a Intell.AI"
+  },
+  "generate": {
+    "title": "Generar",
+    "description": "Generar contenido usando IA"
+  },
+  "images": {
+    "title": "Imágenes",
+    "description": "Gestiona tus imágenes"
+  },
+  "themes": {
+    "title": "Temas",
+    "description": "Personaliza temas"
+  },
+  "reports": {
+    "title": "Reportes",
+    "description": "Ver y gestionar reportes"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Configuración de la aplicación"
+  }
+}

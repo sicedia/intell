@@ -19,10 +19,19 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from apps.core.views import health_check, redis_health_check, celery_health_check
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # API Documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url='/api/schema/'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url='/api/schema/'), name='redoc'),
     # API endpoints
     path('api/', include('apps.jobs.urls')),
     # Health checks
