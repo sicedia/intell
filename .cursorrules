@@ -1,0 +1,69 @@
+# Cursor Rules for Intelli Project
+
+This is a monorepo with Django backend and Next.js frontend. Follow these rules when developing:
+
+## Project Structure
+
+- **Backend**: `backend/` - Django REST API
+
+- **Frontend**: `frontend/` - Next.js with TypeScript
+
+## Code Conventions
+
+
+
+### Frontend (Next.js)
+- Use TypeScript for all components
+- Use Next.js App Router (not Pages Router)
+- Components in `frontend/app/`
+- Use React Query for server data
+- Use Zustand for global client state
+- Use Axios for HTTP calls (configure baseURL: 'http://localhost:8000/api')
+
+## Development Flow
+
+1. **When creating a new backend endpoint:**
+   - Run migrations if there are model changes
+
+
+
+3. **When adding new dependencies:**
+   - Backend: Add to `requirements.txt` and run `pip install -r requirements.txt`
+   - Frontend: Use `npm install <package>` and `package.json` will be updated automatically
+
+## CORS Configuration
+
+The backend is configured to allow requests from `http://localhost:3000`. If you change the frontend port, update `CORS_ALLOWED_ORIGINS` in `backend/config/settings/`.
+
+## Important Commands
+
+### Backend
+- `python manage.py runserver` - Start server (port 8000)
+- `python manage.py makemigrations` - Create migrations
+- `python manage.py migrate` - Apply migrations
+- `python manage.py createsuperuser` - Create admin user
+
+### Frontend
+- `npm run dev` - Start development server (port 3000)
+- `npm run build` - Production build
+- `npm run lint` - Run linter
+
+## Testing
+
+- Backend: Use `python manage.py test` to run Django tests
+- Frontend: Configure tests as needed (Jest, Vitest, etc.)
+
+## Environment Variables
+
+For local development, no additional environment variables are required. In production:
+- Backend: Configure `SECRET_KEY`, `DEBUG=False`, `ALLOWED_HOSTS`, etc.
+- Frontend: Configure `NEXT_PUBLIC_API_URL` if needed
+
+## Important Notes
+
+- The backend uses SQLite in development. In production, use PostgreSQL or another database.
+- The `SECRET_KEY` in settings.py is for development only.
+- Always verify that both servers are running before testing integration.
+- Use descriptive names for models, views, components, and functions.
+- Keep code clean and well-documented.
+

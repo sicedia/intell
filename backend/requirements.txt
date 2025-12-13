@@ -1,0 +1,56 @@
+# Django Core
+Django>=6.0,<7.0
+
+# Django REST Framework
+djangorestframework>=3.16.0
+
+# CORS Headers
+django-cors-headers>=4.9.0
+
+# Environment Variables
+python-decouple>=3.8
+
+# Database URL parsing (for production)
+dj-database-url>=2.1.0
+
+# PostgreSQL adapter (if using PostgreSQL)
+psycopg2-binary>=2.9.9
+
+# Celery for async tasks
+celery>=5.3.0
+redis>=5.0.0
+
+# Django Channels for WebSockets
+channels>=4.0.0
+channels-redis>=4.1.0
+
+# LangChain for AI descriptions
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-anthropic>=0.1.0
+
+# Data processing
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# HTTP client
+httpx>=0.25.0
+
+# Chart generation
+matplotlib>=3.7.0
+numpy>=1.24.0
+
+# Image handling
+Pillow>=10.0.0
+
+# Forecasting and visualization
+statsmodels>=0.14.0
+pmdarima>=2.0.0
+squarify>=0.4.2
+
+# Testing
+pytest>=7.4.0
+pytest-django>=4.7.0
+pytest-cov>=4.1.0
+factory-boy>=3.3.0
+

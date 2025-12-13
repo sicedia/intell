@@ -1,0 +1,332 @@
+"""
+Patent Forecast algorithm.
+Generates line chart with historical data, CAGR projection, and ETS/ARIMA forecasts.
+"""
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import datetime
+import textwrap
+import numpy as np
+from pathlib import Path
+import json
+import io
+from typing import Dict, Any, Optional
+from django.conf import settings
+
+from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.datasets.models import Dataset
+
+# Optional imports for forecasting
+try:
+    from statsmodels.tsa.holtwinters import ExponentialSmoothing
+    HAS_STATSMODELS = True
+except ImportError:
+    HAS_STATSMODELS = False
+
+try:
+    from pmdarima import auto_arima
+    HAS_PMDARIMA = True
+except ImportError:
+    HAS_PMDARIMA = False
+
+
+class PatentForecastAlgorithm(BaseAlgorithm):
+    """
+    Algorithm for generating forecast chart with ETS and ARIMA models.
+    Reads data from Dataset.storage_path (JSON format).
+    """
+    
+    def __init__(self):
+        """Initialize algorithm."""
+        super().__init__(
+            algorithm_key="patent_forecast",
+            algorithm_version="1.0"
+        )
+        
+        self.first_column_name = "Year"
+        self.second_column_name = "Number of Publications"
+        self.historical_years = 20
+        self.cutoff_year = datetime.datetime.now().year - 2
+        self.trend_line_color = '#44b9be'
+        self.cagr_line_color = '#46ad65'
+        self.forecast_ets_color = '#eebe5a'
+        self.forecast_arima_color = '#ef823a'
+        self.chart_width = 15
+        self.chart_height = 8
+        self.x_axis_label = 'Año'
+        self.y_axis_label = 'Número de Familias de Patentes Publicadas'
+    
+    def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
+        """Load data from Dataset."""
+        if dataset.storage_path.startswith('/') or ':' in dataset.storage_path:
+            file_path = Path(dataset.storage_path)
+        else:
+            file_path = Path(settings.MEDIA_ROOT) / dataset.storage_path
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"Dataset file not found: {file_path}")
+        
+        if dataset.normalized_format == 'json':
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            df = pd.DataFrame(data)
+        elif dataset.normalized_format == 'parquet':
+            df = pd.read_parquet(file_path)
+        else:
+            raise ValueError(f"Unsupported format: {dataset.normalized_format}")
+        
+        return df
+    
+    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+        """Execute algorithm on dataset."""
+        import time
+        start_time = time.time()
+        warnings = []
+        
+        # Load data
+        df = self._load_dataset(dataset)
+        
+        # Rename columns if needed
+        if len(df.columns) >= 2:
+            if df.columns[0] != self.first_column_name or df.columns[1] != self.second_column_name:
+                df.rename(columns={df.columns[0]: self.first_column_name, 
+                                 df.columns[1]: self.second_column_name}, inplace=True)
+        
+        # Filter data
+        df = df[(df[self.first_column_name] <= self.cutoff_year) & 
+                (df[self.first_column_name] > (self.cutoff_year - self.historical_years))]
+        
+        # Complete years range
+        complete_years = pd.DataFrame({
+            self.first_column_name: range(df[self.first_column_name].min(), df[self.first_column_name].max() + 1)
+        })
+        
+        # Merge to ensure all years present
+        df = pd.merge(complete_years, df, on=self.first_column_name, how='left')
+        df[self.second_column_name] = df[self.second_column_name].fillna(0)
+        
+        # Fit ETS model
+        best_model_fit_ets = None
+        if HAS_STATSMODELS:
+            try:
+                best_bic = np.inf
+                for trend in ['add', 'mul']:
+                    try:
+                        model_ets = ExponentialSmoothing(df[self.second_column_name], trend=trend, seasonal=None)
+                        model_fit_ets = model_ets.fit()
+                        if model_fit_ets.bic < best_bic:
+                            best_bic = model_fit_ets.bic
+                            best_model_fit_ets = model_fit_ets
+                    except Exception:
+                        pass
+            except Exception as e:
+                warnings.append(f"ETS model fitting failed: {str(e)}")
+        else:
+            warnings.append("statsmodels not available, ETS forecast skipped")
+        
+        # Fit ARIMA model
+        model_fit_arima = None
+        if HAS_PMDARIMA:
+            try:
+                model_arima = auto_arima(df[self.second_column_name], seasonal=False)
+                model_fit_arima = model_arima.fit(df[self.second_column_name])
+            except Exception as e:
+                warnings.append(f"ARIMA model fitting failed: {str(e)}")
+        else:
+            warnings.append("pmdarima not available, ARIMA forecast skipped")
+        
+        # Generate forecasts
+        forecast_years = list(range(self.cutoff_year + 2, self.cutoff_year + 8))
+        forecast_ets = None
+        forecast_arima = None
+        
+        if best_model_fit_ets:
+            try:
+                forecast_ets = best_model_fit_ets.predict(start=len(df), end=len(df) + 5)
+            except Exception:
+                pass
+        
+        if model_fit_arima:
+            try:
+                forecast_arima = model_fit_arima.predict(n_periods=6)
+            except Exception:
+                pass
+        
+        # Create historical DataFrame
+        df_historic = df[[self.first_column_name, self.second_column_name]].copy()
+        
+        # Create forecast DataFrames
+        df_forecast_ets = pd.DataFrame({self.first_column_name: forecast_years, "Forecast_ETS": forecast_ets}) if forecast_ets is not None else None
+        df_forecast_arima = pd.DataFrame({self.first_column_name: forecast_years, "Forecast_ARIMA": forecast_arima}) if forecast_arima is not None else None
+        
+        # Calculate CAGR
+        start_year = self.cutoff_year - 10
+        end_year = self.cutoff_year
+        extended_start_year = self.cutoff_year - self.historical_years + 1
+        extended_end_year = self.cutoff_year + 5
+        extended_years = np.arange(extended_start_year, extended_end_year + 1)
+        
+        cagr_rate = None
+        projected_cagr_line = None
+        if start_year in df[self.first_column_name].values and end_year in df[self.first_column_name].values:
+            try:
+                start_value_cagr = df.loc[df[self.first_column_name] == start_year, self.second_column_name].iloc[0]
+                end_value_cagr = df.loc[df[self.first_column_name] == end_year, self.second_column_name].iloc[0]
+                if start_value_cagr > 0:
+                    cagr_rate = ((end_value_cagr / start_value_cagr) ** (1 / (end_year - start_year))) - 1
+                    projected_cagr_line = start_value_cagr * ((1 + cagr_rate) ** (extended_years - start_year))
+            except Exception as e:
+                warnings.append(f"CAGR calculation failed: {str(e)}")
+        
+        # Create extended CAGR DataFrame
+        df_extended_cagr = None
+        if projected_cagr_line is not None:
+            df_extended_cagr = pd.DataFrame({
+                self.first_column_name: extended_years,
+                "CAGR_Projected_Line": projected_cagr_line
+            })
+        
+        # Create chart
+        plt.rcParams['svg.fonttype'] = 'none'
+        plt.rcParams['font.sans-serif'] = ['Arial']
+        
+        fig, ax = plt.subplots(figsize=(self.chart_width, self.chart_height))
+        
+        # Plot historical data
+        ax.plot(df[self.first_column_name], df[self.second_column_name], 
+                color=self.trend_line_color, marker='o', markersize=4, 
+                label="Número de Familias de Patentes Publicadas", linewidth=1.5)
+        
+        # Plot CAGR line
+        if df_extended_cagr is not None:
+            ax.plot(df_extended_cagr[self.first_column_name], df_extended_cagr["CAGR_Projected_Line"], 
+                    color=self.cagr_line_color, linestyle='dotted', 
+                    label="Línea Proyectada CAGR", linewidth=2.5)
+        
+        # Plot ETS forecast
+        if df_forecast_ets is not None and not df_forecast_ets["Forecast_ETS"].isna().all():
+            ax.plot(df_forecast_ets[self.first_column_name], df_forecast_ets["Forecast_ETS"], 
+                    color=self.forecast_ets_color, linestyle='dotted', 
+                    label="Forecast ETS", linewidth=2.5)
+        
+        # Plot ARIMA forecast
+        if df_forecast_arima is not None and not df_forecast_arima["Forecast_ARIMA"].isna().all():
+            ax.plot(df_forecast_arima[self.first_column_name], df_forecast_arima["Forecast_ARIMA"], 
+                    color=self.forecast_arima_color, linestyle='dotted', 
+                    label="Forecast ARIMA", linewidth=2.5)
+        
+        # Shade forecast area
+        start_forecast_year = self.cutoff_year
+        end_forecast_year = max(forecast_years) if forecast_years else self.cutoff_year + 5
+        ax.axvspan(start_forecast_year, end_forecast_year, color='gray', alpha=0.1)
+        
+        # Labels
+        ax.set_xlabel(self.x_axis_label, fontsize=18)
+        ax.set_ylabel(self.y_axis_label, fontsize=18)
+        
+        # Grid
+        ax.grid(True, color='lightgrey', linestyle='-', linewidth=0.35)
+        
+        # Legend
+        def wrap_labels(labels, text_wrap_width=30):
+            return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
+        
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=12, frameon=False)
+        wrapped_labels1 = wrap_labels([text.get_text() for text in legend.get_texts()])
+        for text, wrapped_label in zip(legend.get_texts(), wrapped_labels1):
+            text.set_text(wrapped_label)
+        
+        # X-axis
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_xticks(df[self.first_column_name].tolist())
+        
+        # Remove spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        
+        # Annotations
+        plt.figtext(-0.1, -0.1,
+                    '*El crecimiento anual compuesto (CAGR) indica la tasa de crecimiento promedio de un valor entre dos puntos en el tiempo, asumiendo un crecimiento acumulado.',
+                    ha="left", fontsize=12, color="black", wrap=True)
+        
+        plt.figtext(-0.1, -0.14,
+                    '** El modelo ARIMA proyecta series temporales considerando patrones históricos de autocorrelación, tendencias y estacionalidades para prever valores futuros.',
+                    ha="left", fontsize=12, color="black", wrap=True)
+        
+        plt.figtext(-0.1, -0.18,
+                    '*** El modelo ETS utiliza descomposición exponencial para prever tendencias, estacionalidad y nivel de una serie temporal, adaptándose dinámicamente a cambios en los datos.',
+                    ha="left", fontsize=12, color="black", wrap=True)
+        
+        if cagr_rate is not None:
+            plt.figtext(-0.1, -0.22,
+                        f'**** El número de publicaciones de familias de patentes ha variado con una Tasa de Crecimiento Anual Compuesta (CAGR) de {round(cagr_rate * 100, 2)}% para el periodo {start_year}-{end_year}, sin incluir {self.cutoff_year + 1} ni {self.cutoff_year + 2}.',
+                        ha="left", fontsize=12, color="black", wrap=True)
+        
+        # Save to bytes
+        png_buffer = io.BytesIO()
+        plt.savefig(png_buffer, format='png', bbox_inches='tight', dpi=100)
+        png_bytes = png_buffer.getvalue()
+        png_buffer.close()
+        
+        svg_buffer = io.StringIO()
+        plt.savefig(svg_buffer, format='svg', bbox_inches='tight')
+        svg_text = svg_buffer.getvalue()
+        svg_buffer.close()
+        plt.close()
+        
+        # Prepare chart_data for AI
+        chart_data = {
+            'type': 'forecast_line',
+            'x_axis': self.x_axis_label,
+            'y_axis': self.y_axis_label,
+            'historical_series': [
+                {
+                    'year': int(row[self.first_column_name]),
+                    'publications': int(row[self.second_column_name])
+                }
+                for _, row in df_historic.iterrows()
+            ],
+            'forecast_ets': [
+                {
+                    'year': int(row[self.first_column_name]),
+                    'forecast': float(row["Forecast_ETS"])
+                }
+                for _, row in df_forecast_ets.iterrows()
+            ] if df_forecast_ets is not None and not df_forecast_ets["Forecast_ETS"].isna().all() else [],
+            'forecast_arima': [
+                {
+                    'year': int(row[self.first_column_name]),
+                    'forecast': float(row["Forecast_ARIMA"])
+                }
+                for _, row in df_forecast_arima.iterrows()
+            ] if df_forecast_arima is not None and not df_forecast_arima["Forecast_ARIMA"].isna().all() else [],
+            'cagr_rate': round(cagr_rate * 100, 2) if cagr_rate is not None else None,
+            'cagr_period': {'start': start_year, 'end': end_year} if cagr_rate is not None else None,
+            'years_range': {
+                'start': int(df[self.first_column_name].min()),
+                'end': int(df[self.first_column_name].max())
+            },
+            'forecast_years': forecast_years,
+            'warnings': warnings
+        }
+        
+        execution_time = time.time() - start_time
+        
+        return ChartResult(
+            png_bytes=png_bytes,
+            svg_text=svg_text,
+            chart_data=chart_data,
+            meta={
+                'algorithm_key': self.algorithm_key,
+                'algorithm_version': self.algorithm_version,
+                'execution_time_seconds': round(execution_time, 2),
+                'years_analyzed': len(df),
+                'cutoff_year': self.cutoff_year,
+                'has_ets_forecast': best_model_fit_ets is not None,
+                'has_arima_forecast': model_fit_arima is not None,
+                'has_cagr': cagr_rate is not None
+            }
+        )
+
