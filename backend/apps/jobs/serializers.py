@@ -4,6 +4,7 @@ Serializers for jobs app.
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from .models import Job, ImageTask, DescriptionTask
+from apps.audit.models import EventLog
 
 
 @extend_schema_serializer(
@@ -126,6 +127,34 @@ class DescriptionTaskSerializer(serializers.ModelSerializer):
 @extend_schema_serializer(
     examples=[
         OpenApiExample(
+            'Event Log',
+            value={
+                'id': 1,
+                'event_type': 'PROGRESS',
+                'level': 'INFO',
+                'message': 'Generating image...',
+                'progress': 50,
+                'created_at': '2024-01-01T00:00:00Z'
+            }
+        ),
+    ]
+)
+class EventLogSerializer(serializers.ModelSerializer):
+    """Serializer for EventLog."""
+    progress = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventLog
+        fields = ['id', 'event_type', 'level', 'message', 'progress', 'created_at', 'payload']
+    
+    def get_progress(self, obj):
+        """Get progress from payload."""
+        return obj.payload.get('progress', 0)
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
             'Trabajo completo con tareas',
             value={
                 'id': 1,
@@ -175,16 +204,22 @@ class JobDetailSerializer(serializers.ModelSerializer):
         read_only=True,
         help_text='ID del dataset asociado al trabajo'
     )
+    events = EventLogSerializer(
+        source='event_logs',
+        many=True,
+        read_only=True,
+        help_text='Historial de eventos del trabajo'
+    )
     
     class Meta:
         model = Job
         fields = [
             'id', 'created_by', 'dataset_id', 'status', 'progress_total',
-            'idempotency_key', 'image_tasks', 'description_tasks',
+            'idempotency_key', 'image_tasks', 'description_tasks', 'events',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'status', 'progress_total', 'image_tasks', 'description_tasks',
+            'id', 'status', 'progress_total', 'image_tasks', 'description_tasks', 'events',
             'created_at', 'updated_at'
         ]
     

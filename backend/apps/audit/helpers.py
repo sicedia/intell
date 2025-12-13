@@ -62,6 +62,11 @@ def emit_event(
         entity_type = 'description_task'
         entity_id = description_task_id
     
+    # Ensure payload exists and includes progress if provided
+    log_payload = payload or {}
+    if progress is not None:
+        log_payload['progress'] = progress
+
     # Insert EventLog (append-only)
     event_log = EventLog.objects.create(
         job_id=job_id,
@@ -71,7 +76,7 @@ def emit_event(
         event_type=event_type,
         level=level,
         message=message,
-        payload=payload or {}
+        payload=log_payload
     )
     
     # Update status/progress in related entities

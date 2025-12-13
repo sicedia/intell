@@ -97,8 +97,35 @@ class JobViewSet(viewsets.ViewSet):
     
     def create(self, request):
         """Create a new job."""
-        serializer = JobCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        # Make data mutable and strictly a standard dict to handle JSON parsing
+        # QueryDict (multipart) doesn't handle list/dict values well
+        if hasattr(request.data, 'dict'):
+            data = request.data.dict()
+        else:
+            data = request.data.copy()
+        
+        print(f"DEBUG: Raw data received: keys={list(data.keys())}")
+
+        # Parse JSON fields if they are strings (common in multipart/form-data)
+        import json
+        for field in ['images', 'source_params']:
+            if field in data and isinstance(data[field], str):
+                try:
+                    parsed_val = json.loads(data[field])
+                    data[field] = parsed_val
+                    print(f"DEBUG: Successfully parsed {field}: {type(parsed_val)}")
+                except json.JSONDecodeError as e:
+                    print(f"DEBUG: Failed to parse JSON for {field}: {e}, Value: {data[field]}")
+                    pass # Let serializer handle the validation error
+            elif field not in data:
+                 print(f"DEBUG: Field {field} MISSING in data")
+
+        print(f"DEBUG: Data passed to serializer: source_type={data.get('source_type')}")
+        
+        serializer = JobCreateSerializer(data=data)
+        if not serializer.is_valid():
+            print(f"DEBUG: Serializer Errors: {serializer.errors}")
+            serializer.is_valid(raise_exception=True)
         
         data = serializer.validated_data
         source_type = data['source_type']
@@ -177,7 +204,7 @@ class JobViewSet(viewsets.ViewSet):
                     )
                 
                 # Enqueue job
-                run_job.delay(job.id)
+                run_job(job.id)
                 
                 return Response({
                     'job_id': job.id,

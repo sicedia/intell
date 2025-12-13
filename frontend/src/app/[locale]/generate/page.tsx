@@ -1,17 +1,17 @@
+"use client";
 
-import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { GenerateWizard } from "@/features/generate/GenerateWizard";
+import { GenerateWizard } from "@/features/generation/ui/GenerateWizard";
 
-export default async function GeneratePage() {
-  const t = await getTranslations("generate");
-
+export default function GeneratePage() {
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t("title") || "New Generation"}
-        subtitle={t("subtitle") || "Configure and run a new analysis job."}
-      />
+    <div className="container mx-auto py-8">
+      <div className="mb-8 text-center sm:text-left">
+        <h1 className="text-3xl font-bold tracking-tight">Generate Visualizations</h1>
+        <p className="text-muted-foreground mt-2">
+          Upload patent data and choose algorithms to generate visual insights.
+        </p>
+      </div>
+
       <GenerateWizard />
     </div>
   );

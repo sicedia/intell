@@ -152,8 +152,7 @@ def generate_image_task(self, image_task_id: int):
         # The error is already logged and ImageTask marked as FAILED
 
 
-@shared_task(bind=True, name='apps.jobs.tasks.run_job')
-def run_job(self, job_id: int):
+def run_job(job_id: int):
     """
     Run job - creates ImageTasks and enqueues them as a group.
     
@@ -195,7 +194,7 @@ def run_job(self, job_id: int):
         )
         
         # Create chord with callback using immutable signature
-        chord(task_group)(finalize_job.si(job_id))
+        chord(task_group)(finalize_job.s(job_id))
         
         # Emit PROGRESS event
         emit_event(

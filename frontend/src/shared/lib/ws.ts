@@ -79,6 +79,12 @@ export class WSClient {
     }
 
     if (this.ws) {
+      // Prevent callbacks from firing during intentional disconnect
+      this.ws.onclose = null;
+      this.ws.onerror = null;
+      this.ws.onmessage = null;
+      this.ws.onopen = null;
+
       this.ws.close();
       this.ws = null;
     }
