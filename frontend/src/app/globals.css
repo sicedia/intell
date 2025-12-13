@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 @layer base {
   :root {
@@ -30,10 +31,11 @@
 
     /* Design System Tokens */
     --success: 142 71% 45%;
-    --success-foreground: 144 70% 98%; 
+    --success-foreground: 144 70% 98%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
-    --pending: 217 33% 17%; /* same as secondary for now, or specific */
+    --pending: 217 33% 17%;
+    /* same as secondary for now, or specific */
   }
 
   .dark {
@@ -74,6 +76,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

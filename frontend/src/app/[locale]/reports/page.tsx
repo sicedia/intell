@@ -1,22 +1,18 @@
-import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
-export default async function ReportsPage() {
-  const t = await getTranslations("reports");
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { StateBlock } from "@/shared/ui/StateBlock";
+import { Construction } from "lucide-react";
 
+export default function ReportsPage() {
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Reports features will be implemented here.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <PageHeader title="Reports" />
+      <StateBlock
+        variant="default"
+        title="Report Generator"
+        description="This feature is not yet available."
+        icon={<Construction className="w-12 h-12 text-muted-foreground" />}
+      />
     </div>
   );
 }

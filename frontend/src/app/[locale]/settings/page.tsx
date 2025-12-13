@@ -1,22 +1,18 @@
-import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
-export default async function SettingsPage() {
-  const t = await getTranslations("settings");
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { StateBlock } from "@/shared/ui/StateBlock";
+import { Construction } from "lucide-react";
 
+export default function SettingsPage() {
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Settings features will be implemented here.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <PageHeader title="Settings" />
+      <StateBlock
+        variant="default"
+        title="Configuration"
+        description="System settings will appear here."
+        icon={<Construction className="w-12 h-12 text-muted-foreground" />}
+      />
     </div>
   );
 }

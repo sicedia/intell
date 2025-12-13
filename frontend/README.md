@@ -291,3 +291,40 @@ function ThemeToggle() {
 ## License
 
 Private - Intell.AI Project
+
+## Design & UX Patterns
+
+### Tokens & Styles
+- **Breakpoints**: Desktop-first optimizations (max-w-7xl)
+- **Colors**: Defined in `globals.css` (HSL variables) + Tailwind config
+- **Spacing**: Standard layout padding `p-4 md:p-6`
+
+### Shared Components (`src/shared/ui/`)
+- `PageHeader`: Standard top-of-page header.
+- `StateBlock`: Feedback states (loading, empty, error, success).
+- `StatusBadge`: Consistent status coloring (PENDING, RUNNING, SUCCESS, etc).
+- `ProgressPanel`: Progress bar with step info.
+- `EventTimeline`: Vertical list of logs/events.
+- `GalleryGrid`: Responsive grid for image cards.
+
+### App Shell
+Responsive sidebar + topbar layout using `AppShell` component.
+- **Desktop**: Fixed sidebar.
+- **Mobile**: Collapsible sidebar (Sheet).
+
+## Mock Mode
+
+For development without a backend, enable mock mode:
+1. Create/Edit `.env.local`
+2. Set `NEXT_PUBLIC_USE_MOCKS=true`
+3. Restart dev server
+
+This will activate `mockJob.ts` data in Dashboard and Generate pages.
+
+## Conv Conventions for New Features
+
+1. Create feature directory in `src/features/[feature-name]`.
+2. Use `PageHeader` for title.
+3. Import shared UI from `@/shared/ui`.
+4. If logic is complex, create a dedicated component (e.g. `Wizard`).
+5. define types in `src/shared/types/backend.ts` if they match backend entities.

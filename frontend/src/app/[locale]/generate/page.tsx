@@ -1,22 +1,18 @@
+
 import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { GenerateWizard } from "@/features/generate/GenerateWizard";
 
 export default async function GeneratePage() {
   const t = await getTranslations("generate");
 
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Generation features will be implemented here.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <PageHeader
+        title={t("title") || "New Generation"}
+        subtitle={t("subtitle") || "Configure and run a new analysis job."}
+      />
+      <GenerateWizard />
     </div>
   );
 }

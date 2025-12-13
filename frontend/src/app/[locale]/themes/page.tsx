@@ -1,22 +1,18 @@
-import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
-export default async function ThemesPage() {
-  const t = await getTranslations("themes");
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { StateBlock } from "@/shared/ui/StateBlock";
+import { Construction } from "lucide-react";
 
+export default function ThemesPage() {
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Theme customization features will be implemented here.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <PageHeader title="Themes & Styling" />
+      <StateBlock
+        variant="default"
+        title="Under Construction"
+        description="Theme management is coming soon."
+        icon={<Construction className="w-12 h-12 text-muted-foreground" />}
+      />
     </div>
   );
 }
