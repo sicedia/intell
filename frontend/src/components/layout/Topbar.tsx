@@ -21,6 +21,9 @@ export function Topbar() {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 w-[240px]">
+                        <span className="sr-only" role="heading" aria-level={1}>
+                            Navigation Menu
+                        </span>
                         <Sidebar onClose={() => setOpen(false)} />
                     </SheetContent>
                 </Sheet>

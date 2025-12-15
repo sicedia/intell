@@ -273,6 +273,16 @@ def finalize_job(self, task_results, job_id: int):
         
         job.save()
         
+        # Emit job_status_changed event for frontend detection
+        emit_event(
+            job_id=job_id,
+            event_type='job_status_changed',
+            level='INFO',
+            message=f'Job status changed to {job.status}',
+            progress=job.progress_total,
+            payload={'status': job.status}
+        )
+        
         # Emit DONE event
         emit_event(
             job_id=job_id,

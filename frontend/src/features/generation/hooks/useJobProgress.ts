@@ -59,11 +59,18 @@ export const useJobProgress = (jobId: number | null): UseJobProgressReturn => {
                         setEvents((prev) => [...prev, data]);
                     }
 
-                    // Check if job finished via WS event to trigger refetch/invalidation
+                    // Check if job finished via WS event to update cache immediately
                     if (data && data.event_type === "job_status_changed") {
                         const newStatus = data.payload?.status;
                         if (["SUCCESS", "FAILED", "CANCELLED", "PARTIAL_SUCCESS"].includes(newStatus)) {
-                            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                            // Update cache directly for immediate UI update
+                            queryClient.setQueryData(["job", jobId, "initial"], (oldData: any) => {
+                                if (!oldData) return oldData;
+                                return { ...oldData, status: newStatus };
+                            });
+
+                            // Then refetch to get complete updated data (with images, etc.)
+                            queryClient.refetchQueries({ queryKey: ["job", jobId], exact: false });
                         }
                     }
                 },

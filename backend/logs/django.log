@@ -1,291 +1,45 @@
-INFO 2025-12-13 03:28:40,787 runserver 29236 17952 [mHTTP GET /api/jobs/23/ 200 [0.08, 127.0.0.1:59256][0m
-DEBUG 2025-12-13 03:28:41,910 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\django\contrib\messages\storage\fallback.py first seen with mtime 1765599150.3162532
-DEBUG 2025-12-13 03:28:41,910 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\django\contrib\messages\storage\session.py first seen with mtime 1765599150.3174615
-DEBUG 2025-12-13 03:28:41,924 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\django\contrib\sessions\serializers.py first seen with mtime 1765599150.8841329
-DEBUG 2025-12-13 03:28:42,024 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\tzdata\zoneinfo\__init__.py first seen with mtime 1765598992.3221188
-DEBUG 2025-12-13 03:28:42,026 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\django\contrib\messages\storage\cookie.py first seen with mtime 1765599150.315252
-DEBUG 2025-12-13 03:28:42,085 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\tzdata\__init__.py first seen with mtime 1765598992.2908547
-INFO 2025-12-13 03:28:59,142 runserver 29236 17952 [mHTTP POST /api/jobs/ 201 [2.42, 127.0.0.1:59256][0m
-INFO 2025-12-13 03:28:59,171 runserver 29236 17952 [mHTTP OPTIONS /api/jobs/25/ 200 [0.01, 127.0.0.1:59256][0m
-INFO 2025-12-13 03:28:59,182 runserver 29236 17952 [mHTTP OPTIONS /api/jobs/25/ 200 [0.01, 127.0.0.1:59256][0m
-INFO 2025-12-13 03:28:59,201 runserver 29236 17952 [mHTTP POST /api/jobs/ 201 [2.47, 127.0.0.1:52057][0m
-INFO 2025-12-13 03:28:59,225 runserver 29236 17952 [mHTTP OPTIONS /api/jobs/26/ 200 [0.01, 127.0.0.1:52057][0m
-INFO 2025-12-13 03:28:59,252 runserver 29236 17952 [mHTTP GET /api/jobs/25/ 200 [0.07, 127.0.0.1:59256][0m
-INFO 2025-12-13 03:28:59,331 runserver 29236 17952 [mHTTP GET /api/jobs/26/ 200 [0.10, 127.0.0.1:52057][0m
-INFO 2025-12-13 03:28:59,341 runserver 29236 17952 [mHTTP GET /api/jobs/25/ 200 [0.09, 127.0.0.1:59256][0m
-DEBUG 2025-12-13 03:28:59,545 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\et_xmlfile\xmlfile.py first seen with mtime 1765599044.1968012
-DEBUG 2025-12-13 03:28:59,549 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\Lib\xml\etree\ElementPath.py first seen with mtime 1738680669.0
-DEBUG 2025-12-13 03:28:59,559 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\datetime.py first seen with mtime 1765599115.575059
-DEBUG 2025-12-13 03:28:59,561 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\cell.py first seen with mtime 1765599115.5724576
-DEBUG 2025-12-13 03:28:59,565 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\__init__.py first seen with mtime 1765599115.5956955
-DEBUG 2025-12-13 03:28:59,566 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\alignment.py first seen with mtime 1765599115.550045
-DEBUG 2025-12-13 03:28:59,567 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\compat\numbers.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,568 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\colors.py first seen with mtime 1765599115.5558066
-DEBUG 2025-12-13 03:28:59,570 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\__init__.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:28:59,570 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\rich_text.py first seen with mtime 1765599115.3955173
-DEBUG 2025-12-13 03:28:59,576 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\protection.py first seen with mtime 1765599115.5644562
-DEBUG 2025-12-13 03:28:59,576 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\fills.py first seen with mtime 1765599115.5594623
-DEBUG 2025-12-13 03:28:59,578 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\__init__.py first seen with mtime 1765599115.3895185
-DEBUG 2025-12-13 03:28:59,580 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\__init__.py first seen with mtime 1765599115.3672786
-DEBUG 2025-12-13 03:28:59,587 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\__init__.py first seen with mtime 1765599115.5704618
-DEBUG 2025-12-13 03:28:59,597 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\cell_style.py first seen with mtime 1765599115.5522668
-DEBUG 2025-12-13 03:28:59,597 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\cell.py first seen with mtime 1765599115.3925178
-DEBUG 2025-12-13 03:28:59,603 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\__init__.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,603 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\Lib\xml\etree\__init__.py first seen with mtime 1738680669.0
-DEBUG 2025-12-13 03:28:59,606 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\namespace.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:28:59,611 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\serialisable.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:28:59,617 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\styleable.py first seen with mtime 1765599115.566459
-DEBUG 2025-12-13 03:28:59,621 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\sequence.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:28:59,625 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\named_styles.py first seen with mtime 1765599115.5614648
-DEBUG 2025-12-13 03:28:59,630 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\proxy.py first seen with mtime 1765599115.5654624
-DEBUG 2025-12-13 03:28:59,635 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\xml\__init__.py first seen with mtime 1765599115.6499314
-DEBUG 2025-12-13 03:28:59,649 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formula\__init__.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:28:59,651 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\Lib\xml\etree\ElementTree.py first seen with mtime 1738680669.0
-DEBUG 2025-12-13 03:28:59,654 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\worksheet.py first seen with mtime 1765599115.6468756
-DEBUG 2025-12-13 03:28:59,661 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\hyperlink.py first seen with mtime 1765599115.6260166
-DEBUG 2025-12-13 03:28:59,662 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\compat\__init__.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,669 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\__init__.py first seen with mtime 1765599115.6113882
-DEBUG 2025-12-13 03:28:59,680 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\formulas.py first seen with mtime 1765599115.5820694
-DEBUG 2025-12-13 03:28:59,689 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\Lib\encodings\cp437.py first seen with mtime 1738680669.0
-DEBUG 2025-12-13 03:28:59,699 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\builtins.py first seen with mtime 1765599115.5522668
-DEBUG 2025-12-13 03:28:59,707 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\excel.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,708 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formula\tokenizer.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:28:59,714 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\et_xmlfile\__init__.py first seen with mtime 1765599044.1938045
-DEBUG 2025-12-13 03:28:59,716 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\base.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,718 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\nested.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:28:59,722 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\exceptions.py first seen with mtime 1765599115.581067
-DEBUG 2025-12-13 03:28:59,732 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\borders.py first seen with mtime 1765599115.5519538
-DEBUG 2025-12-13 03:28:59,751 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\xml\constants.py first seen with mtime 1765599115.6499314
-DEBUG 2025-12-13 03:28:59,759 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\et_xmlfile\incremental_tree.py first seen with mtime 1765599044.1947985
-DEBUG 2025-12-13 03:28:59,765 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\indexed_list.py first seen with mtime 1765599115.58339
-DEBUG 2025-12-13 03:28:59,769 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\DLLs\_elementtree.pyd first seen with mtime 1738868804.2844713
-DEBUG 2025-12-13 03:28:59,770 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\xml\functions.py first seen with mtime 1765599115.6499314
-DEBUG 2025-12-13 03:28:59,776 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\fonts.py first seen with mtime 1765599115.5604594
-DEBUG 2025-12-13 03:28:59,782 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\formula.py first seen with mtime 1765599115.6260166
-DEBUG 2025-12-13 03:28:59,785 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\compat\strings.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:28:59,792 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\workbook.py first seen with mtime 1765599115.6070535
-DEBUG 2025-12-13 03:28:59,792 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\numbers.py first seen with mtime 1765599115.5634577
-INFO 2025-12-13 03:29:00,313 runserver 29236 17952 WebSocket HANDSHAKING /ws/jobs/26/ [127.0.0.1:63839]
-INFO 2025-12-13 03:29:00,319 runserver 29236 17952 WebSocket CONNECT /ws/jobs/26/ [127.0.0.1:63839]
-DEBUG 2025-12-13 03:29:01,716 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\policies.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,716 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\table.py first seen with mtime 1765599115.5684617
-DEBUG 2025-12-13 03:29:01,718 autoreload 29236 18692 File C:\Users\Felipe\miniconda3\Lib\shelve.py first seen with mtime 1738680669.0
-DEBUG 2025-12-13 03:29:01,720 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\utils.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,722 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\series_factory.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,722 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\custom.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,724 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\transport\redis.py first seen with mtime 1765599233.021761
-DEBUG 2025-12-13 03:29:01,725 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\shapes.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,726 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\ImageMath.py first seen with mtime 1765599012.7868752
-DEBUG 2025-12-13 03:29:01,727 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\connection.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,727 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\__init__.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,728 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\pie_chart.py first seen with mtime 1765599115.431282
-DEBUG 2025-12-13 03:29:01,729 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\transport\virtual\__init__.py first seen with mtime 1765599233.021761
-DEBUG 2025-12-13 03:29:01,730 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\image.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,731 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\cryptography\fernet.py first seen with mtime 1765612655.8455114
-DEBUG 2025-12-13 03:29:01,732 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formula\translate.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,733 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\matplotlib\backends\_backend_agg.cp313-win_amd64.pyd first seen with mtime 1765599224.438261
-DEBUG 2025-12-13 03:29:01,734 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\backends\redis.py first seen with mtime 1765599279.028414
-DEBUG 2025-12-13 03:29:01,736 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\chartspace.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,739 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\descriptors.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,740 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\utils\text.py first seen with mtime 1765599233.0377858
-DEBUG 2025-12-13 03:29:01,741 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\writer\excel.py first seen with mtime 1765599115.6499314
-DEBUG 2025-12-13 03:29:01,743 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\relation.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,745 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\__init__.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,746 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\print_settings.py first seen with mtime 1765599115.6392548
-DEBUG 2025-12-13 03:29:01,747 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\bound_dictionary.py first seen with mtime 1765599115.5714607
-DEBUG 2025-12-13 03:29:01,748 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\worker\worker.py first seen with mtime 1765599279.1233811
-DEBUG 2025-12-13 03:29:01,749 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\connection.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,749 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\properties.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,751 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\stylesheet.py first seen with mtime 1765599115.567461
-DEBUG 2025-12-13 03:29:01,751 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\escape.py first seen with mtime 1765599115.58007
-DEBUG 2025-12-13 03:29:01,753 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\protection.py first seen with mtime 1765599115.5926993
-DEBUG 2025-12-13 03:29:01,753 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\_writer.py first seen with mtime 1765599115.39152
-DEBUG 2025-12-13 03:29:01,755 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\protection.py first seen with mtime 1765599115.6418643
-DEBUG 2025-12-13 03:29:01,755 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\text.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,757 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\reader\strings.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,758 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\__init__.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,759 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\properties.py first seen with mtime 1765599115.6402502
-DEBUG 2025-12-13 03:29:01,760 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\text.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,761 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\backends\__init__.py first seen with mtime 1765599279.0135887
-DEBUG 2025-12-13 03:29:01,762 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\drawing.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,764 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\cluster.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,765 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\table.py first seen with mtime 1765599115.6448748
-DEBUG 2025-12-13 03:29:01,767 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\cryptography\hazmat\primitives\hmac.py first seen with mtime 1765612655.9027967
-DEBUG 2025-12-13 03:29:01,768 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\matplotlib\backends\backend_agg.py first seen with mtime 1765599224.5943108
-DEBUG 2025-12-13 03:29:01,769 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\_constants.py first seen with mtime 1765599115.3672786
-DEBUG 2025-12-13 03:29:01,770 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\hiredis.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,770 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\updown_bars.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,771 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\transport\base.py first seen with mtime 1765599233.013799
-DEBUG 2025-12-13 03:29:01,772 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\marker.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,773 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\bootsteps.py first seen with mtime 1765599278.9873886
-DEBUG 2025-12-13 03:29:01,777 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\views.py first seen with mtime 1765599115.6040535
-DEBUG 2025-12-13 03:29:01,779 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\effect.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,780 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\helpers.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,780 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\title.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,782 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\base.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,783 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\pivot\cache.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,783 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\filters.py first seen with mtime 1765599115.6260166
-DEBUG 2025-12-13 03:29:01,785 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\colors.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,787 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\__init__.py first seen with mtime 1765599115.399518
-DEBUG 2025-12-13 03:29:01,787 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\ImageOps.py first seen with mtime 1765599012.7904432
-DEBUG 2025-12-13 03:29:01,789 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\web.py first seen with mtime 1765599115.6060545
-DEBUG 2025-12-13 03:29:01,790 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\client.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,792 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\pivot\table.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,794 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\crc.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,796 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\reader\drawings.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,797 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\child.py first seen with mtime 1765599115.5976992
-DEBUG 2025-12-13 03:29:01,797 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\utils.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,799 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\layout.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,800 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\drawing.py first seen with mtime 1765599115.6260166
-DEBUG 2025-12-13 03:29:01,801 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\exceptions.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,802 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\scatter_chart.py first seen with mtime 1765599115.446901
-DEBUG 2025-12-13 03:29:01,802 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\picture.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,804 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\chartsheet.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,806 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\__init__.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,808 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\resp3.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,808 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\area_chart.py first seen with mtime 1765599115.4001198
-DEBUG 2025-12-13 03:29:01,809 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\comments\shape_writer.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:29:01,810 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\contrib\__init__.py first seen with mtime 1765599279.0613358
-DEBUG 2025-12-13 03:29:01,812 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\cache.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,812 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\comments\comments.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:29:01,814 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\worker\state.py first seen with mtime 1765599279.1233811
-DEBUG 2025-12-13 03:29:01,815 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\reader\workbook.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,816 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\defined_name.py first seen with mtime 1765599115.598697
-DEBUG 2025-12-13 03:29:01,816 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\writer\theme.py first seen with mtime 1765599115.6499314
-DEBUG 2025-12-13 03:29:01,818 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\line.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,819 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\pivot\__init__.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,821 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\external_link\external.py first seen with mtime 1765599115.610391
-DEBUG 2025-12-13 03:29:01,823 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\reader\excel.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,825 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\PpmImagePlugin.py first seen with mtime 1765599012.8131416
-DEBUG 2025-12-13 03:29:01,826 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\backends\asynchronous.py first seen with mtime 1765599279.019357
-DEBUG 2025-12-13 03:29:01,828 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\error_bar.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,831 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\connector.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,832 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\legend.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,833 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\auth\__init__.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,834 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\lock.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,835 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\descriptors\container.py first seen with mtime 1765599115.4785728
-DEBUG 2025-12-13 03:29:01,836 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\client.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,837 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\surface_chart.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,838 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\workbook.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,838 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\dimensions.py first seen with mtime 1765599115.624718
-DEBUG 2025-12-13 03:29:01,839 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\transport\virtual\base.py first seen with mtime 1765599233.021761
-DEBUG 2025-12-13 03:29:01,840 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\credentials.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,841 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\pivot\record.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,844 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\channels_redis\__init__.py first seen with mtime 1765599278.8533106
-DEBUG 2025-12-13 03:29:01,846 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\writer\__init__.py first seen with mtime 1765599115.6488733
-DEBUG 2025-12-13 03:29:01,847 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\JpegImagePlugin.py first seen with mtime 1765599012.7975104
-DEBUG 2025-12-13 03:29:01,848 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\concurrency\__init__.py first seen with mtime 1765599279.0555887
-DEBUG 2025-12-13 03:29:01,849 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\utils\scheduling.py first seen with mtime 1765599233.0377858
-DEBUG 2025-12-13 03:29:01,852 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\cluster.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,853 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\protection.py first seen with mtime 1765599115.6020527
-DEBUG 2025-12-13 03:29:01,855 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formatting\__init__.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,856 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\sentinel.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,857 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\_write_only.py first seen with mtime 1765599115.6153903
-DEBUG 2025-12-13 03:29:01,857 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\bubble_chart.py first seen with mtime 1765599115.4001198
-DEBUG 2025-12-13 03:29:01,858 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\_writer.py first seen with mtime 1765599115.6167166
-DEBUG 2025-12-13 03:29:01,859 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\header_footer.py first seen with mtime 1765599115.6260166
-DEBUG 2025-12-13 03:29:01,863 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\contrib\django\__init__.py first seen with mtime 1765599279.0683825
-DEBUG 2025-12-13 03:29:01,863 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\lock.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,865 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\utils\units.py first seen with mtime 1765599115.593698
-DEBUG 2025-12-13 03:29:01,865 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\copier.py first seen with mtime 1765599115.6217182
-DEBUG 2025-12-13 03:29:01,867 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\backoff.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,867 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\contrib\django\task.py first seen with mtime 1765599279.0683825
-DEBUG 2025-12-13 03:29:01,868 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\spreadsheet_drawing.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,871 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formatting\formatting.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,872 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\comments\author.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,872 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\maint_notifications.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,874 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\geometry.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,875 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\data_source.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,876 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\core.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,877 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\axis.py first seen with mtime 1765599115.4001198
-DEBUG 2025-12-13 03:29:01,879 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\JpegPresets.py first seen with mtime 1765599012.7975104
-DEBUG 2025-12-13 03:29:01,881 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\plotarea.py first seen with mtime 1765599115.431282
-DEBUG 2025-12-13 03:29:01,882 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\backends\base.py first seen with mtime 1765599279.019357
-DEBUG 2025-12-13 03:29:01,883 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\utils\eventio.py first seen with mtime 1765599233.0377858
-DEBUG 2025-12-13 03:29:01,883 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\channels_redis\core.py first seen with mtime 1765599278.8533106
-DEBUG 2025-12-13 03:29:01,885 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\formatting\rule.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,886 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\retry.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,887 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\_chart.py first seen with mtime 1765599115.4001198
-DEBUG 2025-12-13 03:29:01,888 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\utils\deprecated.py first seen with mtime 1765599279.093256
-DEBUG 2025-12-13 03:29:01,889 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\protection.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,889 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\event.py first seen with mtime 1765599001.3990185
-DEBUG 2025-12-13 03:29:01,891 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\xdr.py first seen with mtime 1765599115.509825
-DEBUG 2025-12-13 03:29:01,892 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\core.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,894 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\styles\differential.py first seen with mtime 1765599115.5558066
-DEBUG 2025-12-13 03:29:01,895 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\encoders.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,895 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\series.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,896 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\_imagingmath.cp313-win_amd64.pyd first seen with mtime 1765599012.9230006
-DEBUG 2025-12-13 03:29:01,897 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\bar_chart.py first seen with mtime 1765599115.4001198
-DEBUG 2025-12-13 03:29:01,897 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\label.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,898 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\cryptography\hazmat\primitives\padding.py first seen with mtime 1765612655.910875
-DEBUG 2025-12-13 03:29:01,900 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\function_group.py first seen with mtime 1765599115.6000516
-DEBUG 2025-12-13 03:29:01,902 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\channels_redis\utils.py first seen with mtime 1765599278.8593266
-DEBUG 2025-12-13 03:29:01,905 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\cluster.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,907 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\worker\__init__.py first seen with mtime 1765599279.1134527
-DEBUG 2025-12-13 03:29:01,908 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\commands.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,908 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\properties.py first seen with mtime 1765599115.6010585
-DEBUG 2025-12-13 03:29:01,909 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\picture.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,910 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\__init__.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,911 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\utils\time.py first seen with mtime 1765599233.0377858
-DEBUG 2025-12-13 03:29:01,913 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\matplotlib\backends\backend_mixed.py first seen with mtime 1765599224.6014957
-DEBUG 2025-12-13 03:29:01,913 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\pandas\core\methods\to_dict.py first seen with mtime 1765599191.2447002
-DEBUG 2025-12-13 03:29:01,915 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\fill.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,915 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\comments\comment_sheet.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,917 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\billiard\einfo.py first seen with mtime 1765599057.8558533
-DEBUG 2025-12-13 03:29:01,918 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\related.py first seen with mtime 1765599115.6428766
-DEBUG 2025-12-13 03:29:01,918 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\retry.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,920 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\graphic.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,923 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\radar_chart.py first seen with mtime 1765599115.446901
-DEBUG 2025-12-13 03:29:01,925 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\read_only.py first seen with mtime 1765599115.3935182
-DEBUG 2025-12-13 03:29:01,931 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\relation.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,931 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\message.py first seen with mtime 1765599232.9691274
-DEBUG 2025-12-13 03:29:01,933 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\merge.py first seen with mtime 1765599115.633238
-DEBUG 2025-12-13 03:29:01,936 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\custom.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,937 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\page.py first seen with mtime 1765599115.635252
-DEBUG 2025-12-13 03:29:01,938 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\_read_only.py first seen with mtime 1765599115.6123917
-DEBUG 2025-12-13 03:29:01,940 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\helpers.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,941 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\properties.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,943 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\auth\token.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,946 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\commands\redismodules.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:01,947 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\utils\saferepr.py first seen with mtime 1765599279.1079443
-DEBUG 2025-12-13 03:29:01,947 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\pagebreak.py first seen with mtime 1765599115.6372526
-DEBUG 2025-12-13 03:29:01,948 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\external_reference.py first seen with mtime 1765599115.598697
-DEBUG 2025-12-13 03:29:01,949 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\external_link\__init__.py first seen with mtime 1765599115.6083891
-DEBUG 2025-12-13 03:29:01,950 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\cell_range.py first seen with mtime 1765599115.6177213
-DEBUG 2025-12-13 03:29:01,950 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\line_chart.py first seen with mtime 1765599115.415635
-DEBUG 2025-12-13 03:29:01,953 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\reader.py first seen with mtime 1765599115.446901
-DEBUG 2025-12-13 03:29:01,953 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\__init__.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,954 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\_writer.py first seen with mtime 1765599115.5966966
-DEBUG 2025-12-13 03:29:01,955 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\print_settings.py first seen with mtime 1765599115.431282
-DEBUG 2025-12-13 03:29:01,955 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\cell\text.py first seen with mtime 1765599115.3965163
-DEBUG 2025-12-13 03:29:01,957 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\pivot\fields.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,961 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\drawing\__init__.py first seen with mtime 1765599115.494197
-DEBUG 2025-12-13 03:29:01,961 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\pivot.py first seen with mtime 1765599115.431282
-DEBUG 2025-12-13 03:29:01,962 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\reader\__init__.py first seen with mtime 1765599115.5410717
-DEBUG 2025-12-13 03:29:01,962 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\socket.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,964 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\publish.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,964 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chartsheet\views.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,964 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\_3d.py first seen with mtime 1765599115.3985138
-DEBUG 2025-12-13 03:29:01,972 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\_reader.py first seen with mtime 1765599115.614396
-DEBUG 2025-12-13 03:29:01,972 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\kombu\transport\virtual\exchange.py first seen with mtime 1765599233.021761
-DEBUG 2025-12-13 03:29:01,973 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\GifImagePlugin.py first seen with mtime 1765599012.7539022
-DEBUG 2025-12-13 03:29:01,973 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\scenario.py first seen with mtime 1765599115.6438735
-DEBUG 2025-12-13 03:29:01,975 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\matplotlib\backends\backend_svg.py first seen with mtime 1765599224.6046894
-DEBUG 2025-12-13 03:29:01,976 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\views.py first seen with mtime 1765599115.6458728
-DEBUG 2025-12-13 03:29:01,976 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\asyncio\sentinel.py first seen with mtime 1765599001.4302702
-DEBUG 2025-12-13 03:29:01,977 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\typing.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,979 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\trendline.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,980 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\channels_redis\serializers.py first seen with mtime 1765599278.8593266
-DEBUG 2025-12-13 03:29:01,984 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\stock_chart.py first seen with mtime 1765599115.4559133
-DEBUG 2025-12-13 03:29:01,987 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\app\task.py first seen with mtime 1765599279.0033543
-DEBUG 2025-12-13 03:29:01,988 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\worksheet\datavalidation.py first seen with mtime 1765599115.6227157
-DEBUG 2025-12-13 03:29:01,988 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\workbook\smart_tags.py first seen with mtime 1765599115.603052
-DEBUG 2025-12-13 03:29:01,989 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\relationship.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,992 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\_parsers\resp2.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:01,993 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\celery\app\trace.py first seen with mtime 1765599279.0033543
-DEBUG 2025-12-13 03:29:01,996 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\comments\__init__.py first seen with mtime 1765599115.4629283
-DEBUG 2025-12-13 03:29:01,996 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\packaging\manifest.py first seen with mtime 1765599115.525447
-DEBUG 2025-12-13 03:29:01,998 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\openpyxl\chart\reference.py first seen with mtime 1765599115.446901
-DEBUG 2025-12-13 03:29:01,999 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\sentinel.py first seen with mtime 1765599001.4146447
-DEBUG 2025-12-13 03:29:02,001 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\redis\auth\err.py first seen with mtime 1765599001.445896
-DEBUG 2025-12-13 03:29:02,004 autoreload 29236 18692 File C:\ucuenca\intell\.venv\Lib\site-packages\PIL\BmpImagePlugin.py first seen with mtime 1765599012.7539022
+INFO 2025-12-13 12:04:14,789 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [2.55, 127.0.0.1:55799][0m
+INFO 2025-12-13 12:04:14,807 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/71/ 200 [0.00, 127.0.0.1:55799][0m
+INFO 2025-12-13 12:04:14,816 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/71/ 200 [0.01, 127.0.0.1:55799][0m
+INFO 2025-12-13 12:04:14,884 runserver 23956 8008 [mHTTP GET /api/jobs/71/ 200 [0.07, 127.0.0.1:55799][0m
+INFO 2025-12-13 12:04:14,963 runserver 23956 8008 [mHTTP GET /api/jobs/71/ 200 [0.08, 127.0.0.1:55799][0m
+INFO 2025-12-13 12:04:15,068 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [2.82, 127.0.0.1:64763][0m
+INFO 2025-12-13 12:04:15,086 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/70/ 200 [0.01, 127.0.0.1:64763][0m
+INFO 2025-12-13 12:04:15,153 runserver 23956 8008 [mHTTP GET /api/jobs/70/ 200 [0.07, 127.0.0.1:64763][0m
+INFO 2025-12-13 12:04:15,492 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/70/ [127.0.0.1:55161]
+INFO 2025-12-13 12:04:15,497 runserver 23956 8008 WebSocket CONNECT /ws/jobs/70/ [127.0.0.1:55161]
+INFO 2025-12-13 12:08:19,445 runserver 23956 8008 [mHTTP GET /api/jobs/58/ 200 [0.08, 127.0.0.1:53235][0m
+INFO 2025-12-13 12:08:19,453 runserver 23956 8008 [mHTTP GET /api/jobs/70/ 200 [0.06, 127.0.0.1:52348][0m
+INFO 2025-12-13 12:08:24,775 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/70/ [127.0.0.1:55161]
+INFO 2025-12-13 12:08:38,526 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.60, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:08:38,532 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.61, 127.0.0.1:52348][0m
+INFO 2025-12-13 12:08:38,548 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/73/ 200 [0.01, 127.0.0.1:52348][0m
+INFO 2025-12-13 12:08:38,550 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/73/ 200 [0.01, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:08:38,565 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/72/ 200 [0.01, 127.0.0.1:52348][0m
+INFO 2025-12-13 12:08:38,620 runserver 23956 8008 [mHTTP GET /api/jobs/73/ 200 [0.07, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:08:38,643 runserver 23956 8008 [mHTTP GET /api/jobs/72/ 200 [0.07, 127.0.0.1:52348][0m
+INFO 2025-12-13 12:08:38,702 runserver 23956 8008 [mHTTP GET /api/jobs/73/ 200 [0.08, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:08:38,989 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/72/ [127.0.0.1:63428]
+INFO 2025-12-13 12:08:38,993 runserver 23956 8008 WebSocket CONNECT /ws/jobs/72/ [127.0.0.1:63428]
+INFO 2025-12-13 12:09:01,191 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/72/cancel/ 200 [0.00, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:09:01,246 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:09:01,714 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:09:02,342 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
+INFO 2025-12-13 12:09:03,216 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/72/ [127.0.0.1:63428]
+INFO 2025-12-13 18:51:15,033 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.32, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:15,037 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.32, 127.0.0.1:55068][0m
+INFO 2025-12-13 18:51:15,051 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/75/ 200 [0.01, 127.0.0.1:55068][0m
+INFO 2025-12-13 18:51:15,052 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/75/ 200 [0.01, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:15,061 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/74/ 200 [0.00, 127.0.0.1:55068][0m
+INFO 2025-12-13 18:51:15,125 runserver 23956 8008 [mHTTP GET /api/jobs/74/ 200 [0.06, 127.0.0.1:55068][0m
+INFO 2025-12-13 18:51:15,127 runserver 23956 8008 [mHTTP GET /api/jobs/75/ 200 [0.07, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:15,198 runserver 23956 8008 [mHTTP GET /api/jobs/75/ 200 [0.07, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:15,465 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/74/ [127.0.0.1:55796]
+INFO 2025-12-13 18:51:15,470 runserver 23956 8008 WebSocket CONNECT /ws/jobs/74/ [127.0.0.1:55796]
+INFO 2025-12-13 18:51:26,437 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/74/ [127.0.0.1:55796]
+INFO 2025-12-13 18:51:27,397 runserver 23956 8008 [mHTTP GET /api/jobs/74/ 200 [0.06, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:27,751 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/74/ [127.0.0.1:62936]
+INFO 2025-12-13 18:51:27,757 runserver 23956 8008 WebSocket CONNECT /ws/jobs/74/ [127.0.0.1:62936]
+INFO 2025-12-13 18:51:29,497 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/74/cancel/ 200 [0.00, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:29,540 runserver 23956 8008 [mHTTP POST /api/jobs/74/cancel/ 200 [0.04, 127.0.0.1:58978][0m
+INFO 2025-12-13 18:51:30,479 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/74/ [127.0.0.1:62936]
