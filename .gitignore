@@ -74,6 +74,7 @@ backend/*.py,cover
 backend/.hypothesis/
 backend/.pytest_cache/
 backend/cover/
+.pytest_cache/
 
 # Translations (backend)
 backend/*.mo
