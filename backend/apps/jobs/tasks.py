@@ -13,6 +13,88 @@ import traceback
 logger = logging.getLogger(__name__)
 
 
+def _check_and_update_job_status(job: Job) -> None:
+    """
+    Check if all ImageTasks for a job are complete and update job status accordingly.
+    
+    This is called after individual task completion to handle:
+    - Individual task retries (which don't trigger finalize_job)
+    - Edge cases where chord callback might not fire
+    
+    Args:
+        job: Job instance to check
+    """
+    # Refresh job from DB to get latest status
+    job.refresh_from_db()
+    
+    # Skip if job is already in a final state
+    if job.status in [Job.Status.SUCCESS, Job.Status.CANCELLED]:
+        return
+    
+    # Get all ImageTasks for this job
+    image_tasks = ImageTask.objects.filter(job=job)
+    
+    if not image_tasks.exists():
+        return
+    
+    # Count statuses
+    total_count = image_tasks.count()
+    success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
+    failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
+    cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
+    completed_count = success_count + failed_count + cancelled_count
+    
+    # Only update if all tasks are complete
+    if completed_count < total_count:
+        # Still have pending/running tasks - update progress only
+        avg_progress = sum(task.progress for task in image_tasks) / total_count
+        if job.progress_total != int(avg_progress):
+            job.progress_total = int(avg_progress)
+            job.save(update_fields=['progress_total', 'updated_at'])
+        return
+    
+    # All tasks complete - determine final status
+    old_status = job.status
+    
+    if cancelled_count == total_count:
+        job.status = Job.Status.CANCELLED
+    elif success_count == total_count:
+        job.status = Job.Status.SUCCESS
+    elif success_count > 0:
+        job.status = Job.Status.PARTIAL_SUCCESS
+    else:
+        job.status = Job.Status.FAILED
+    
+    job.progress_total = 100
+    job.save(update_fields=['status', 'progress_total', 'updated_at'])
+    
+    # Emit job_status_changed event if status changed
+    if old_status != job.status:
+        emit_event(
+            job_id=job.id,
+            event_type='job_status_changed',
+            level='INFO',
+            message=f'Job status changed from {old_status} to {job.status}',
+            progress=100,
+            payload={'status': job.status, 'previous_status': old_status}
+        )
+        
+        # Also emit DONE for the job
+        emit_event(
+            job_id=job.id,
+            event_type='DONE',
+            level='INFO',
+            message=f'Job completed: {job.status} ({success_count}/{total_count} successful)',
+            progress=100,
+            payload={
+                'success_count': success_count,
+                'failed_count': failed_count,
+                'cancelled_count': cancelled_count,
+                'total_count': total_count
+            }
+        )
+
+
 @shared_task(bind=True, name='apps.jobs.tasks.generate_image_task')
 def generate_image_task(self, image_task_id: int):
     """
@@ -160,6 +242,10 @@ def generate_image_task(self, image_task_id: int):
             payload={'chart_data_keys': list(result.chart_data.keys()) if result.chart_data else []}
         )
         
+        # Check if all tasks are now complete and update job status
+        # This handles the case of individual task retries
+        _check_and_update_job_status(job)
+        
     except Exception as e:
         # Log error to Django logger
         error_trace = traceback.format_exc()
@@ -191,6 +277,10 @@ def generate_image_task(self, image_task_id: int):
                 image_task.error_code = 'ALGORITHM_ERROR'
                 image_task.error_message = str(e)
                 image_task.save()
+                
+                # Check if all tasks are now complete and update job status
+                # This handles the case of individual task retries
+                _check_and_update_job_status(job)
         
         # Don't raise - let chord complete so finalize_job can run
         # The error is already logged and ImageTask marked as FAILED (if it exists)

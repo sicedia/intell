@@ -9,6 +9,7 @@ import { env } from "@/shared/lib/env";
 import { cn } from "@/shared/lib/utils";
 import { retryImageTask, cancelImageTask } from "../api/jobs";
 import { useQueryClient } from "@tanstack/react-query";
+import { isConnectionError, isCancelledError, getConnectionErrorMessage } from "@/shared/lib/api-client";
 
 // Helper to construct full URL if backend returns relative path
 const getFullUrl = (path?: string) => {
@@ -129,12 +130,24 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
         setIsRetrying(true);
         try {
             await retryImageTask(task.id);
-            // Invalidate job query to refetch updated state
-            // The WebSocket will also update the state in real-time
-            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            // Invalidate ALL job queries to refetch updated state
+            // Use partial key match to cover both ["job", jobId] and ["job", jobId, "initial"]
+            await queryClient.invalidateQueries({ 
+                queryKey: ["job", jobId],
+                // Force refetch even if query is stale
+                refetchType: "all"
+            });
         } catch (error) {
-            console.error("Failed to retry image task:", error);
-            // Error handling could show a toast notification here
+            // Ignorar cancelaciones (ej: usuario navegó a otra página)
+            if (isCancelledError(error)) return;
+            
+            // Los errores de conexión ya son manejados globalmente (banner + toast)
+            // Solo hacer logging contextual aquí
+            if (isConnectionError(error)) {
+                console.warn(`[Retry Task ${task.id}] ${getConnectionErrorMessage(error)}`);
+            } else {
+                console.error(`[Retry Task ${task.id}] Error:`, error);
+            }
         } finally {
             setIsRetrying(false);
         }
@@ -146,12 +159,24 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
         setIsCancelling(true);
         try {
             await cancelImageTask(task.id);
-            // Invalidate job query to refetch updated state
-            // The WebSocket will also update the state in real-time
-            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            // Invalidate ALL job queries to refetch updated state
+            // Use partial key match to cover both ["job", jobId] and ["job", jobId, "initial"]
+            await queryClient.invalidateQueries({ 
+                queryKey: ["job", jobId],
+                // Force refetch even if query is stale
+                refetchType: "all"
+            });
         } catch (error) {
-            console.error("Failed to cancel image task:", error);
-            // Error handling could show a toast notification here
+            // Ignorar cancelaciones (ej: usuario navegó a otra página)
+            if (isCancelledError(error)) return;
+            
+            // Los errores de conexión ya son manejados globalmente (banner + toast)
+            // Solo hacer logging contextual aquí
+            if (isConnectionError(error)) {
+                console.warn(`[Cancel Task ${task.id}] ${getConnectionErrorMessage(error)}`);
+            } else {
+                console.error(`[Cancel Task ${task.id}] Error:`, error);
+            }
         } finally {
             setIsCancelling(false);
         }

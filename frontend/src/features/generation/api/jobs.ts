@@ -1,4 +1,10 @@
-import { apiClient } from "@/shared/lib/api-client";
+import { 
+    apiClient, 
+    ConnectionError, 
+    HttpError, 
+    CancelledError,
+    UPLOAD_TIMEOUT 
+} from "@/shared/lib/api-client";
 import { Job, BackendJob, transformJob } from "../constants/job";
 import { env } from "@/shared/lib/env";
 
@@ -17,41 +23,73 @@ export const createJob = async (formData: FormData): Promise<{ job_id: number; s
     const apiUrl = env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "");
     const fullUrl = `${apiUrl}${BASE_URL}/`;
 
-    const response = await fetch(fullUrl, {
-        method: "POST",
-        body: formData,
-    });
+    // AbortController para timeout (uploads pueden tardar más)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT);
 
-    if (!response.ok) {
-        let errorData;
-        try {
-            errorData = await response.json();
-        } catch {
-            errorData = await response.text();
-        }
+    try {
+        const response = await fetch(fullUrl, {
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
+        });
 
-        console.error("API Error Response:", errorData);
+        clearTimeout(timeoutId);
 
-        let errorMessage = `API Error: ${response.statusText}`;
-
-        if (typeof errorData === 'object' && errorData !== null) {
-            const errorObj = errorData as Record<string, unknown>;
-            if ('message' in errorObj && typeof errorObj.message === 'string') {
-                errorMessage = errorObj.message;
-            } else if ('detail' in errorObj && typeof errorObj.detail === 'string') {
-                errorMessage = errorObj.detail;
-            } else {
-                // Flatten field errors, e.g. { source_data: ["Required"] }
-                errorMessage = JSON.stringify(errorData);
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch {
+                errorData = await response.text();
             }
-        } else if (typeof errorData === 'string') {
-            errorMessage = errorData;
+
+            console.error("API Error Response:", errorData);
+
+            let errorMessage = `API Error: ${response.statusText}`;
+
+            if (typeof errorData === 'object' && errorData !== null) {
+                const errorObj = errorData as Record<string, unknown>;
+                if ('message' in errorObj && typeof errorObj.message === 'string') {
+                    errorMessage = errorObj.message;
+                } else if ('detail' in errorObj && typeof errorObj.detail === 'string') {
+                    errorMessage = errorObj.detail;
+                } else {
+                    // Flatten field errors, e.g. { source_data: ["Required"] }
+                    errorMessage = JSON.stringify(errorData);
+                }
+            } else if (typeof errorData === 'string') {
+                errorMessage = errorData;
+            }
+
+            throw new HttpError(errorMessage, response.status, errorData);
         }
 
-        throw new Error(errorMessage);
-    }
+        return response.json();
+    } catch (error) {
+        clearTimeout(timeoutId);
 
-    return response.json();
+        // Re-throw errores ya tipados
+        if (error instanceof HttpError || error instanceof ConnectionError || error instanceof CancelledError) {
+            throw error;
+        }
+
+        // AbortError = cancelación o timeout (NO es error de conexión)
+        if (error instanceof Error && error.name === "AbortError") {
+            throw new CancelledError("Upload cancelled or timed out");
+        }
+
+        // TypeError/DOMException = red/DNS/CORS/servidor inaccesible
+        if (error instanceof TypeError || error instanceof DOMException) {
+            throw new ConnectionError(
+                "No se puede conectar al servidor",
+                error instanceof Error ? error.message : error
+            );
+        }
+
+        // Error desconocido
+        throw error;
+    }
 };
 
 export const getJob = async (jobId: number | string): Promise<Job> => {
@@ -65,15 +103,17 @@ export const cancelJob = async (jobId: number | string): Promise<{ job_id: numbe
 };
 
 export const retryImageTask = async (imageTaskId: number | string): Promise<{ image_task_id: number; status: string; message: string; task: unknown }> => {
+    // Note: apiClient already prepends NEXT_PUBLIC_API_BASE_URL which includes /api
     const result = await apiClient.post<{ image_task_id: number; status: string; message: string; task: unknown }>(
-        `/api/image-tasks/${imageTaskId}/retry/`
+        `/image-tasks/${imageTaskId}/retry/`
     );
     return result;
 };
 
 export const cancelImageTask = async (imageTaskId: number | string): Promise<{ image_task_id: number; status: string; message: string; task: unknown }> => {
+    // Note: apiClient already prepends NEXT_PUBLIC_API_BASE_URL which includes /api
     const result = await apiClient.post<{ image_task_id: number; status: string; message: string; task: unknown }>(
-        `/api/image-tasks/${imageTaskId}/cancel/`
+        `/image-tasks/${imageTaskId}/cancel/`
     );
     return result;
 };

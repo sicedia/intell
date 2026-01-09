@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/shared/components/providers/theme-provider";
 import { QueryProvider } from "@/shared/components/providers/query-provider";
+import { ConnectionBanner } from "@/shared/components/ui/connection-banner";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <QueryProvider>
+              <ConnectionBanner />
               <AppShell>
                 {children}
               </AppShell>

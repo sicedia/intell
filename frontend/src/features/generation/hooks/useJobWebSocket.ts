@@ -160,6 +160,8 @@ export function useJobWebSocket({
                     // Update status based on event type
                     if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
                         updatedImages[taskIndex].status = JobStatus.SUCCESS;
+                        // Refetch to get artifact URLs (PNG/SVG)
+                        shouldRefetch = true;
                     } else if (
                         transformedEvent.event_type === JOB_EVENT_TYPES.ERROR ||
                         transformedEvent.event_type === JOB_EVENT_TYPES.ALGORITHM_ERROR
