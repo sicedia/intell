@@ -75,7 +75,7 @@ backend/.hypothesis/
 backend/.pytest_cache/
 backend/cover/
 .pytest_cache/
-
+.venv/
 # Translations (backend)
 backend/*.mo
 backend/**/*.mo
