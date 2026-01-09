@@ -3,6 +3,7 @@ API views for jobs app.
 """
 import logging
 import json
+import traceback
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view
@@ -320,15 +321,291 @@ class JobViewSet(viewsets.ViewSet):
             404: ErrorResponseSerializer,
         },
     ),
+    retry=extend_schema(
+        summary='Reintentar generación de imagen',
+        description='Reintenta la generación de una imagen que falló o quedó atascada. Resetea el estado de la tarea y la reencola para procesamiento. Permite reintentar tareas FAILED, RUNNING o PENDING.',
+        tags=['Image Tasks'],
+        responses={
+            200: ImageTaskSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    cancel=extend_schema(
+        summary='Cancelar generación de imagen',
+        description='Cancela una tarea de generación de imagen individual. Solo permite cancelar tareas que están en estado PENDING o RUNNING.',
+        tags=['Image Tasks'],
+        responses={
+            200: ImageTaskSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
 )
 class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for ImageTask (read-only)."""
+    """ViewSet for ImageTask (read-only with retry and cancel actions)."""
     queryset = ImageTask.objects.all()
     serializer_class = ImageTaskSerializer
     
     def get_serializer_context(self):
         """Add request to serializer context."""
         return {'request': self.request}
+    
+    @action(detail=True, methods=['post'])
+    def cancel(self, request, pk=None):
+        """
+        Cancel an ImageTask.
+        
+        Only allows canceling tasks that are PENDING or RUNNING.
+        """
+        from apps.audit.helpers import emit_event
+        from celery import current_app
+        
+        image_task = get_object_or_404(ImageTask, pk=pk)
+        job = image_task.job
+        
+        # Only allow canceling pending or running tasks
+        if image_task.status not in [ImageTask.Status.PENDING, ImageTask.Status.RUNNING]:
+            return Response(
+                {'error': f'Task status is {image_task.status}. Only PENDING or RUNNING tasks can be cancelled.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if job is cancelled
+        if job.status == Job.Status.CANCELLED:
+            return Response(
+                {'error': 'Cannot cancel task: Job is already cancelled.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Cancel the task
+            image_task.status = ImageTask.Status.CANCELLED
+            image_task.save(update_fields=['status', 'updated_at'])
+            
+            # Try to revoke the Celery task if it's still in queue
+            # Note: This is best-effort, the task might already be executing
+            try:
+                # We need to find the task ID - this is tricky without storing it
+                # For now, we'll just mark it as cancelled in the DB
+                # The worker will check the status before processing
+                pass
+            except Exception as revoke_error:
+                logger.warning(
+                    f'Could not revoke Celery task for ImageTask {image_task.id}: {revoke_error}',
+                    extra={'image_task_id': image_task.id}
+                )
+            
+            # Emit cancel event
+            emit_event(
+                job_id=job.id,
+                image_task_id=image_task.id,
+                event_type='CANCELLED',
+                level='INFO',
+                message=f'Image generation cancelled for {image_task.algorithm_key}',
+                progress=image_task.progress
+            )
+            
+            # Check if all tasks are cancelled - update job status
+            remaining_tasks = ImageTask.objects.filter(
+                job=job,
+                status__in=[ImageTask.Status.PENDING, ImageTask.Status.RUNNING]
+            )
+            
+            if not remaining_tasks.exists():
+                # All tasks are done or cancelled
+                all_cancelled = ImageTask.objects.filter(
+                    job=job
+                ).exclude(status=ImageTask.Status.CANCELLED).exists() == False
+                
+                if all_cancelled:
+                    job.status = Job.Status.CANCELLED
+                    job.save(update_fields=['status', 'updated_at'])
+                    
+                    emit_event(
+                        job_id=job.id,
+                        event_type='job_status_changed',
+                        level='INFO',
+                        message='All tasks cancelled - Job cancelled',
+                        progress=job.progress_total,
+                        payload={'status': job.status}
+                    )
+            
+            logger.info(
+                f'ImageTask {image_task.id} cancelled',
+                extra={
+                    'image_task_id': image_task.id,
+                    'job_id': job.id,
+                    'algorithm_key': image_task.algorithm_key
+                }
+            )
+            
+            # Return updated task
+            serializer = self.get_serializer(image_task)
+            return Response({
+                'image_task_id': image_task.id,
+                'status': image_task.status,
+                'message': 'Task cancelled successfully',
+                'task': serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            logger.error(
+                f'Failed to cancel ImageTask {image_task.id}: {str(e)}',
+                exc_info=True,
+                extra={'image_task_id': image_task.id, 'job_id': job.id}
+            )
+            
+            emit_event(
+                job_id=job.id,
+                image_task_id=image_task.id,
+                event_type='ERROR',
+                level='ERROR',
+                message=f'Failed to cancel task: {str(e)}',
+                payload={'error': str(e), 'trace': error_trace}
+            )
+            
+            return Response(
+                {'error': f'Failed to cancel task: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=True, methods=['post'])
+    def retry(self, request, pk=None):
+        """
+        Retry an ImageTask.
+        
+        Allows retrying FAILED, RUNNING, or PENDING tasks.
+        Resets the task status to PENDING, clears error information,
+        and re-enqueues the task for processing.
+        """
+        from apps.jobs.tasks import generate_image_task
+        from apps.audit.helpers import emit_event
+        
+        image_task = get_object_or_404(ImageTask, pk=pk)
+        job = image_task.job
+        
+        # Allow retry for failed, running, pending, or cancelled tasks
+        # This handles cases where tasks got stuck due to connection loss, etc.
+        if image_task.status not in [
+            ImageTask.Status.FAILED,
+            ImageTask.Status.RUNNING,
+            ImageTask.Status.PENDING,
+            ImageTask.Status.CANCELLED
+        ]:
+            return Response(
+                {'error': f'Task status is {image_task.status}. Only FAILED, RUNNING, PENDING, or CANCELLED tasks can be retried.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if job is cancelled
+        if job.status == Job.Status.CANCELLED:
+            return Response(
+                {'error': 'Cannot retry task: Job is cancelled.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Reset task state
+            image_task.status = ImageTask.Status.PENDING
+            image_task.progress = 0
+            image_task.error_code = None
+            image_task.error_message = None
+            image_task.trace_id = None
+            
+            # Optionally clear old artifacts (optional - can keep for debugging)
+            # Uncomment if you want to delete old artifacts on retry:
+            # if image_task.artifact_png:
+            #     image_task.artifact_png.delete(save=False)
+            # if image_task.artifact_svg:
+            #     image_task.artifact_svg.delete(save=False)
+            # image_task.chart_data = {}
+            
+            image_task.save(update_fields=[
+                'status', 'progress', 'error_code', 'error_message', 
+                'trace_id', 'updated_at'
+            ])
+            
+            # Update job status if it was FAILED or PARTIAL_SUCCESS
+            # Recalculate job progress based on all image tasks
+            job_status_changed = False
+            if job.status in [Job.Status.FAILED, Job.Status.PARTIAL_SUCCESS]:
+                old_status = job.status
+                job.status = Job.Status.RUNNING
+                job_status_changed = True
+                
+                # Recalculate progress from all image tasks
+                image_tasks = ImageTask.objects.filter(job=job)
+                if image_tasks.exists():
+                    total_progress = sum(task.progress for task in image_tasks)
+                    task_count = image_tasks.count()
+                    job.progress_total = int(total_progress / task_count) if task_count > 0 else 0
+                
+                job.save(update_fields=['status', 'progress_total', 'updated_at'])
+                
+                # Emit job status changed event
+                emit_event(
+                    job_id=job.id,
+                    event_type='job_status_changed',
+                    level='INFO',
+                    message=f'Job status changed from {old_status} to {job.status} due to task retry',
+                    progress=job.progress_total,
+                    payload={'status': job.status, 'previous_status': old_status}
+                )
+            
+            # Emit retry event
+            emit_event(
+                job_id=job.id,
+                image_task_id=image_task.id,
+                event_type='RETRY',
+                level='INFO',
+                message=f'Retrying image generation for {image_task.algorithm_key}',
+                progress=0
+            )
+            
+            # Re-enqueue the task
+            generate_image_task.delay(image_task.id)
+            
+            logger.info(
+                f'ImageTask {image_task.id} retry requested - task re-enqueued',
+                extra={
+                    'image_task_id': image_task.id,
+                    'job_id': job.id,
+                    'algorithm_key': image_task.algorithm_key
+                }
+            )
+            
+            # Return updated task
+            serializer = self.get_serializer(image_task)
+            return Response({
+                'image_task_id': image_task.id,
+                'status': image_task.status,
+                'message': 'Task retry initiated',
+                'task': serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            logger.error(
+                f'Failed to retry ImageTask {image_task.id}: {str(e)}',
+                exc_info=True,
+                extra={'image_task_id': image_task.id, 'job_id': job.id}
+            )
+            
+            emit_event(
+                job_id=job.id,
+                image_task_id=image_task.id,
+                event_type='ERROR',
+                level='ERROR',
+                message=f'Failed to retry task: {str(e)}',
+                payload={'error': str(e), 'trace': error_trace}
+            )
+            
+            return Response(
+                {'error': f'Failed to retry task: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @extend_schema_view(

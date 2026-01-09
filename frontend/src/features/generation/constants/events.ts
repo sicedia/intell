@@ -8,6 +8,8 @@ export const JOB_EVENT_TYPES = {
     ERROR: "ERROR",
     JOB_STATUS_CHANGED: "job_status_changed",
     ALGORITHM_ERROR: "ALGORITHM_ERROR",
+    RETRY: "RETRY",
+    CANCELLED: "CANCELLED",
     
     // Progress events
     PROGRESS: "PROGRESS",

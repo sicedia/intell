@@ -39,6 +39,25 @@ def generate_image_task(self, image_task_id: int):
         
         job = image_task.job
         
+        # Check if task or job was cancelled
+        if image_task.status == ImageTask.Status.CANCELLED:
+            logger.info(
+                f'ImageTask {image_task_id} is cancelled - skipping execution',
+                extra={'image_task_id': image_task_id, 'job_id': job.id}
+            )
+            return
+        
+        if job.status == Job.Status.CANCELLED:
+            logger.info(
+                f'Job {job.id} is cancelled - skipping ImageTask {image_task_id} execution',
+                extra={'image_task_id': image_task_id, 'job_id': job.id}
+            )
+            # Mark task as cancelled if job is cancelled
+            if image_task.status != ImageTask.Status.CANCELLED:
+                image_task.status = ImageTask.Status.CANCELLED
+                image_task.save(update_fields=['status', 'updated_at'])
+            return
+        
         # Check if task has a specific dataset_id (for multi-sheet Excel support)
         dataset_id = image_task.params.get('_dataset_id')
         if dataset_id:
@@ -49,21 +68,6 @@ def generate_image_task(self, image_task_id: int):
                 dataset = job.dataset
         else:
             dataset = job.dataset
-        
-        # Check cancellation at start
-        job.refresh_from_db()
-        if job.status == Job.Status.CANCELLED:
-            image_task.status = ImageTask.Status.CANCELLED
-            image_task.save(update_fields=['status', 'updated_at'])
-            emit_event(
-                job_id=job.id,
-                image_task_id=image_task_id,
-                event_type='ERROR',
-                level='WARNING',
-                message='Task cancelled',
-                trace_id=image_task.trace_id
-            )
-            return
         
         # Emit START event
         trace_id = image_task.trace_id or None

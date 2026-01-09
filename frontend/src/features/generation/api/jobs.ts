@@ -63,3 +63,17 @@ export const cancelJob = async (jobId: number | string): Promise<{ job_id: numbe
     const result = await apiClient.post<{ job_id: number; status: string; message: string }>(`${BASE_URL}/${jobId}/cancel/`);
     return result;
 };
+
+export const retryImageTask = async (imageTaskId: number | string): Promise<{ image_task_id: number; status: string; message: string; task: unknown }> => {
+    const result = await apiClient.post<{ image_task_id: number; status: string; message: string; task: unknown }>(
+        `/api/image-tasks/${imageTaskId}/retry/`
+    );
+    return result;
+};
+
+export const cancelImageTask = async (imageTaskId: number | string): Promise<{ image_task_id: number; status: string; message: string; task: unknown }> => {
+    const result = await apiClient.post<{ image_task_id: number; status: string; message: string; task: unknown }>(
+        `/api/image-tasks/${imageTaskId}/cancel/`
+    );
+    return result;
+};

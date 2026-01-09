@@ -224,6 +224,14 @@ def _update_image_task_status(image_task, event_type: str, progress: Optional[in
         image_task.status = ImageTask.Status.RUNNING
         if progress is not None:
             image_task.progress = progress
+    elif event_type == 'RETRY':
+        # RETRY resets task to PENDING/RUNNING state
+        image_task.status = ImageTask.Status.PENDING
+        image_task.progress = 0
+        image_task.error_code = None
+        image_task.error_message = None
+    elif event_type == 'CANCELLED':
+        image_task.status = ImageTask.Status.CANCELLED
     elif event_type == 'PROGRESS':
         image_task.status = ImageTask.Status.RUNNING
         if progress is not None:
@@ -237,7 +245,7 @@ def _update_image_task_status(image_task, event_type: str, progress: Optional[in
     elif event_type in ['EXTERNAL_API_ERROR', 'ALGORITHM_ERROR', 'RENDER_ERROR', 'STORAGE_ERROR']:
         image_task.status = ImageTask.Status.FAILED
     
-    image_task.save(update_fields=['status', 'progress', 'updated_at'])
+    image_task.save(update_fields=['status', 'progress', 'error_code', 'error_message', 'updated_at'])
 
 
 def _update_description_task_status(description_task, event_type: str, progress: Optional[int]):

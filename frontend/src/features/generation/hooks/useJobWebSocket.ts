@@ -112,6 +112,13 @@ export function useJobWebSocket({
                         ].includes(newStatus as JobStatus);
                     }
                 }
+                
+                // Handle RETRY event - job status may change from FAILED/PARTIAL_SUCCESS to RUNNING
+                if (transformedEvent.event_type === JOB_EVENT_TYPES.RETRY) {
+                    if (updatedJob.status === JobStatus.FAILED || updatedJob.status === JobStatus.PARTIAL_SUCCESS) {
+                        updatedJob.status = JobStatus.RUNNING;
+                    }
+                }
 
                 // Handle job completion events
                 if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
@@ -159,8 +166,16 @@ export function useJobWebSocket({
                     ) {
                         updatedImages[taskIndex].status = JobStatus.FAILED;
                         updatedImages[taskIndex].error_message = transformedEvent.message;
-                    } else if (transformedEvent.event_type === JOB_EVENT_TYPES.START) {
+                    } else if (transformedEvent.event_type === JOB_EVENT_TYPES.CANCELLED) {
+                        updatedImages[taskIndex].status = JobStatus.CANCELLED;
+                    } else if (
+                        transformedEvent.event_type === JOB_EVENT_TYPES.START ||
+                        transformedEvent.event_type === JOB_EVENT_TYPES.RETRY
+                    ) {
+                        // RETRY event resets task to PENDING/RUNNING state
                         updatedImages[taskIndex].status = JobStatus.RUNNING;
+                        updatedImages[taskIndex].error_message = undefined;
+                        updatedImages[taskIndex].progress = 0;
                     }
 
                     updatedJob.images = updatedImages;

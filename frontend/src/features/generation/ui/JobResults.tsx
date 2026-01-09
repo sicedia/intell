@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Job, ImageTask, JobStatus } from "../constants/job";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
-import { buttonVariants } from "@/shared/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Button, buttonVariants } from "@/shared/components/ui/button";
+import { Loader2, RotateCcw, X } from "lucide-react";
 import { env } from "@/shared/lib/env";
 import { cn } from "@/shared/lib/utils";
+import { retryImageTask, cancelImageTask } from "../api/jobs";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Helper to construct full URL if backend returns relative path
 const getFullUrl = (path?: string) => {
@@ -42,6 +45,7 @@ export const JobResults = ({ job }: { job: Job }) => {
     const successfulImages = job.images.filter(img => img.status === JobStatus.SUCCESS);
     const failedImages = job.images.filter(img => img.status === JobStatus.FAILED);
     const pendingImages = job.images.filter(img => img.status === JobStatus.PENDING || img.status === JobStatus.RUNNING);
+    const cancelledImages = job.images.filter(img => img.status === JobStatus.CANCELLED);
 
     return (
         <div className="space-y-6">
@@ -52,7 +56,7 @@ export const JobResults = ({ job }: { job: Job }) => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {successfulImages.map((task) => (
-                            <TaskResultCard key={task.id} task={task} />
+                            <TaskResultCard key={task.id} task={task} jobId={job.id} />
                         ))}
                     </div>
                 </div>
@@ -65,7 +69,7 @@ export const JobResults = ({ job }: { job: Job }) => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {pendingImages.map((task) => (
-                            <TaskResultCard key={task.id} task={task} />
+                            <TaskResultCard key={task.id} task={task} jobId={job.id} />
                         ))}
                     </div>
                 </div>
@@ -78,7 +82,20 @@ export const JobResults = ({ job }: { job: Job }) => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {failedImages.map((task) => (
-                            <TaskResultCard key={task.id} task={task} />
+                            <TaskResultCard key={task.id} task={task} jobId={job.id} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {cancelledImages.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-medium mb-4 text-muted-foreground">
+                        Cancelled ({cancelledImages.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {cancelledImages.map((task) => (
+                            <TaskResultCard key={task.id} task={task} jobId={job.id} />
                         ))}
                     </div>
                 </div>
@@ -87,11 +104,58 @@ export const JobResults = ({ job }: { job: Job }) => {
     );
 };
 
-const TaskResultCard = ({ task }: { task: ImageTask }) => {
+const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => {
+    const [isRetrying, setIsRetrying] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const queryClient = useQueryClient();
     const pngUrl = getFullUrl(task.result_urls.png);
     const svgUrl = getFullUrl(task.result_urls.svg);
     const hasImages = pngUrl || svgUrl;
     const hasBoth = pngUrl && svgUrl;
+    
+    // Check if task can be retried (FAILED, RUNNING, PENDING, or CANCELLED)
+    const canRetry = task.status === JobStatus.FAILED || 
+                     task.status === JobStatus.RUNNING || 
+                     task.status === JobStatus.PENDING ||
+                     task.status === JobStatus.CANCELLED;
+    
+    // Check if task can be cancelled (RUNNING or PENDING only)
+    const canCancel = task.status === JobStatus.RUNNING || 
+                      task.status === JobStatus.PENDING;
+    
+    const handleRetry = async () => {
+        if (isRetrying || !canRetry) return;
+        
+        setIsRetrying(true);
+        try {
+            await retryImageTask(task.id);
+            // Invalidate job query to refetch updated state
+            // The WebSocket will also update the state in real-time
+            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+        } catch (error) {
+            console.error("Failed to retry image task:", error);
+            // Error handling could show a toast notification here
+        } finally {
+            setIsRetrying(false);
+        }
+    };
+    
+    const handleCancel = async () => {
+        if (isCancelling || !canCancel) return;
+        
+        setIsCancelling(true);
+        try {
+            await cancelImageTask(task.id);
+            // Invalidate job query to refetch updated state
+            // The WebSocket will also update the state in real-time
+            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+        } catch (error) {
+            console.error("Failed to cancel image task:", error);
+            // Error handling could show a toast notification here
+        } finally {
+            setIsCancelling(false);
+        }
+    };
 
     return (
         <Card className="overflow-hidden">
@@ -149,6 +213,20 @@ const TaskResultCard = ({ task }: { task: ImageTask }) => {
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         <p>Generating image...</p>
                         <p className="text-xs">Progress: {task.progress}%</p>
+                        {(task.progress === 0 && canRetry) && (
+                            <p className="text-xs text-amber-500 mt-2">
+                                Task may be stuck. You can retry or cancel.
+                            </p>
+                        )}
+                    </div>
+                ) : task.status === JobStatus.CANCELLED ? (
+                    <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
+                        <p className="font-medium">Generation Cancelled</p>
+                        {canRetry && (
+                            <p className="text-xs text-muted-foreground">
+                                You can retry this task if needed.
+                            </p>
+                        )}
                     </div>
                 ) : (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
@@ -166,6 +244,48 @@ const TaskResultCard = ({ task }: { task: ImageTask }) => {
                     Task ID: {task.id}
                 </div>
                 <div className="flex gap-2">
+                    {canCancel && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancel}
+                            disabled={isCancelling || isRetrying}
+                            className="gap-2"
+                        >
+                            {isCancelling ? (
+                                <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Cancelling...
+                                </>
+                            ) : (
+                                <>
+                                    <X className="h-3 w-3" />
+                                    Cancel
+                                </>
+                            )}
+                        </Button>
+                    )}
+                    {canRetry && (
+                        <Button
+                            size="sm"
+                            variant="default"
+                            onClick={handleRetry}
+                            disabled={isRetrying || isCancelling}
+                            className="gap-2"
+                        >
+                            {isRetrying ? (
+                                <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Retrying...
+                                </>
+                            ) : (
+                                <>
+                                    <RotateCcw className="h-3 w-3" />
+                                    Retry
+                                </>
+                            )}
+                        </Button>
+                    )}
                     {pngUrl && (
                         <a
                             href={pngUrl}
