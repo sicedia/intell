@@ -4,12 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/c
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button, buttonVariants } from "@/shared/components/ui/button";
-import { Loader2, RotateCcw, X } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import { Loader2, RotateCcw, X, Download, ChevronDown } from "lucide-react";
 import { env } from "@/shared/lib/env";
 import { cn } from "@/shared/lib/utils";
-import { retryImageTask, cancelImageTask } from "../api/jobs";
+import { retryImageTask, cancelImageTask, downloadJobZip, ZipFormat } from "../api/jobs";
 import { useQueryClient } from "@tanstack/react-query";
 import { isConnectionError, isCancelledError, getConnectionErrorMessage } from "@/shared/lib/api-client";
+import { createLogger } from "@/shared/lib/logger";
 
 // Helper to construct full URL if backend returns relative path
 const getFullUrl = (path?: string) => {
@@ -31,7 +38,32 @@ const formatAlgorithmKey = (key: string): string => {
         .join(' ');
 };
 
+// Scoped loggers for different operations
+const downloadLog = createLogger("DownloadZip");
+const taskLog = createLogger("ImageTask");
+
 export const JobResults = ({ job }: { job: Job }) => {
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const handleDownloadAll = async (format: ZipFormat) => {
+        if (isDownloading) return;
+        
+        setIsDownloading(true);
+        try {
+            await downloadJobZip(job.id, format);
+        } catch (error) {
+            if (isCancelledError(error)) return;
+            
+            if (isConnectionError(error)) {
+                downloadLog.warn(getConnectionErrorMessage(error));
+            } else {
+                downloadLog.error("Failed to download:", error);
+            }
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
     if (!job.images || job.images.length === 0) {
         return (
             <div className="text-center text-muted-foreground p-8 border rounded-lg">
@@ -52,9 +84,35 @@ export const JobResults = ({ job }: { job: Job }) => {
         <div className="space-y-6">
             {successfulImages.length > 0 && (
                 <div>
-                    <h3 className="text-lg font-medium mb-4">
-                        Generated Images ({successfulImages.length})
-                    </h3>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-medium">
+                            Generated Images ({successfulImages.length})
+                        </h3>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button size="sm" variant="outline" disabled={isDownloading}>
+                                    {isDownloading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                    ) : (
+                                        <Download className="h-4 w-4 mr-2" />
+                                    )}
+                                    Download All
+                                    <ChevronDown className="h-4 w-4 ml-1" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleDownloadAll("both")}>
+                                    All Formats (PNG + SVG)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownloadAll("png")}>
+                                    PNG Only
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownloadAll("svg")}>
+                                    SVG Only
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {successfulImages.map((task) => (
                             <TaskResultCard key={task.id} task={task} jobId={job.id} />
@@ -142,11 +200,10 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
             if (isCancelledError(error)) return;
             
             // Los errores de conexión ya son manejados globalmente (banner + toast)
-            // Solo hacer logging contextual aquí
             if (isConnectionError(error)) {
-                console.warn(`[Retry Task ${task.id}] ${getConnectionErrorMessage(error)}`);
+                taskLog.warn(`Retry task ${task.id}: ${getConnectionErrorMessage(error)}`);
             } else {
-                console.error(`[Retry Task ${task.id}] Error:`, error);
+                taskLog.error(`Retry task ${task.id} failed:`, error);
             }
         } finally {
             setIsRetrying(false);
@@ -171,11 +228,10 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
             if (isCancelledError(error)) return;
             
             // Los errores de conexión ya son manejados globalmente (banner + toast)
-            // Solo hacer logging contextual aquí
             if (isConnectionError(error)) {
-                console.warn(`[Cancel Task ${task.id}] ${getConnectionErrorMessage(error)}`);
+                taskLog.warn(`Cancel task ${task.id}: ${getConnectionErrorMessage(error)}`);
             } else {
-                console.error(`[Cancel Task ${task.id}] Error:`, error);
+                taskLog.error(`Cancel task ${task.id} failed:`, error);
             }
         } finally {
             setIsCancelling(false);

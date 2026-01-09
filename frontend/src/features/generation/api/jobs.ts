@@ -7,6 +7,9 @@ import {
 } from "@/shared/lib/api-client";
 import { Job, BackendJob, transformJob } from "../constants/job";
 import { env } from "@/shared/lib/env";
+import { createLogger } from "@/shared/lib/logger";
+
+const log = createLogger("JobsAPI");
 
 const getBaseUrl = () => {
     // Determine if API_BASE_URL already includes '/api'
@@ -44,7 +47,7 @@ export const createJob = async (formData: FormData): Promise<{ job_id: number; s
                 errorData = await response.text();
             }
 
-            console.error("API Error Response:", errorData);
+            log.error("API Error Response:", errorData);
 
             let errorMessage = `API Error: ${response.statusText}`;
 
@@ -116,4 +119,56 @@ export const cancelImageTask = async (imageTaskId: number | string): Promise<{ i
         `/image-tasks/${imageTaskId}/cancel/`
     );
     return result;
+};
+
+export type ZipFormat = "both" | "png" | "svg";
+
+/**
+ * Download all successful job images as a ZIP file.
+ * 
+ * @param jobId - The job ID
+ * @param format - Format to include: "both" (PNG + SVG), "png", or "svg"
+ */
+export const downloadJobZip = async (
+    jobId: number | string,
+    format: ZipFormat = "both"
+): Promise<void> => {
+    const apiUrl = env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "");
+    const url = `${apiUrl}${BASE_URL}/${jobId}/download-zip/?format=${format}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        let errorMessage = `Download failed: ${response.statusText}`;
+        try {
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
+            }
+        } catch {
+            // Ignore JSON parse errors
+        }
+        throw new HttpError(errorMessage, response.status);
+    }
+
+    const blob = await response.blob();
+    
+    // Extract filename from Content-Disposition header or use default
+    const contentDisposition = response.headers.get('Content-Disposition');
+    let filename = `job_${jobId}_images.zip`;
+    if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    // Trigger browser download
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
 };

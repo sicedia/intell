@@ -25,6 +25,7 @@ from .serializers import (
     JobCreateResponseSerializer, JobCancelResponseSerializer,
     AIDescribeResponseSerializer, ErrorResponseSerializer
 )
+from apps.artifacts.services import create_images_zip
 from apps.datasets.normalizers import normalize, normalize_from_excel, get_sheet_for_algorithm
 from apps.ingestion.connectors import LensConnector
 from apps.jobs.tasks import run_job
@@ -36,7 +37,7 @@ logger = logging.getLogger(__name__)
 @extend_schema_view(
     create=extend_schema(
         summary='Crear un nuevo trabajo',
-        description='Crea un nuevo trabajo de generación de gráficos. El trabajo puede obtener datos desde Lens API o desde un archivo Excel de Espacenet.',
+        description='Crea un nuevo trabajo de generaciรณn de grรกficos. El trabajo puede obtener datos desde Lens API o desde un archivo Excel de Espacenet.',
         tags=['Jobs'],
         request=JobCreateSerializer,
         responses={
@@ -86,7 +87,7 @@ logger = logging.getLogger(__name__)
     ),
     retrieve=extend_schema(
         summary='Obtener detalles de un trabajo',
-        description='Obtiene los detalles completos de un trabajo, incluyendo todas sus tareas de imagen y descripción.',
+        description='Obtiene los detalles completos de un trabajo, incluyendo todas sus tareas de imagen y descripciรณn.',
         tags=['Jobs'],
         responses={
             200: JobDetailSerializer,
@@ -95,7 +96,7 @@ logger = logging.getLogger(__name__)
     ),
     cancel=extend_schema(
         summary='Cancelar un trabajo',
-        description='Cancela un trabajo en ejecución o pendiente.',
+        description='Cancela un trabajo en ejecuciรณn o pendiente.',
         tags=['Jobs'],
         responses={
             200: JobCancelResponseSerializer,
@@ -205,7 +206,7 @@ class JobViewSet(viewsets.ViewSet):
                     
                     if not sheet_to_dataset:
                         raise ValueError(
-                            f"No se pudo crear ningún dataset del archivo Excel. "
+                            f"No se pudo crear ningรบn dataset del archivo Excel. "
                             f"Verifique que el archivo contenga las hojas requeridas para los algoritmos seleccionados."
                         )
                     
@@ -304,17 +305,79 @@ class JobViewSet(viewsets.ViewSet):
             'status': job.status,
             'message': 'Job cancelled'
         })
+    
+    @extend_schema(
+        summary='Descargar imágenes como ZIP',
+        description='Descarga todas las imágenes generadas exitosamente de un trabajo en un archivo ZIP.',
+        tags=['Jobs'],
+        parameters=[
+            {
+                'name': 'format',
+                'in': 'query',
+                'description': 'Formato de imágenes a incluir: both (PNG y SVG), png (solo PNG), svg (solo SVG)',
+                'required': False,
+                'schema': {'type': 'string', 'enum': ['both', 'png', 'svg'], 'default': 'both'}
+            }
+        ],
+        responses={
+            200: {'description': 'Archivo ZIP con las imágenes', 'content': {'application/zip': {}}},
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    )
+    @action(detail=True, methods=['get'], url_path='download-zip')
+    def download_zip(self, request, pk=None):
+        """Download all successful job images as a ZIP file."""
+        job = get_object_or_404(Job, pk=pk)
+        
+        # Parse format parameter
+        format_param = request.query_params.get('format', 'both').lower()
+        if format_param not in ('both', 'png', 'svg'):
+            return Response(
+                {'error': f"Invalid format '{format_param}'. Must be 'both', 'png', or 'svg'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        include_png = format_param in ('both', 'png')
+        include_svg = format_param in ('both', 'svg')
+        
+        try:
+            zip_buffer = create_images_zip(job, include_png=include_png, include_svg=include_svg)
+            
+            # Generate filename with format suffix
+            format_suffix = f"_{format_param}" if format_param != 'both' else ""
+            filename = f"job_{job.id}_images{format_suffix}.zip"
+            
+            response = FileResponse(
+                zip_buffer,
+                as_attachment=True,
+                filename=filename,
+                content_type='application/zip'
+            )
+            return response
+            
+        except ValueError as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.exception(f"Error creating ZIP for job {pk}")
+            return Response(
+                {'error': 'Failed to create ZIP file'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @extend_schema_view(
     list=extend_schema(
         summary='Listar tareas de imagen',
-        description='Obtiene una lista paginada de todas las tareas de generación de imágenes.',
+        description='Obtiene una lista paginada de todas las tareas de generaciรณn de imรกgenes.',
         tags=['Image Tasks'],
     ),
     retrieve=extend_schema(
         summary='Obtener detalles de una tarea de imagen',
-        description='Obtiene los detalles completos de una tarea de generación de imagen, incluyendo URLs de artefactos y datos del gráfico.',
+        description='Obtiene los detalles completos de una tarea de generaciรณn de imagen, incluyendo URLs de artefactos y datos del grรกfico.',
         tags=['Image Tasks'],
         responses={
             200: ImageTaskSerializer,
@@ -322,8 +385,8 @@ class JobViewSet(viewsets.ViewSet):
         },
     ),
     retry=extend_schema(
-        summary='Reintentar generación de imagen',
-        description='Reintenta la generación de una imagen que falló o quedó atascada. Resetea el estado de la tarea y la reencola para procesamiento. Permite reintentar tareas FAILED, RUNNING o PENDING.',
+        summary='Reintentar generaciรณn de imagen',
+        description='Reintenta la generaciรณn de una imagen que fallรณ o quedรณ atascada. Resetea el estado de la tarea y la reencola para procesamiento. Permite reintentar tareas FAILED, RUNNING o PENDING.',
         tags=['Image Tasks'],
         responses={
             200: ImageTaskSerializer,
@@ -332,8 +395,8 @@ class JobViewSet(viewsets.ViewSet):
         },
     ),
     cancel=extend_schema(
-        summary='Cancelar generación de imagen',
-        description='Cancela una tarea de generación de imagen individual. Solo permite cancelar tareas que están en estado PENDING o RUNNING.',
+        summary='Cancelar generaciรณn de imagen',
+        description='Cancela una tarea de generaciรณn de imagen individual. Solo permite cancelar tareas que estรกn en estado PENDING o RUNNING.',
         tags=['Image Tasks'],
         responses={
             200: ImageTaskSerializer,
@@ -610,13 +673,13 @@ class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary='Listar tareas de descripción',
-        description='Obtiene una lista paginada de todas las tareas de generación de descripciones con IA.',
+        summary='Listar tareas de descripciรณn',
+        description='Obtiene una lista paginada de todas las tareas de generaciรณn de descripciones con IA.',
         tags=['Description Tasks'],
     ),
     retrieve=extend_schema(
-        summary='Obtener detalles de una tarea de descripción',
-        description='Obtiene los detalles completos de una tarea de generación de descripción, incluyendo el texto generado y el prompt utilizado.',
+        summary='Obtener detalles de una tarea de descripciรณn',
+        description='Obtiene los detalles completos de una tarea de generaciรณn de descripciรณn, incluyendo el texto generado y el prompt utilizado.',
         tags=['Description Tasks'],
         responses={
             200: DescriptionTaskSerializer,
@@ -632,8 +695,8 @@ class DescriptionTaskViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     create=extend_schema(
-        summary='Generar descripción con IA',
-        description='Crea una nueva tarea para generar una descripción de un gráfico usando inteligencia artificial. La tarea se procesa de forma asíncrona.',
+        summary='Generar descripciรณn con IA',
+        description='Crea una nueva tarea para generar una descripciรณn de un grรกfico usando inteligencia artificial. La tarea se procesa de forma asรญncrona.',
         tags=['AI'],
         request=AIDescribeRequestSerializer,
         responses={
@@ -643,10 +706,10 @@ class DescriptionTaskViewSet(viewsets.ReadOnlyModelViewSet):
         },
         examples=[
             OpenApiExample(
-                'Ejemplo básico',
+                'Ejemplo bรกsico',
                 value={
                     'image_task_id': 1,
-                    'user_context': 'Este gráfico muestra tendencias de patentes en inteligencia artificial',
+                    'user_context': 'Este grรกfico muestra tendencias de patentes en inteligencia artificial',
                     'provider_preference': 'openai'
                 },
                 request_only=True,
