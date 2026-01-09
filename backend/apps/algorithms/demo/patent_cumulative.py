@@ -36,10 +36,14 @@ class PatentCumulativeAlgorithm(BaseAlgorithm):
         self.historical_years = 20
         self.cutoff_year = datetime.datetime.now().year - 2
         self.cumulative_line_color = '#001f3f'
-        self.chart_width = 10
+        self.chart_width = 12
         self.chart_height = 8
         self.x_axis_label = 'Año'
         self.y_axis_label = 'Publicaciones de Patentes Acumulativas'
+        self.axis_label_fontsize = 14
+        self.tick_fontsize = 10
+        self.legend_fontsize = 10
+        self.annotation_fontsize = 10
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """Load data from Dataset."""
@@ -240,9 +244,10 @@ class PatentCumulativeAlgorithm(BaseAlgorithm):
                 label=self.y_axis_label, linewidth=1.5)
         
         # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=18)
-        ax.set_ylabel(self.y_axis_label, fontsize=18, color="black")
-        ax.tick_params(axis='y', labelcolor="black")
+        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
+        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize, color="black")
+        ax.tick_params(axis='y', labelcolor="black", labelsize=self.tick_fontsize)
+        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
         
         # Grid
         ax.grid(True, color='lightgrey', linestyle='-', linewidth=0.35)
@@ -251,7 +256,7 @@ class PatentCumulativeAlgorithm(BaseAlgorithm):
         def wrap_labels(labels, text_wrap_width=20):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=12, frameon=False)
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=self.legend_fontsize, frameon=False)
         wrapped_labels = wrap_labels([text.get_text() for text in legend.get_texts()])
         for text, wrapped_label in zip(legend.get_texts(), wrapped_labels):
             text.set_text(wrapped_label)
@@ -267,7 +272,7 @@ class PatentCumulativeAlgorithm(BaseAlgorithm):
         # Annotations
         plt.figtext(0, -0.075,
                     '* Se muestran las publicaciones hasta hace 2 años, porque los documentos de patente suelen demorar hasta 18 meses en su publicación.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

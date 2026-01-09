@@ -140,22 +140,73 @@ Server runs at `http://localhost:8000`
 
 ### Celery Workers
 
-Run 3 separate workers for different queues:
+**Important**: EAGER mode is disabled by default. You must run Celery workers for tasks to be processed asynchronously.
+
+#### Quick Start (Recommended)
+
+Use the helper script to start all queues in one worker:
+
+**Windows PowerShell:**
+```powershell
+.\scripts\start_celery_worker.ps1
+```
+
+**Linux/macOS:**
+```bash
+chmod +x scripts/start_celery_worker.sh
+./scripts/start_celery_worker.sh
+```
+
+This starts a single worker processing all queues: `ingestion_io`, `charts_cpu`, and `ai`.
+
+**Note for Windows users:** The configuration in `config/celery.py` automatically detects Windows and uses the `solo` pool. On Linux/macOS (production), the `prefork` pool is used by default for parallel task execution. For better performance on Windows, consider using WSL2 or Docker.
+
+#### Manual Start
+
+Start a single worker for all queues:
+```bash
+celery -A config worker -l info -Q ingestion_io,charts_cpu,ai
+```
+
+Or run separate workers for better isolation:
 
 **Terminal 1 - Ingestion I/O queue:**
 ```bash
-celery -A config worker -Q ingestion_io -c 4 --prefetch-multiplier=4
+celery -A config worker -Q ingestion_io -c 4 --prefetch-multiplier=4 -l info
 ```
 
 **Terminal 2 - Charts CPU queue:**
 ```bash
-celery -A config worker -Q charts_cpu -c 2 --prefetch-multiplier=1
+celery -A config worker -Q charts_cpu -c 2 --prefetch-multiplier=1 -l info
 ```
 
 **Terminal 3 - AI queue:**
 ```bash
-celery -A config worker -Q ai -c 2 --prefetch-multiplier=1
+celery -A config worker -Q ai -c 2 --prefetch-multiplier=1 -l info
 ```
+
+#### Verify Celery Setup
+
+Check that Redis is accessible and workers are running:
+```bash
+python scripts/check_celery.py
+```
+
+This script verifies:
+- ✅ Redis connectivity (broker and channels)
+- ✅ EAGER mode is disabled
+- ✅ Celery workers are running
+- ✅ Tasks are registered
+
+#### Enabling EAGER Mode (Debugging Only)
+
+If you need synchronous task execution for debugging, uncomment these lines in `config/settings/development.py`:
+```python
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+```
+
+**Note**: EAGER mode defeats the async architecture and blocks API responses. Only use for debugging.
 
 ### Infrastructure Services (PostgreSQL and Redis)
 

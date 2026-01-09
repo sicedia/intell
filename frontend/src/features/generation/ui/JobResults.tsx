@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Job, ImageTask, JobStatus } from "../constants/job";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
@@ -110,13 +109,12 @@ const TaskResultCard = ({ task }: { task: ImageTask }) => {
                         <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b relative">
                             <TabsContent value="png" className="mt-0 w-full flex justify-center">
                                 {pngUrl ? (
-                                    <div className="relative w-full max-w-full h-[300px]">
-                                        <Image 
+                                    <div className="relative w-full max-w-full h-[300px] flex items-center justify-center">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img 
                                             src={pngUrl} 
                                             alt={`${formatAlgorithmKey(task.algorithm_key)} - PNG`} 
-                                            fill
-                                            className="object-contain"
-                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                            className="max-h-[300px] max-w-full object-contain"
                                         />
                                     </div>
                                 ) : (
@@ -125,15 +123,14 @@ const TaskResultCard = ({ task }: { task: ImageTask }) => {
                             </TabsContent>
                             <TabsContent value="svg" className="mt-0 w-full flex justify-center">
                                 {svgUrl ? (
-                                    <object 
-                                        data={svgUrl} 
-                                        type="image/svg+xml" 
-                                        className="max-h-[300px] max-w-full"
-                                        aria-label={`${formatAlgorithmKey(task.algorithm_key)} - SVG`}
-                                    >
-                                        {/* Fallback for browsers that don't support object */}
-                                        <div className="text-sm text-muted-foreground">SVG not supported</div>
-                                    </object>
+                                    <div className="relative w-full max-w-full h-[300px] flex items-center justify-center">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img 
+                                            src={svgUrl} 
+                                            alt={`${formatAlgorithmKey(task.algorithm_key)} - SVG`} 
+                                            className="max-h-[300px] max-w-full object-contain"
+                                        />
+                                    </div>
                                 ) : (
                                     <span className="text-sm text-muted-foreground">No SVG available</span>
                                 )}

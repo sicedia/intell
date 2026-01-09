@@ -99,7 +99,21 @@ MEDIA_ROOT.mkdir(exist_ok=True)
 #         'propagate': False,
 #     }
 
-# Execute Celery tasks synchronously in development
-CELERY_TASK_ALWAYS_EAGER = True
-CELERY_TASK_EAGER_PROPAGATES = True
+# Celery Configuration
+# ===================
+# For true async task processing, disable EAGER mode and run Celery workers:
+#   celery -A config worker -l info -Q ingestion_io,charts_cpu,ai
+# Or run all queues:
+#   celery -A config worker -l info
+#
+# To run Celery workers in development:
+#   1. Ensure Redis is running (docker-compose up redis)
+#   2. Start worker: celery -A config worker -l info -Q ingestion_io,charts_cpu,ai
+#   3. Optional: Start flower for monitoring: celery -A config flower
+#
+# EAGER mode (commented out below) runs tasks synchronously in the Django process.
+# This is useful for debugging but defeats the async architecture.
+# Uncomment these lines if you want synchronous execution for debugging:
+# CELERY_TASK_ALWAYS_EAGER = True
+# CELERY_TASK_EAGER_PROPAGATES = True
 

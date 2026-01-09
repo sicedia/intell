@@ -225,6 +225,43 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
         cmap = plt.cm.colors.LinearSegmentedColormap.from_list("custom_blue", ['#44b9be', '#0234a5', '#001f3f'])
         bar_colors = [cmap(norm_color(value)) for value in top_n_cpcs[self.second_column_name]]
         
+        # Helper function to truncate text to fit within rectangle
+        def truncate_text_to_fit(text, max_width, font_size, fig, renderer=None):
+            """Truncate text with ellipsis if it exceeds max_width."""
+            if renderer is None:
+                renderer = fig.canvas.get_renderer()
+            
+            # Create temporary text to measure
+            temp_text = ax.text(0, 0, text, fontsize=font_size, fontweight='bold')
+            bbox = temp_text.get_window_extent(renderer=renderer)
+            text_width = bbox.width / fig.dpi  # Convert to inches
+            temp_text.remove()
+            
+            # Convert max_width from data coords to inches (approximate)
+            ax_bbox = ax.get_position()
+            fig_width = fig.get_figwidth()
+            data_to_inches = (ax_bbox.width * fig_width) / plot_width
+            max_width_inches = max_width * data_to_inches * 0.85  # 85% margin
+            
+            if text_width <= max_width_inches:
+                return text
+            
+            # Truncate with ellipsis
+            for i in range(len(text) - 1, 0, -1):
+                truncated = text[:i] + "..."
+                temp_text = ax.text(0, 0, truncated, fontsize=font_size, fontweight='bold')
+                bbox = temp_text.get_window_extent(renderer=renderer)
+                text_width = bbox.width / fig.dpi
+                temp_text.remove()
+                if text_width <= max_width_inches:
+                    return truncated
+            
+            return "..."
+        
+        # Get renderer for text measurement
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        
         # Plot rectangles
         if len(rects_data) == len(top_n_cpcs):
             for i, rect_geom in enumerate(rects_data):
@@ -235,32 +272,7 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
                 num_patents = top_n_cpcs.iloc[i][self.second_column_name]
                 color = bar_colors[i]
                 
-                # Calculate font size
-                full_label_text = f"{cpc_label}\n(No. Patentes: {num_patents})"
-                simplified_label_text = cpc_label
-                
-                num_chars_full = len(full_label_text) + 1
-                target_size_full = self.min_font_size
-                if area > 1e-6 and num_chars_full > 0:
-                    target_size_full = math.sqrt(area / num_chars_full) * self.font_scale_factor * ((plot_width * plot_height) / (1.0 * 1.0))
-                
-                final_font_size_full = max(self.min_font_size, min(self.max_font_size, target_size_full))
-                
-                # Apply simplification if needed
-                display_label_text = full_label_text
-                final_font_size = final_font_size_full
-                
-                if final_font_size_full < self.simplification_threshold_fontsize:
-                    display_label_text = simplified_label_text
-                    num_chars_simplified = len(display_label_text) + 1
-                    target_size_simplified = self.min_font_size
-                    if area > 1e-6 and num_chars_simplified > 0:
-                        target_size_simplified = math.sqrt(area / num_chars_simplified) * self.font_scale_factor * ((plot_width * plot_height) / (1.0 * 1.0))
-                        final_font_size = max(self.min_font_size, min(self.simplification_threshold_fontsize - 0.1, min(self.max_font_size, target_size_simplified)))
-                    else:
-                        final_font_size = self.min_font_size
-                
-                # Draw rectangle
+                # Draw rectangle first
                 if dx > 1e-6 and dy > 1e-6:
                     rect_patch = plt.Rectangle((x, y), dx, dy,
                                                facecolor=color,
@@ -269,14 +281,62 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
                                                alpha=0.8)
                     ax.add_patch(rect_patch)
                     
-                    # Draw text
-                    ax.text(x + dx / 2, y + dy / 2,
+                    # Skip text for very small rectangles
+                    min_area_for_text = 0.002 * plot_width * plot_height
+                    if area < min_area_for_text:
+                        continue
+                    
+                    # Calculate font size based on rectangle dimensions
+                    # Use the smaller dimension to determine max font size
+                    min_dimension = min(dx, dy)
+                    max_font_from_height = min_dimension * 25  # Scale factor for height
+                    
+                    # Calculate font size based on area
+                    full_label_text = f"{cpc_label}\n({int(num_patents)})"
+                    simplified_label_text = cpc_label
+                    
+                    num_chars_full = len(full_label_text) + 1
+                    target_size_full = self.min_font_size
+                    if area > 1e-6 and num_chars_full > 0:
+                        target_size_full = math.sqrt(area / num_chars_full) * self.font_scale_factor * ((plot_width * plot_height) / (1.0 * 1.0))
+                    
+                    # Clamp font size considering rectangle height
+                    final_font_size_full = max(self.min_font_size, min(self.max_font_size, min(target_size_full, max_font_from_height)))
+                    
+                    # Apply simplification if needed
+                    display_label_text = full_label_text
+                    final_font_size = final_font_size_full
+                    
+                    if final_font_size_full < self.simplification_threshold_fontsize:
+                        display_label_text = simplified_label_text
+                        num_chars_simplified = len(display_label_text) + 1
+                        target_size_simplified = self.min_font_size
+                        if area > 1e-6 and num_chars_simplified > 0:
+                            target_size_simplified = math.sqrt(area / num_chars_simplified) * self.font_scale_factor * ((plot_width * plot_height) / (1.0 * 1.0))
+                            final_font_size = max(self.min_font_size, min(self.simplification_threshold_fontsize - 0.1, min(self.max_font_size, target_size_simplified, max_font_from_height)))
+                        else:
+                            final_font_size = self.min_font_size
+                    
+                    # Truncate text if it's too wide for the rectangle
+                    # Handle multiline text
+                    lines = display_label_text.split('\n')
+                    truncated_lines = []
+                    for line in lines:
+                        truncated_line = truncate_text_to_fit(line, dx, final_font_size, fig, renderer)
+                        truncated_lines.append(truncated_line)
+                    display_label_text = '\n'.join(truncated_lines)
+                    
+                    # Draw text with clipping enabled
+                    text_obj = ax.text(x + dx / 2, y + dy / 2,
                             display_label_text,
                             ha='center', va='center',
                             fontsize=final_font_size,
                             color='white',
                             fontweight='bold',
-                            wrap=False)
+                            wrap=False,
+                            clip_on=True)
+                    # Set clip box to the rectangle bounds
+                    text_obj.set_clip_box(ax.bbox)
         
         # Final touches
         ax.axis('off')

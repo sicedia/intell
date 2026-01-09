@@ -40,10 +40,13 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         self.gradient_color_max = '#1e3d8f'
         self.ecuador_bar_color = '#eebe5a'
         self.others_bar_color = '#46ad65'
-        self.chart_width = 10
-        self.chart_height = 8
-        self.x_axis_label = 'Number of Patents Published'
-        self.y_axis_label = 'Jurisdiction'
+        self.chart_width = 12
+        self.chart_height = 10
+        self.x_axis_label = 'Número de Patentes Publicadas'
+        self.y_axis_label = 'Jurisdicción'
+        self.axis_label_fontsize = 14
+        self.tick_fontsize = 10
+        self.bar_label_fontsize = 9
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """
@@ -289,9 +292,15 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
             ax.text(
                 bar.get_width() + label_offset,
                 bar.get_y() + bar.get_height() / 2,
-                f'{num_publications:,.0f} ({percentage:.2f}%)',
-                ha='left', va='center'
+                f'{num_publications:,.0f} ({percentage:.1f}%)',
+                ha='left', va='center',
+                fontsize=self.bar_label_fontsize
             )
+        
+        # Adjust x-axis limit to fit labels
+        ax.set_xlim(0, max_val * 1.25)
+        ax.tick_params(axis='y', labelsize=self.tick_fontsize)
+        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
         
         # Remove top and right spines
         ax.spines['right'].set_visible(False)
@@ -300,8 +309,8 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         ax.yaxis.set_ticks_position('none')
         
         # Add axis labels
-        ax.set_xlabel(self.x_axis_label, fontsize=18, labelpad=12, color="black")
-        ax.set_ylabel(self.y_axis_label, fontsize=18, labelpad=12, color="black")
+        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
+        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
         
         # Generate PNG bytes
         png_buffer = io.BytesIO()

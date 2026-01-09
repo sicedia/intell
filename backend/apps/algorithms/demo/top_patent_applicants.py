@@ -37,11 +37,16 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
         self.second_column_name = "Number of Publications"
         self.gradient_color_min = '#4fc0e5'
         self.gradient_color_max = '#1e3d8f'
-        self.chart_width = 10
-        self.chart_height = 8
+        self.chart_width = 12
+        self.chart_height = 10
         self.x_axis_label = 'Número de Patentes Publicadas'
         self.y_axis_label = 'Solicitantes'
-        self.text_wrap_width = 25
+        self.text_wrap_width = 30
+        self.axis_label_fontsize = 14
+        self.tick_fontsize = 9
+        self.bar_label_fontsize = 9
+        self.annotation_fontsize = 9
+        self.max_label_length = 40
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """Load data from Dataset."""
@@ -191,11 +196,23 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
         
         colors = [cmap(val) for val in normalized_vals]
         
-        # Wrap labels
-        def wrap_labels(labels, text_wrap_width):
-            return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
+        # Wrap and truncate labels
+        def process_labels(labels, text_wrap_width, max_length):
+            processed = []
+            for label in labels:
+                # Truncate if too long
+                if len(label) > max_length:
+                    label = label[:max_length-3] + "..."
+                # Wrap text
+                wrapped = "\n".join(textwrap.wrap(label, width=text_wrap_width))
+                processed.append(wrapped)
+            return processed
         
-        top_n_applicants[self.first_column_name] = wrap_labels(top_n_applicants[self.first_column_name], self.text_wrap_width)
+        top_n_applicants[self.first_column_name] = process_labels(
+            top_n_applicants[self.first_column_name].tolist(), 
+            self.text_wrap_width, 
+            self.max_label_length
+        )
         top_n_applicants[self.first_column_name] = top_n_applicants[self.first_column_name].apply(lambda x: x.strip().title())
         
         # Create chart
@@ -220,9 +237,15 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
             ax.text(
                 bar.get_width() + label_offset,
                 bar.get_y() + bar.get_height() / 2,
-                f'{num_publications:,.0f} ({percentage:.2f}%)',
-                ha='left', va='center'
+                f'{num_publications:,.0f} ({percentage:.1f}%)',
+                ha='left', va='center',
+                fontsize=self.bar_label_fontsize
             )
+        
+        # Adjust x-axis limit to fit labels
+        ax.set_xlim(0, max_val * 1.25)
+        ax.tick_params(axis='y', labelsize=self.tick_fontsize)
+        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
         
         # Remove spines
         ax.spines['right'].set_visible(False)
@@ -231,17 +254,17 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
         ax.yaxis.set_ticks_position('none')
         
         # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=18, labelpad=12, color="black")
-        ax.set_ylabel(self.y_axis_label, fontsize=18, labelpad=12, color="black")
+        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
+        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
         
         # Annotations
-        plt.figtext(-0.1, -0.075,
-                    '* Los solicitantes de patentes son quienes tienen el derecho legal de presentar y reclamar la protección de una invención, lo que les otorga exclusividad para explotarla comercialmente.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+        plt.figtext(0.02, -0.06,
+                    '* Los solicitantes tienen el derecho legal de reclamar la protección de una invención.',
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
-        plt.figtext(-0.1, -0.15,
-                    '** Un solicitante puede ser una persona física o jurídica que busca proteger una invención mediante una patente, asegurando su control y aprovechamiento exclusivo de la innovación.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+        plt.figtext(0.02, -0.10,
+                    '** Un solicitante puede ser persona física o jurídica que busca proteger una invención.',
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

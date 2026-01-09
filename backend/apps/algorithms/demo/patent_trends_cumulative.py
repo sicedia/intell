@@ -37,11 +37,15 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         self.cutoff_year = datetime.datetime.now().year - 2
         self.trend_line_color = '#44b9be'
         self.cumulative_line_color = '#001f3f'
-        self.chart_width = 10
+        self.chart_width = 12
         self.chart_height = 8
         self.x_axis_label = 'Año'
         self.y_axis_label = 'Número de Patentes Publicadas'
-        self.y_axis_label_2 = 'Publicaciones de Patentes Acumulativas'
+        self.y_axis_label_2 = 'Publicaciones Acumulativas'
+        self.axis_label_fontsize = 14
+        self.tick_fontsize = 10
+        self.legend_fontsize = 10
+        self.annotation_fontsize = 10
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """Load data from Dataset."""
@@ -244,10 +248,10 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
                 label=self.y_axis_label, linewidth=1.5)
         
         # First Y-axis labels
-        ax1.set_xlabel(self.x_axis_label, fontsize=18)
-        ax1.set_ylabel(self.y_axis_label, color=self.trend_line_color, fontsize=18)
-        ax1.tick_params(axis='y', labelcolor=self.trend_line_color)
-        ax1.tick_params(axis='y', color=self.trend_line_color)
+        ax1.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
+        ax1.set_ylabel(self.y_axis_label, color=self.trend_line_color, fontsize=self.axis_label_fontsize)
+        ax1.tick_params(axis='y', labelcolor=self.trend_line_color, labelsize=self.tick_fontsize)
+        ax1.tick_params(axis='x', labelsize=self.tick_fontsize)
         
         # Second Y-axis for cumulative
         ax2 = ax1.twinx()
@@ -256,9 +260,8 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
                 label=self.y_axis_label_2, linewidth=1.5)
         
         # Second Y-axis labels
-        ax2.set_ylabel(self.y_axis_label_2, color=self.cumulative_line_color, fontsize=18)
-        ax2.tick_params(axis='y', labelcolor=self.cumulative_line_color)
-        ax2.tick_params(axis='y', color=self.cumulative_line_color)
+        ax2.set_ylabel(self.y_axis_label_2, color=self.cumulative_line_color, fontsize=self.axis_label_fontsize)
+        ax2.tick_params(axis='y', labelcolor=self.cumulative_line_color, labelsize=self.tick_fontsize)
         
         # Grid
         ax1.grid(True, axis='x', color='lightgrey', linestyle='-', linewidth=0.35)
@@ -267,8 +270,8 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         def wrap_labels(labels, text_wrap_width=20):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend1 = ax1.legend(loc='center left', bbox_to_anchor=(1.1, 0.9), fontsize=12, frameon=False)
-        legend2 = ax2.legend(loc='center left', bbox_to_anchor=(1.1, 0.8), fontsize=12, frameon=False)
+        legend1 = ax1.legend(loc='center left', bbox_to_anchor=(1.1, 0.9), fontsize=self.legend_fontsize, frameon=False)
+        legend2 = ax2.legend(loc='center left', bbox_to_anchor=(1.1, 0.8), fontsize=self.legend_fontsize, frameon=False)
         
         wrapped_labels1 = wrap_labels([text.get_text() for text in legend1.get_texts()])
         wrapped_labels2 = wrap_labels([text.get_text() for text in legend2.get_texts()])
@@ -291,7 +294,7 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         # Annotations
         plt.figtext(0, -0.075,
                     '* Se muestran las publicaciones hasta hace 2 años, porque los documentos de patente suelen demorar hasta 18 meses en su publicación.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

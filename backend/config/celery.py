@@ -2,6 +2,7 @@
 Celery configuration for Intelli project.
 """
 import os
+import sys
 from celery import Celery
 from django.conf import settings
 
@@ -12,6 +13,19 @@ app = Celery('config')
 
 # Load settings from Django settings
 app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Windows compatibility: Use 'solo' pool instead of 'prefork'
+# The 'prefork' pool (default on Linux/macOS) doesn't work well on Windows
+# due to how Windows handles process forking.
+# In production (Linux), 'prefork' is used by default for better performance.
+if sys.platform == 'win32':
+    app.conf.worker_pool = 'solo'
+    # Note: 'solo' pool runs tasks sequentially in the main thread
+    # For better performance on Windows, consider using WSL2 or Docker
+else:
+    # Linux/macOS: Use 'prefork' pool by default (better performance, parallel execution)
+    # This is the default, but we set it explicitly for clarity
+    app.conf.worker_pool = 'prefork'
 
 # Auto-discover tasks from all installed apps
 app.autodiscover_tasks()

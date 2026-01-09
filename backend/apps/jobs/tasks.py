@@ -26,7 +26,17 @@ def generate_image_task(self, image_task_id: int):
     
     try:
         # Get ImageTask and Job
-        image_task = ImageTask.objects.select_related('job', 'job__dataset').get(id=image_task_id)
+        try:
+            image_task = ImageTask.objects.select_related('job', 'job__dataset').get(id=image_task_id)
+        except ImageTask.DoesNotExist:
+            logger.warning(
+                f'ImageTask {image_task_id} does not exist - task may have been cancelled or deleted',
+                extra={'image_task_id': image_task_id}
+            )
+            # Emit error event if we can determine the job_id from context
+            # Note: Without ImageTask, we can't determine job_id, so we skip emit_event
+            return
+        
         job = image_task.job
         
         # Check if task has a specific dataset_id (for multi-sheet Excel support)
@@ -159,26 +169,27 @@ def generate_image_task(self, image_task_id: int):
             }
         )
         
-        # Emit ERROR event
-        emit_event(
-            job_id=job.id if 'job' in locals() else None,
-            image_task_id=image_task_id,
-            event_type='ALGORITHM_ERROR',
-            level='ERROR',
-            message=f'Image generation failed: {str(e)}',
-            trace_id=trace_id if 'trace_id' in locals() else None,
-            payload={'error': str(e), 'trace': error_trace}
-        )
-        
-        # Update ImageTask with error (don't raise to allow chord to complete)
-        if 'image_task' in locals():
-            image_task.status = ImageTask.Status.FAILED
-            image_task.error_code = 'ALGORITHM_ERROR'
-            image_task.error_message = str(e)
-            image_task.save()
+        # Emit ERROR event only if we have a job reference
+        if 'job' in locals() and job:
+            emit_event(
+                job_id=job.id,
+                image_task_id=image_task_id,
+                event_type='ALGORITHM_ERROR',
+                level='ERROR',
+                message=f'Image generation failed: {str(e)}',
+                trace_id=trace_id if 'trace_id' in locals() else None,
+                payload={'error': str(e), 'trace': error_trace}
+            )
+            
+            # Update ImageTask with error (don't raise to allow chord to complete)
+            if 'image_task' in locals() and image_task:
+                image_task.status = ImageTask.Status.FAILED
+                image_task.error_code = 'ALGORITHM_ERROR'
+                image_task.error_message = str(e)
+                image_task.save()
         
         # Don't raise - let chord complete so finalize_job can run
-        # The error is already logged and ImageTask marked as FAILED
+        # The error is already logged and ImageTask marked as FAILED (if it exists)
 
 
 def run_job(job_id: int):

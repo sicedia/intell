@@ -57,6 +57,10 @@ class PatentForecastAlgorithm(BaseAlgorithm):
         self.chart_height = 8
         self.x_axis_label = 'Año'
         self.y_axis_label = 'Número de Familias de Patentes Publicadas'
+        self.axis_label_fontsize = 14
+        self.tick_fontsize = 10
+        self.legend_fontsize = 10
+        self.annotation_fontsize = 9
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """Load data from Dataset."""
@@ -361,8 +365,9 @@ class PatentForecastAlgorithm(BaseAlgorithm):
         ax.axvspan(start_forecast_year, end_forecast_year, color='gray', alpha=0.1)
         
         # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=18)
-        ax.set_ylabel(self.y_axis_label, fontsize=18)
+        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
+        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize)
+        ax.tick_params(axis='both', labelsize=self.tick_fontsize)
         
         # Grid
         ax.grid(True, color='lightgrey', linestyle='-', linewidth=0.35)
@@ -371,7 +376,7 @@ class PatentForecastAlgorithm(BaseAlgorithm):
         def wrap_labels(labels, text_wrap_width=30):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=12, frameon=False)
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=self.legend_fontsize, frameon=False)
         wrapped_labels1 = wrap_labels([text.get_text() for text in legend.get_texts()])
         for text, wrapped_label in zip(legend.get_texts(), wrapped_labels1):
             text.set_text(wrapped_label)
@@ -385,23 +390,23 @@ class PatentForecastAlgorithm(BaseAlgorithm):
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
         
-        # Annotations
-        plt.figtext(-0.1, -0.1,
-                    '*El crecimiento anual compuesto (CAGR) indica la tasa de crecimiento promedio de un valor entre dos puntos en el tiempo, asumiendo un crecimiento acumulado.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+        # Annotations - positioned to avoid overflow
+        plt.figtext(0.02, -0.08,
+                    '*El crecimiento anual compuesto (CAGR) indica la tasa de crecimiento promedio de un valor entre dos puntos en el tiempo.',
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
-        plt.figtext(-0.1, -0.14,
-                    '** El modelo ARIMA proyecta series temporales considerando patrones históricos de autocorrelación, tendencias y estacionalidades para prever valores futuros.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+        plt.figtext(0.02, -0.12,
+                    '** El modelo ARIMA proyecta series temporales considerando patrones históricos de autocorrelación y tendencias.',
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
-        plt.figtext(-0.1, -0.18,
-                    '*** El modelo ETS utiliza descomposición exponencial para prever tendencias, estacionalidad y nivel de una serie temporal, adaptándose dinámicamente a cambios en los datos.',
-                    ha="left", fontsize=12, color="black", wrap=True)
+        plt.figtext(0.02, -0.16,
+                    '*** El modelo ETS utiliza descomposición exponencial para prever tendencias y nivel de una serie temporal.',
+                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
         if cagr_rate is not None:
-            plt.figtext(-0.1, -0.22,
-                        f'**** El número de publicaciones de familias de patentes ha variado con una Tasa de Crecimiento Anual Compuesta (CAGR) de {round(cagr_rate * 100, 2)}% para el periodo {start_year}-{end_year}, sin incluir {self.cutoff_year + 1} ni {self.cutoff_year + 2}.',
-                        ha="left", fontsize=12, color="black", wrap=True)
+            plt.figtext(0.02, -0.20,
+                        f'**** CAGR de {round(cagr_rate * 100, 2)}% para el periodo {start_year}-{end_year}.',
+                        ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()
