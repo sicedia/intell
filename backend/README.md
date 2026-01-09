@@ -1,42 +1,63 @@
 # Intelli Backend
 
-Django + DRF + Celery + Redis + Channels + PostgreSQL + LangChain backend for patent data processing and chart generation.
+Django + DRF + Celery + Redis + Channels + PostgreSQL backend for patent data processing and chart generation.
 
 ## Architecture
 
 The backend follows a canonical Dataset pipeline:
+
 ```
-ingestion (raw) → normalize() → persist Dataset → Job FK→Dataset → ImageTask consume Dataset → algorithm recibe Dataset
+Excel/API → normalize() → Dataset → Job → ImageTask → Algorithm → PNG/SVG
+                                      ↓
+                              WebSocket Events → Frontend
 ```
 
-All algorithms consume `datasets.Dataset` (never raw data). EventLog is append-only with `emit_event()` as the single source of truth.
+Key principles:
+- All algorithms consume `datasets.Dataset` (never raw data)
+- EventLog is append-only with `emit_event()` as the single source of truth
+- Individual task retry/cancel without affecting other tasks
+- Automatic job status calculation when all tasks complete
 
 ## Project Structure
 
 ```
 backend/
 ├── apps/
-│   ├── core/              # Shared utilities and exceptions
-│   ├── ingestion/         # Data source connectors
+│   ├── core/              # Health checks, shared utilities
+│   ├── ingestion/         # Data source connectors (Lens API)
 │   ├── datasets/          # Canonical dataset normalization
 │   ├── algorithms/        # Chart generation algorithms
-│   ├── jobs/              # Job orchestration and API
+│   │   └── demo/          # Patent chart algorithms
+│   ├── jobs/              # Job orchestration, tasks, WebSocket
+│   │   ├── models.py      # Job, ImageTask, DescriptionTask
+│   │   ├── views.py       # REST API (create, retry, cancel)
+│   │   ├── tasks.py       # Celery tasks
+│   │   ├── consumers.py   # WebSocket consumer
+│   │   └── serializers.py # DRF serializers
 │   ├── artifacts/         # Artifact storage
 │   ├── ai_descriptions/   # AI-powered chart descriptions
 │   └── audit/             # Append-only event logging
-├── config/                # Django configuration
+├── config/
+│   ├── settings/          # Environment-specific settings
+│   │   ├── base.py        # Shared settings
+│   │   ├── development.py # Development (DEBUG=True)
+│   │   └── production.py  # Production (security, PostgreSQL)
+│   ├── celery.py          # Celery configuration (auto pool detection)
+│   └── asgi.py            # ASGI config (Daphne + Channels)
+├── scripts/               # Utility scripts
 ├── context/               # Test data and examples
-└── media/                 # Media files (datasets, artifacts)
+├── media/                 # Generated artifacts (PNG/SVG)
+├── Dockerfile.prod        # Production Dockerfile
+└── requirements.txt
 ```
 
 ## Setup
 
 ### Prerequisites
 
-- Python 3.8+
-- Docker and Docker Compose (for infrastructure services)
-- PostgreSQL (via docker-compose)
-- Redis (via docker-compose)
+- Python 3.11+ (recommended 3.13)
+- Docker and Docker Compose (for PostgreSQL and Redis)
+- Virtual environment (venv)
 
 ### Installation
 
@@ -159,7 +180,11 @@ chmod +x scripts/start_celery_worker.sh
 
 This starts a single worker processing all queues: `ingestion_io`, `charts_cpu`, and `ai`.
 
-**Note for Windows users:** The configuration in `config/celery.py` automatically detects Windows and uses the `solo` pool. On Linux/macOS (production), the `prefork` pool is used by default for parallel task execution. For better performance on Windows, consider using WSL2 or Docker.
+**Automatic Pool Detection:** The configuration in `config/celery.py` automatically detects the OS:
+- **Windows**: Uses `solo` pool (sequential execution, for development)
+- **Linux/macOS**: Uses `prefork` pool (parallel execution, for production)
+
+For better performance on Windows development, consider using WSL2 or Docker.
 
 #### Manual Start
 
@@ -238,24 +263,53 @@ python scripts/check_infrastructure.py
 
 ### Health Checks
 
-- `GET /api/health/` - Basic health check
-- `GET /api/health/redis/` - Redis health check
-- `GET /api/health/celery/` - Celery health check
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health/` | GET | Basic health check |
+| `/api/health/redis/` | GET | Redis connectivity check |
+| `/api/health/celery/` | GET | Celery worker check |
 
 ### Jobs
 
-- `POST /api/jobs/` - Create a new job
-- `GET /api/jobs/<id>/` - Get job details
-- `POST /api/jobs/<id>/cancel/` - Cancel a job
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/jobs/` | POST | Create a new job |
+| `/api/jobs/<id>/` | GET | Get job details with all tasks |
+| `/api/jobs/<id>/cancel/` | POST | Cancel entire job |
 
-### Tasks
+### Image Tasks
 
-- `GET /api/image-tasks/<id>/` - Get image task details
-- `GET /api/description-tasks/<id>/` - Get description task details
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/image-tasks/<id>/` | GET | Get image task details |
+| `/api/image-tasks/<id>/retry/` | POST | Retry failed/stuck task |
+| `/api/image-tasks/<id>/cancel/` | POST | Cancel running/pending task |
+
+**Retry behavior:**
+- Resets task to PENDING status
+- Clears error information
+- Re-enqueues task for processing
+- Updates job status if needed (FAILED → RUNNING)
+- Automatically updates job status when all tasks complete
+
+**Cancel behavior:**
+- Only for PENDING or RUNNING tasks
+- Marks task as CANCELLED
+- Updates job status if all tasks cancelled
 
 ### AI Descriptions
 
-- `POST /api/ai/describe/` - Create AI description task
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/ai/describe/` | POST | Create AI description task |
+
+### API Documentation
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/docs/` | Swagger UI |
+| `/api/redoc/` | ReDoc UI |
+| `/api/schema/` | OpenAPI schema |
 
 ## Example Requests
 
@@ -304,6 +358,38 @@ Response:
 }
 ```
 
+### Retry Failed Image Task
+
+```bash
+curl -X POST http://localhost:8000/api/image-tasks/1/retry/
+```
+
+Response:
+```json
+{
+  "image_task_id": 1,
+  "status": "PENDING",
+  "message": "Task retry initiated",
+  "task": {...}
+}
+```
+
+### Cancel Running Image Task
+
+```bash
+curl -X POST http://localhost:8000/api/image-tasks/1/cancel/
+```
+
+Response:
+```json
+{
+  "image_task_id": 1,
+  "status": "CANCELLED",
+  "message": "Task cancelled successfully",
+  "task": {...}
+}
+```
+
 ### Create AI Description
 
 ```bash
@@ -337,7 +423,21 @@ ws.onmessage = (event) => {
 };
 ```
 
-Event payload structure:
+### Event Types
+
+| Event | Entity | Description |
+|-------|--------|-------------|
+| `START` | job/image_task | Task started |
+| `PROGRESS` | job/image_task | Progress update (0-100) |
+| `DONE` | job/image_task | Task completed successfully |
+| `ERROR` | job/image_task | Task failed |
+| `ALGORITHM_ERROR` | image_task | Algorithm execution failed |
+| `CANCELLED` | job/image_task | Task was cancelled |
+| `RETRY` | image_task | Task retry initiated |
+| `job_status_changed` | job | Job status changed (SUCCESS, FAILED, etc.) |
+
+### Event Payload Structure
+
 ```json
 {
   "job_id": 1,
@@ -350,6 +450,21 @@ Event payload structure:
   "payload": {},
   "trace_id": "uuid-here",
   "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+### Job Status Changed Event
+
+When all tasks complete, emits:
+```json
+{
+  "job_id": 1,
+  "event_type": "job_status_changed",
+  "progress": 100,
+  "payload": {
+    "status": "SUCCESS",
+    "previous_status": "RUNNING"
+  }
 }
 ```
 
@@ -472,11 +587,23 @@ Jobs support idempotency via `idempotency_key`:
 
 ### Job Status Calculation
 
-`finalize_job` calculates final status:
-- **SUCCESS**: All ImageTasks succeed
-- **PARTIAL_SUCCESS**: Some succeed, some fail
-- **FAILED**: All fail
-- `progress_total` = average of ImageTask progress values
+Job status is calculated automatically when all tasks complete:
+
+| Condition | Status |
+|-----------|--------|
+| All tasks SUCCESS | `SUCCESS` |
+| Some SUCCESS, some FAILED | `PARTIAL_SUCCESS` |
+| All FAILED | `FAILED` |
+| All CANCELLED | `CANCELLED` |
+
+**Status update triggers:**
+1. `finalize_job` - Called by Celery chord after initial job run
+2. `_check_and_update_job_status` - Called after individual task completion (retry/error)
+
+This ensures job status updates correctly even for:
+- Individual task retries
+- Tasks that fail after retry
+- Mixed success/failure scenarios
 
 ## Troubleshooting
 
@@ -517,7 +644,53 @@ registry.register("top_patent_countries", "1.0", TopPatentCountriesAlgorithm())
 2. Add normalizer in `apps/datasets/normalizers.py`
 3. Update `Dataset.SOURCE_TYPE_CHOICES`
 
+## Docker Production
+
+### Dockerfile
+
+The production Dockerfile (`Dockerfile.prod`) includes:
+- Python 3.13 slim base
+- Daphne ASGI server (WebSocket support)
+- Health check endpoint
+- Non-root user for security
+- Static files collection
+
+### Build and Run
+
+```bash
+# Build
+docker build -f Dockerfile.prod -t intell-backend .
+
+# Run
+docker run -p 8000:8000 \
+  -e SECRET_KEY=your-secret-key \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  -e CELERY_BROKER_URL=redis://redis:6379/0 \
+  intell-backend
+```
+
+### With Docker Compose
+
+Use the production docker-compose from `infrastructure/`:
+
+```bash
+cd ../infrastructure
+docker-compose -f docker-compose.prod.yml up backend celery-worker
+```
+
+### Environment Variables (Production)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SECRET_KEY` | Yes | Django secret key |
+| `DEBUG` | No | Must be `False` |
+| `ALLOWED_HOSTS` | Yes | Comma-separated hostnames |
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `CELERY_BROKER_URL` | Yes | Redis URL for Celery |
+| `REDIS_URL` | Yes | Redis URL for Channels |
+| `CORS_ALLOWED_ORIGINS` | Yes | Frontend URL(s) |
+
 ## License
 
-[Your License Here]
+Proprietary - All rights reserved
 

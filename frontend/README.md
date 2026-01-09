@@ -1,6 +1,6 @@
 # Intell.AI Frontend
 
-Next.js application with TypeScript, App Router, and modern tooling for the Intell.AI platform.
+Next.js application with TypeScript, App Router, and modern tooling for the Intell.AI patent analysis platform.
 
 ## Features
 
@@ -8,13 +8,16 @@ Next.js application with TypeScript, App Router, and modern tooling for the Inte
 - 🎨 **Tailwind CSS** + **shadcn/ui** components
 - 🌐 **i18n** (English/Spanish) with next-intl
 - 🌓 **Dark mode** with next-themes
-- 🔄 **TanStack Query** for server state
+- 🔄 **TanStack Query** for server state (with intelligent retry)
 - 🐻 **Zustand** for client state
 - 📝 **React Hook Form** + **Zod** for forms
 - 📊 **Excel upload** (react-dropzone + xlsx)
-- 🔌 **WebSocket client** utility
+- 🔌 **WebSocket client** for real-time updates
+- 🔒 **Connection handling** with global error management
+- 🔔 **Toast notifications** (Sonner)
 - ✅ **Testing** (Vitest + Playwright)
 - 🎯 **Code quality** (ESLint + Prettier + Husky)
+- 🐳 **Docker** production-ready
 
 ## Project Structure
 
@@ -23,30 +26,42 @@ frontend/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── [locale]/           # Localized routes
-│   │   │   ├── dashboard/
-│   │   │   ├── generate/
-│   │   │   ├── images/
-│   │   │   ├── themes/
-│   │   │   ├── reports/
-│   │   │   └── settings/
+│   │   │   ├── dashboard/      # Dashboard page
+│   │   │   ├── generate/       # Job generation wizard
+│   │   │   ├── images/         # Image gallery
+│   │   │   ├── themes/         # Theme settings
+│   │   │   ├── reports/        # Reports
+│   │   │   └── settings/       # App settings
 │   │   ├── layout.tsx          # Root layout
 │   │   └── globals.css         # Global styles
-│   ├── features/               # Feature modules (to be implemented)
+│   ├── features/               # Feature modules
+│   │   └── generation/         # Job generation feature
+│   │       ├── api/            # API functions (jobs.ts)
+│   │       ├── constants/      # Types & constants
+│   │       ├── hooks/          # Custom hooks (WebSocket, polling)
+│   │       ├── stores/         # Feature-specific stores
+│   │       └── ui/             # UI components (wizard, results)
 │   ├── shared/                 # Shared utilities and components
-│   │   ├── components/         # Reusable components
-│   │   │   ├── ui/             # shadcn/ui components
-│   │   │   ├── layout/         # Layout components
-│   │   │   └── providers/      # Context providers
-│   │   ├── lib/                # Utilities
-│   │   │   ├── api-client.ts   # API client
+│   │   ├── components/
+│   │   │   ├── ui/             # shadcn/ui + custom components
+│   │   │   │   └── connection-banner.tsx  # Global connection status
+│   │   │   ├── layout/         # AppShell, Sidebar, Topbar
+│   │   │   └── providers/      # QueryProvider, ThemeProvider
+│   │   ├── lib/
+│   │   │   ├── api-client.ts   # API client with error handling
 │   │   │   ├── ws.ts           # WebSocket client
-│   │   │   ├── env.ts          # Environment validation
+│   │   │   ├── env.ts          # Environment validation (Zod)
 │   │   │   └── utils.ts        # Helper functions
-│   │   └── store/              # Zustand stores
+│   │   ├── store/
+│   │   │   ├── connection-store.ts  # Connection state (Zustand)
+│   │   │   └── ui-store.ts     # UI state
+│   │   └── ui/                 # Shared UI components
 │   ├── i18n/                   # Internationalization config
-│   └── test/                     # Test setup
-├── messages/                    # Translation files
+│   └── test/                   # Test setup
+├── messages/                   # Translation files (en.json, es.json)
 ├── e2e/                        # Playwright e2e tests
+├── Dockerfile                  # Development Dockerfile
+├── Dockerfile.prod             # Production Dockerfile (multi-stage)
 └── public/                     # Static assets
 ```
 
@@ -66,10 +81,10 @@ frontend/
 
 2. **Set up environment variables:**
    ```bash
-   cp .env.example .env
+   cp env.example .env.local
    ```
    
-   Edit `.env` with your configuration:
+   Edit `.env.local` with your configuration:
    ```env
    NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
    NEXT_PUBLIC_WS_BASE_URL=ws://localhost:8000/ws
@@ -110,6 +125,27 @@ npm run build
 
 # Start production server
 npm run start
+```
+
+### Docker Production Build
+
+The production Dockerfile (`Dockerfile.prod`) uses multi-stage builds:
+
+```bash
+# Build and run with Docker
+docker build -f Dockerfile.prod \
+  --build-arg NEXT_PUBLIC_API_BASE_URL=https://your-domain.com/api \
+  --build-arg NEXT_PUBLIC_WS_BASE_URL=wss://your-domain.com/ws \
+  -t intell-frontend .
+
+docker run -p 3000:3000 intell-frontend
+```
+
+Or use docker-compose from the `infrastructure/` directory:
+
+```bash
+cd ../infrastructure
+docker-compose -f docker-compose.prod.yml up frontend
 ```
 
 ## Testing
@@ -167,7 +203,23 @@ All environment variables are validated using Zod in `src/shared/lib/env.ts`:
 
 ### API Client
 
-The API client is configured in `src/shared/lib/api-client.ts`:
+The API client (`src/shared/lib/api-client.ts`) includes typed errors and connection handling:
+
+#### Error Types
+
+```typescript
+import { 
+  ApiError,           // Base error class (status, data)
+  ConnectionError,    // Network errors (status = 0)
+  HttpError,          // HTTP errors (4xx, 5xx)
+  CancelledError,     // Request cancelled/timeout (status = -1)
+  isConnectionError,  // Type guard
+  isCancelledError,   // Type guard
+  getConnectionErrorMessage  // User-friendly message
+} from "@/shared/lib/api-client";
+```
+
+#### Basic Usage
 
 ```typescript
 import { apiClient } from "@/shared/lib/api-client";
@@ -177,7 +229,71 @@ const data = await apiClient.get<User[]>("/users/");
 
 // POST request
 const newUser = await apiClient.post<User>("/users/", { name: "John" });
+
+// With custom timeout
+const data = await apiClient.get<Data>("/slow-endpoint/", { timeout: 30000 });
 ```
+
+#### Error Handling
+
+```typescript
+import { isConnectionError, getConnectionErrorMessage } from "@/shared/lib/api-client";
+
+try {
+  await apiClient.post("/jobs/", data);
+} catch (error) {
+  if (isConnectionError(error)) {
+    // Network error - server unreachable
+    console.warn(getConnectionErrorMessage(error));
+  } else if (isCancelledError(error)) {
+    // Request was cancelled or timed out
+  } else {
+    // HTTP error (4xx, 5xx)
+    console.error(error);
+  }
+}
+```
+
+#### Features
+
+- **Automatic timeout**: 15s default, 60s for uploads
+- **204/Empty responses**: Handled gracefully
+- **JSON parse errors**: Safe fallback
+- **Connection detection**: TypeError/DOMException → ConnectionError
+
+### Connection State Management
+
+Global connection state is managed with Zustand (`src/shared/store/connection-store.ts`):
+
+```typescript
+import { useConnectionStore } from "@/shared/store/connection-store";
+
+function MyComponent() {
+  const { isConnected, lastError, clearError } = useConnectionStore();
+  
+  // isConnected: true | false | null (unknown)
+  // lastError: Error | null
+  // clearError: () => void - resets to unknown state
+}
+```
+
+The `ConnectionBanner` component (`src/shared/components/ui/connection-banner.tsx`) automatically shows when the backend is unreachable:
+
+- Displays at the top of the page when `isConnected === false`
+- Includes "Retry" button to manually check connection
+- Auto-hides when a successful request is made
+
+### React Query Configuration
+
+React Query is configured in `src/shared/components/providers/query-provider.tsx` with:
+
+- **Intelligent retry logic**:
+  - Connection errors: 2 retries (queries), 1 retry (mutations)
+  - Server errors (500+): 1 retry
+  - Client errors (4xx): No retry
+  - Cancelled: No retry
+- **Global error handling**: Updates connection store on errors
+- **Global success handling**: Marks connection as active on success
 
 ### WebSocket Client
 
@@ -199,6 +315,48 @@ ws.connect();
 ws.send({ action: "subscribe" });
 ws.disconnect();
 ```
+
+### Job Generation Feature
+
+The main feature (`src/features/generation/`) handles patent chart generation:
+
+#### API Functions (`api/jobs.ts`)
+
+```typescript
+import { createJob, getJob, retryImageTask, cancelImageTask } from "@/features/generation/api/jobs";
+
+// Create a new job with Excel file
+const result = await createJob(formData);
+
+// Get job details
+const job = await getJob(jobId);
+
+// Retry a failed image task
+await retryImageTask(taskId);
+
+// Cancel a running image task
+await cancelImageTask(taskId);
+```
+
+#### Hooks
+
+```typescript
+import { useJobProgress } from "@/features/generation/hooks/useJobProgress";
+
+function JobPage({ jobId }: { jobId: number }) {
+  const { job, events, connectionStatus, isConnected } = useJobProgress(jobId);
+  
+  // job: Current job state (auto-updates via WebSocket)
+  // events: Array of job events (START, PROGRESS, DONE, ERROR, etc.)
+  // connectionStatus: "connecting" | "connected" | "disconnected" | "failed"
+}
+```
+
+#### Components
+
+- `GenerateWizard` - Multi-step wizard for job creation
+- `JobProgress` - Real-time progress display
+- `JobResults` - Display generated images with retry/cancel buttons
 
 ### Internationalization
 
@@ -249,21 +407,21 @@ function ThemeToggle() {
 
 ## Technologies
 
-- **Next.js 16** - React framework with App Router
-- **TypeScript** - Static typing
-- **Tailwind CSS** - Utility-first CSS
-- **shadcn/ui** - Component library
-- **TanStack Query** - Server state management
-- **Zustand** - Client state management
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
-- **next-intl** - Internationalization
-- **next-themes** - Theme management
-- **Vitest** - Unit testing
-- **Playwright** - E2E testing
-- **ESLint** - Linting
-- **Prettier** - Code formatting
-- **Husky** - Git hooks
+| Category | Technology | Purpose |
+|----------|------------|---------|
+| Framework | **Next.js 16** | React framework with App Router |
+| Language | **TypeScript 5** | Static typing |
+| Styling | **Tailwind CSS 4** | Utility-first CSS |
+| Components | **shadcn/ui** | Component library |
+| Server State | **TanStack Query** | Data fetching, caching, retry logic |
+| Client State | **Zustand** | Global state (connection, UI) |
+| Forms | **React Hook Form + Zod** | Form handling with validation |
+| i18n | **next-intl** | Internationalization |
+| Theming | **next-themes** | Dark/light mode |
+| Notifications | **Sonner** | Toast notifications |
+| Testing | **Vitest + Playwright** | Unit, component, E2E tests |
+| Code Quality | **ESLint + Prettier + Husky** | Linting, formatting, git hooks |
+| Container | **Docker** | Production deployment |
 
 ## Development Guidelines
 
@@ -321,10 +479,26 @@ For development without a backend, enable mock mode:
 
 This will activate `mockJob.ts` data in Dashboard and Generate pages.
 
-## Conv Conventions for New Features
+## Conventions for New Features
 
-1. Create feature directory in `src/features/[feature-name]`.
-2. Use `PageHeader` for title.
-3. Import shared UI from `@/shared/ui`.
-4. If logic is complex, create a dedicated component (e.g. `Wizard`).
-5. define types in `src/shared/types/backend.ts` if they match backend entities.
+1. **Feature structure**: Create directory in `src/features/[feature-name]/` with:
+   - `api/` - API functions
+   - `hooks/` - Custom hooks
+   - `ui/` - UI components
+   - `constants/` - Types, enums, constants
+   - `stores/` - Feature-specific Zustand stores (if needed)
+
+2. **Page components**: Use `PageHeader` for title.
+
+3. **Shared imports**: Import from `@/shared/ui`, `@/shared/lib`, `@/shared/store`.
+
+4. **Error handling**: 
+   - Use `isConnectionError()` and `isCancelledError()` for error checks
+   - Connection errors are handled globally (banner + toast)
+   - Add local try/catch only for specific UX needs
+
+5. **Types**: Define in `src/shared/types/backend.ts` for backend entities.
+
+6. **API calls**: Use `apiClient` from `@/shared/lib/api-client.ts`.
+
+7. **Real-time updates**: Use WebSocket hooks for progress tracking.
