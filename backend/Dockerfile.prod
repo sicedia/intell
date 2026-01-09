@@ -1,0 +1,49 @@
+# =============================================================================
+# Backend Production Dockerfile
+# Django + Daphne (ASGI) for WebSocket support
+# =============================================================================
+
+FROM python:3.13-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=config.settings.production
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project files
+COPY . .
+
+# Create directories for logs and media
+RUN mkdir -p logs media staticfiles
+
+# Collect static files
+RUN python manage.py collectstatic --noinput --settings=config.settings.production || true
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health/ || exit 1
+
+# Run with Daphne (ASGI server for WebSocket support)
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]

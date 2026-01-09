@@ -184,10 +184,91 @@ If migrations fail because the database isn't ready:
 2. Check database status: `docker-compose exec db pg_isready -U intell_user -d intell`
 3. Use the automated setup script which waits for the database: `python scripts/setup_dev.py`
 
+## Production Deployment
+
+For production, use `docker-compose.prod.yml` which includes all services:
+
+### Quick Start
+
+1. **Copy and configure environment files:**
+   ```bash
+   cp env.example .env
+   cp backend.env.example backend.env
+   # Edit both files with your production values
+   ```
+
+2. **Configure Nginx SSL (optional but recommended):**
+   ```bash
+   mkdir -p nginx/ssl
+   # Copy your SSL certificates:
+   # - nginx/ssl/fullchain.pem
+   # - nginx/ssl/privkey.pem
+   # Uncomment HTTPS server block in nginx/nginx.conf
+   ```
+
+3. **Build and start all services:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d --build
+   ```
+
+4. **Run database migrations:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml exec backend python manage.py migrate
+   ```
+
+5. **Create superuser (optional):**
+   ```bash
+   docker-compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
+   ```
+
+### Production Services
+
+| Service | Description | Port |
+|---------|-------------|------|
+| `db` | PostgreSQL 16 | Internal only |
+| `redis` | Redis 7 (Celery + Channels) | Internal only |
+| `backend` | Django + Daphne (ASGI) | Internal only |
+| `celery-worker` | Celery with prefork pool | N/A |
+| `frontend` | Next.js (standalone) | Internal only |
+| `nginx` | Reverse proxy | 80, 443 |
+
+### Scaling Celery Workers
+
+For high load, scale Celery workers:
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d --scale celery-worker=4
+```
+
+### Monitoring
+
+```bash
+# View all logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# View specific service logs
+docker-compose -f docker-compose.prod.yml logs -f backend celery-worker
+
+# Check service status
+docker-compose -f docker-compose.prod.yml ps
+```
+
+### Backup Database
+
+```bash
+docker-compose -f docker-compose.prod.yml exec db pg_dump -U intell_user intell > backup.sql
+```
+
+### Restore Database
+
+```bash
+docker-compose -f docker-compose.prod.yml exec -T db psql -U intell_user intell < backup.sql
+```
+
 ## Notes
 
 - Django and Celery workers run **locally** for easier development and debugging
 - Infrastructure services (PostgreSQL, Redis) run in Docker
 - Volumes persist data between container restarts
 - Database is automatically created and initialized on first startup
-- For production, consider running Django and Celery in Docker as well
+- For production, use `docker-compose.prod.yml` which includes all services
