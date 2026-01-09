@@ -8,6 +8,24 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

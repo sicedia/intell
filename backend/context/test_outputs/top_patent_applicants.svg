@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="764.465848pt" height="611.79225pt" viewBox="0 0 764.465848 611.79225" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-01-09T10:31:26.628938</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 611.79225 
+L 764.465848 611.79225 
+L 764.465848 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 169.2 450.72 
+L 727.2 450.72 
+L 727.2 7.2 
+L 169.2 7.2 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 169.2 430.56 
+L 321.036735 430.56 
+L 321.036735 397.645714 
+L 169.2 397.645714 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #4fc0e5"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 169.2 389.417143 
+L 321.036735 389.417143 
+L 321.036735 356.502857 
+L 169.2 356.502857 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #4fc0e5"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 169.2 348.274286 
+L 321.036735 348.274286 
+L 321.036735 315.36 
+L 169.2 315.36 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #4fc0e5"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 169.2 307.131429 
+L 321.036735 307.131429 
+L 321.036735 274.217143 
+L 169.2 274.217143 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #4fc0e5"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 169.2 265.988571 
+L 396.955102 265.988571 
+L 396.955102 233.074286 
+L 169.2 233.074286 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #45a6d4"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 169.2 224.845714 
+L 396.955102 224.845714 
+L 396.955102 191.931429 
+L 169.2 191.931429 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #45a6d4"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 169.2 183.702857 
+L 396.955102 183.702857 
+L 396.955102 150.788571 
+L 169.2 150.788571 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #45a6d4"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 169.2 142.56 
+L 548.791837 142.56 
+L 548.791837 109.645714 
+L 169.2 109.645714 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #3271b1"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 169.2 101.417143 
+L 624.710204 101.417143 
+L 624.710204 68.502857 
+L 169.2 68.502857 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #2857a0"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 169.2 60.274286 
+L 700.628571 60.274286 
+L 700.628571 27.36 
+L 169.2 27.36 
+z
+" clip-path="url(#p2c3f6ff62d)" style="fill: #1e3d8f"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="169.2" y="464.877812" transform="rotate(-0 169.2 464.877812)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="245.118367" y="464.877812" transform="rotate(-0 245.118367 464.877812)">1</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="text_3">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="321.036735" y="464.877812" transform="rotate(-0 321.036735 464.877812)">2</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="396.955102" y="464.877812" transform="rotate(-0 396.955102 464.877812)">3</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="472.873469" y="464.877812" transform="rotate(-0 472.873469 464.877812)">4</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="548.791837" y="464.877812" transform="rotate(-0 548.791837 464.877812)">5</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="624.710204" y="464.877812" transform="rotate(-0 624.710204 464.877812)">6</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="text_8">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: middle" x="700.628571" y="464.877812" transform="rotate(-0 700.628571 464.877812)">7</text>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 18px; font-family: 'Arial', sans-serif; text-anchor: middle" x="448.2" y="491.749375" transform="rotate(-0 448.2 491.749375)">Número de Patentes Publicadas</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="text_10">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(53.265625 402.279576)">Agro Environmental Prot</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(76.628125 413.127388)">Institute Ministry Of</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(67.710937 423.821451)">Agriculture And Rural</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(134.035937 434.515513)">Affairs</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="text_11">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(59.921875 371.96625)">Chinese Res Acad Env</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(121.625 382.543125)">Sciences</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="text_12">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: end" x="162.2" y="335.456987" transform="rotate(-0 162.2 335.456987)">Essenlix Corp</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="text_13">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: end" x="162.2" y="294.314129" transform="rotate(-0 162.2 294.314129)">Cho Sung Kook</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="text_14">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(52.15 248.540022)">Univ Kunming Science &amp;</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(111.617187 259.234085)">Technology</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="text_15">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: end" x="162.2" y="211.967478" transform="rotate(-0 162.2 211.967478)">Univ Yunnan</text>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="text_16">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(96.060937 160.968996)">Nanjing Inst Of</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(54.929687 171.663058)">Environmental Sciences</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(142.748437 182.239933)">Mee</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="text_17">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(68.282812 125.114576)">Nanjing University Of</text>
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif" transform="translate(111.617187 135.808638)">Technology</text>
+     </g>
+    </g>
+    <g id="ytick_9">
+     <g id="text_18">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: end" x="162.2" y="88.538906" transform="rotate(-0 162.2 88.538906)">Univ Central South</text>
+     </g>
+    </g>
+    <g id="ytick_10">
+     <g id="text_19">
+      <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: end" x="162.2" y="47.396049" transform="rotate(-0 162.2 47.396049)">Univ Zhejiang</text>
+     </g>
+    </g>
+    <g id="text_20">
+     <text style="font-size: 18px; font-family: 'Arial', sans-serif; text-anchor: middle" x="36.5725" y="228.96" transform="rotate(-90 36.5725 228.96)">Solicitantes</text>
+    </g>
+   </g>
+   <g id="patch_13">
+    <path d="M 169.2 450.72 
+L 169.2 7.2 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 169.2 450.72 
+L 727.2 450.72 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="334.322449" y="416.690357" transform="rotate(-0 334.322449 416.690357)">2 (0.64%)</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="334.322449" y="375.5475" transform="rotate(-0 334.322449 375.5475)">2 (0.64%)</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="334.322449" y="334.404643" transform="rotate(-0 334.322449 334.404643)">2 (0.64%)</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="334.322449" y="293.261786" transform="rotate(-0 334.322449 293.261786)">2 (0.64%)</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="410.240816" y="252.118929" transform="rotate(-0 410.240816 252.118929)">3 (0.96%)</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="410.240816" y="210.976071" transform="rotate(-0 410.240816 210.976071)">3 (0.96%)</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="410.240816" y="169.833214" transform="rotate(-0 410.240816 169.833214)">3 (0.96%)</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="562.077551" y="128.690357" transform="rotate(-0 562.077551 128.690357)">5 (1.59%)</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="637.995918" y="87.5475" transform="rotate(-0 637.995918 87.5475)">6 (1.91%)</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 10px; font-family: 'Arial', sans-serif; text-anchor: start" x="713.914286" y="46.404643" transform="rotate(-0 713.914286 46.404643)">7 (2.23%)</text>
+   </g>
+  </g>
+  <g id="text_31">
+   <text style="font-size: 12px; font-family: 'Arial', sans-serif" transform="translate(7.2 546.165)">* Los solicitantes de patentes son quienes tienen el derecho legal de presentar y reclamar la protección de una invención, lo que les otorga</text>
+   <text style="font-size: 12px; font-family: 'Arial', sans-serif" transform="translate(7.2 558.997875)">exclusividad para explotarla comercialmente.</text>
+  </g>
+  <g id="text_32">
+   <text style="font-size: 12px; font-family: 'Arial', sans-serif" transform="translate(7.2 589.318125)">** Un solicitante puede ser una persona física o jurídica que busca proteger una invención mediante una patente, asegurando su control y</text>
+   <text style="font-size: 12px; font-family: 'Arial', sans-serif" transform="translate(7.2 602.20725)">aprovechamiento exclusivo de la innovación.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p2c3f6ff62d">
+   <rect x="169.2" y="7.2" width="558" height="443.52"/>
+  </clipPath>
+ </defs>
+</svg>

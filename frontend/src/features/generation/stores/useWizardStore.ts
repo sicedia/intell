@@ -1,10 +1,11 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { AlgorithmConfig } from "../constants/algorithms";
 
 interface WizardState {
     currentStep: number;
     sourceType: "espacenet_excel" | "lens_query";
-    sourceFile: File | null;
+    sourceFile: File | null; // Not persisted - File objects are not serializable
     selectedAlgorithms: AlgorithmConfig[];
     jobId: number | null;
 
@@ -17,24 +18,48 @@ interface WizardState {
     reset: () => void;
 }
 
-export const useWizardStore = create<WizardState>((set) => ({
-    currentStep: 0,
-    sourceType: "espacenet_excel",
-    sourceFile: null,
-    selectedAlgorithms: [],
-    jobId: null,
+// Persisted state (excludes sourceFile as it's not serializable)
+type PersistedWizardState = Omit<WizardState, "sourceFile">;
 
-    setStep: (step) => set({ currentStep: step }),
-    setSourceType: (type) => set({ sourceType: type }),
-    setSourceFile: (file) => set({ sourceFile: file }),
-    setSelectedAlgorithms: (algorithms) => set({ selectedAlgorithms: algorithms }),
-    setJobId: (id) => set({ jobId: id }),
-    reset: () =>
-        set({
+export const useWizardStore = create<WizardState>()(
+    persist(
+        (set) => ({
             currentStep: 0,
             sourceType: "espacenet_excel",
             sourceFile: null,
             selectedAlgorithms: [],
             jobId: null,
+
+            setStep: (step) => set({ currentStep: step }),
+            setSourceType: (type) => set({ sourceType: type }),
+            setSourceFile: (file) => set({ sourceFile: file }),
+            setSelectedAlgorithms: (algorithms) => set({ selectedAlgorithms: algorithms }),
+            setJobId: (id) => set({ jobId: id }),
+            reset: () =>
+                set({
+                    currentStep: 0,
+                    sourceType: "espacenet_excel",
+                    sourceFile: null,
+                    selectedAlgorithms: [],
+                    jobId: null,
+                }),
         }),
-}));
+        {
+            name: "wizard-store",
+            storage: createJSONStorage(() => sessionStorage),
+            // Only persist serializable fields
+            partialize: (state): PersistedWizardState => ({
+                currentStep: state.currentStep,
+                sourceType: state.sourceType,
+                selectedAlgorithms: state.selectedAlgorithms,
+                jobId: state.jobId,
+                setStep: state.setStep,
+                setSourceType: state.setSourceType,
+                setSourceFile: state.setSourceFile,
+                setSelectedAlgorithms: state.setSelectedAlgorithms,
+                setJobId: state.setJobId,
+                reset: state.reset,
+            }),
+        }
+    )
+);

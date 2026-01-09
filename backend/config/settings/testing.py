@@ -59,6 +59,13 @@ CACHES = {
     }
 }
 
+# Channel layers - use in-memory backend for tests (no Redis required)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 # Disable security features for faster tests
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
@@ -77,6 +84,9 @@ MEDIA_ROOT = tempfile.mkdtemp()
 # Django REST Framework - simplified for tests
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Allow all for tests
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],

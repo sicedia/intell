@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/lib/api-client";
-import { Job } from "../constants/job";
+import { Job, BackendJob, transformJob } from "../constants/job";
 import { env } from "@/shared/lib/env";
 
 const getBaseUrl = () => {
@@ -34,11 +34,12 @@ export const createJob = async (formData: FormData): Promise<{ job_id: number; s
 
         let errorMessage = `API Error: ${response.statusText}`;
 
-        if (typeof errorData === 'object' && errorData) {
-            if ('message' in errorData) {
-                errorMessage = (errorData as any).message;
-            } else if ('detail' in errorData) {
-                errorMessage = (errorData as any).detail;
+        if (typeof errorData === 'object' && errorData !== null) {
+            const errorObj = errorData as Record<string, unknown>;
+            if ('message' in errorObj && typeof errorObj.message === 'string') {
+                errorMessage = errorObj.message;
+            } else if ('detail' in errorObj && typeof errorObj.detail === 'string') {
+                errorMessage = errorObj.detail;
             } else {
                 // Flatten field errors, e.g. { source_data: ["Required"] }
                 errorMessage = JSON.stringify(errorData);
@@ -54,9 +55,11 @@ export const createJob = async (formData: FormData): Promise<{ job_id: number; s
 };
 
 export const getJob = async (jobId: number | string): Promise<Job> => {
-    return apiClient.get<Job>(`${BASE_URL}/${jobId}/`);
+    const backendJob = await apiClient.get<BackendJob>(`${BASE_URL}/${jobId}/`);
+    return transformJob(backendJob);
 };
 
-export const cancelJob = async (jobId: number | string): Promise<void> => {
-    return apiClient.post(`${BASE_URL}/${jobId}/cancel/`);
+export const cancelJob = async (jobId: number | string): Promise<{ job_id: number; status: string; message: string }> => {
+    const result = await apiClient.post<{ job_id: number; status: string; message: string }>(`${BASE_URL}/${jobId}/cancel/`);
+    return result;
 };

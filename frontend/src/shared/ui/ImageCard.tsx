@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from "next/image";
 import { Card } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
@@ -12,19 +13,20 @@ interface ImageCardProps {
     subtitle?: string; // e.g., Algorithm name
     className?: string;
     onView?: () => void;
-    onDownload?: () => void;
+    onDownload?: () => void; // Reserved for future use
 }
 
-export function ImageCard({ title, imageUrl, status, subtitle, className, onView, onDownload }: ImageCardProps) {
+export function ImageCard({ title, imageUrl, status, subtitle, className, onView }: ImageCardProps) {
     return (
         <Card className={cn("overflow-hidden flex flex-col h-full", className)}>
-            <div className="relative aspect-square w-full bg-muted/40 cursor-pointer group" onClick={onView}>
+            <div className="relative aspect-square w-full bg-muted/40 cursor-pointer group overflow-hidden" onClick={onView}>
                 {imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                         src={imageUrl}
                         alt={title}
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground text-sm">

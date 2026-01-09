@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
 import { hasLocale } from "next-intl";
-import { AppShell } from "@/components/layout/AppShell";
+import { AppShell } from "@/shared/components/layout/AppShell";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });

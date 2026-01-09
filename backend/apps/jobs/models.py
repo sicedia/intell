@@ -72,9 +72,36 @@ class Job(models.Model):
         return f"Job {self.id} ({self.status})"
     
     def cancel(self):
-        """Cancel the job."""
+        """Cancel the job and all associated tasks."""
+        from celery import current_app
+        
+        # Mark job as cancelled
         self.status = self.Status.CANCELLED
         self.save(update_fields=['status', 'updated_at'])
+        
+        # Cancel all pending/running image tasks
+        image_tasks = self.image_tasks.all()
+        for task in image_tasks:
+            if task.status in [ImageTask.Status.PENDING, ImageTask.Status.RUNNING]:
+                task.status = ImageTask.Status.CANCELLED
+                task.save(update_fields=['status', 'updated_at'])
+                
+                # Try to revoke Celery task if we have the task_id
+                if hasattr(task, 'celery_task_id') and task.celery_task_id:
+                    try:
+                        current_app.control.revoke(task.celery_task_id, terminate=True)
+                    except Exception:
+                        pass  # Task may have already completed
+        
+        # Emit cancellation event
+        from apps.audit.helpers import emit_event
+        emit_event(
+            job_id=self.id,
+            event_type='job_status_changed',
+            level='INFO',
+            message='Job cancelled by user',
+            payload={'status': self.Status.CANCELLED}
+        )
 
 
 class ImageTask(models.Model):

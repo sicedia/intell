@@ -80,10 +80,21 @@ def emit_event(
     )
     
     # Update status/progress in related entities
+    job_updated = False
     if job_id:
         try:
             job = Job.objects.get(id=job_id)
-            _update_job_status(job, event_type, progress)
+            # Special handling for job_status_changed - update status from payload
+            if event_type == 'job_status_changed' and payload:
+                new_status = payload.get('status')
+                if new_status:
+                    job.status = new_status
+                if progress is not None:
+                    job.progress_total = progress
+                job.save(update_fields=['status', 'progress_total', 'updated_at'])
+            else:
+                _update_job_status(job, event_type, progress)
+            job_updated = True
         except Job.DoesNotExist:
             pass
     
@@ -91,12 +102,29 @@ def emit_event(
         try:
             image_task = ImageTask.objects.get(id=image_task_id)
             _update_image_task_status(image_task, event_type, progress)
-            # Also update job if not already updated
-            if not job_id and image_task.job_id:
+            # Also update job progress based on all image tasks if not already updated
+            if image_task.job_id and not job_updated:
                 try:
                     job = Job.objects.get(id=image_task.job_id)
-                    _update_job_status(job, event_type, progress)
-                    job_id = job.id
+                    # Don't recalculate progress if job is already finalized
+                    # This prevents race conditions where delayed events override final status
+                    is_finalized = job.status in [Job.Status.SUCCESS, Job.Status.FAILED, Job.Status.PARTIAL_SUCCESS, Job.Status.CANCELLED]
+                    
+                    if not is_finalized:
+                        # Recalculate job progress_total from all image tasks
+                        image_tasks = ImageTask.objects.filter(job=job)
+                        if image_tasks.exists():
+                            # Calculate average progress, only counting tasks that have started
+                            total_progress = sum(task.progress for task in image_tasks)
+                            task_count = image_tasks.count()
+                            avg_progress = int(total_progress / task_count) if task_count > 0 else 0
+                            job.progress_total = avg_progress
+                            # Only update status if not already finalized
+                            job.status = Job.Status.RUNNING
+                            job.save(update_fields=['status', 'progress_total', 'updated_at'])
+                    # Set job_id for WebSocket emission
+                    if not job_id:
+                        job_id = job.id
                 except Job.DoesNotExist:
                     pass
         except ImageTask.DoesNotExist:
@@ -151,8 +179,12 @@ def emit_event(
 
 
 def _update_job_status(job, event_type: str, progress: Optional[int]):
-    """Update Job status based on event_type."""
+    """
+    Update Job status and progress based on event_type.
     
+    Note: For job_status_changed events, the status should already be set
+    in finalize_job, so we just update progress if provided.
+    """
     if event_type == 'START':
         job.status = Job.Status.RUNNING
         if progress is not None:
@@ -161,6 +193,16 @@ def _update_job_status(job, event_type: str, progress: Optional[int]):
         job.status = Job.Status.RUNNING
         if progress is not None:
             job.progress_total = progress
+    elif event_type == 'job_status_changed':
+        # Status should already be set by finalize_job, just update progress
+        # But we'll recalculate from image tasks to ensure accuracy
+        if progress is not None:
+            job.progress_total = progress
+        # Recalculate from image tasks to ensure consistency
+        image_tasks = ImageTask.objects.filter(job=job)
+        if image_tasks.exists():
+            avg_progress = sum(task.progress for task in image_tasks) / image_tasks.count()
+            job.progress_total = int(avg_progress)
     elif event_type == 'ERROR':
         # Don't automatically set to FAILED - let finalize_job handle it
         if progress is not None:

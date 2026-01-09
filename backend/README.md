@@ -40,7 +40,54 @@ backend/
 
 ### Installation
 
-1. **Start infrastructure services (PostgreSQL, Redis):**
+#### Automated Setup (Recommended)
+
+1. **Start infrastructure services:**
+   ```bash
+   cd ../infrastructure
+   # Use automated setup script
+   ./setup.sh  # Linux/macOS
+   # or
+   .\setup.ps1  # Windows PowerShell
+   
+   # Or manually:
+   docker-compose up -d
+   ```
+
+2. **Install Python dependencies:**
+   ```bash
+   cd ../backend
+   pip install -r requirements.txt
+   ```
+
+3. **Set up environment variables:**
+   ```bash
+   cp env.example .env
+   # The DATABASE_URL is already configured in env.example
+   ```
+
+4. **Run automated backend setup:**
+   ```bash
+   python scripts/setup_dev.py
+   ```
+   
+   This script will:
+   - Check if infrastructure services are running
+   - Wait for database to be ready
+   - Run Django migrations automatically
+   - Create a superuser interactively (optional)
+   
+   Options:
+   ```bash
+   python scripts/setup_dev.py --skip-superuser  # Skip superuser creation
+   python scripts/setup_dev.py --skip-infrastructure-check  # Skip infrastructure check
+   ```
+
+#### Manual Setup (Alternative)
+
+If you prefer to set up manually:
+
+1. **Start infrastructure services:**
    ```bash
    cd ../infrastructure
    docker-compose up -d
@@ -48,13 +95,13 @@ backend/
 
 2. **Install Python dependencies:**
    ```bash
+   cd ../backend
    pip install -r requirements.txt
    ```
 
 3. **Set up environment variables:**
    ```bash
    cp env.example .env
-   # Edit .env with your settings
    ```
    
    **Required variables for development:**

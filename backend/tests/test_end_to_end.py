@@ -72,7 +72,7 @@ class TestEndToEndPipeline:
         # Verify SVG text
         assert chart_result.svg_text is not None
         assert len(chart_result.svg_text) > 0
-        assert chart_result.svg_text.startswith('<svg')
+        assert '<svg' in chart_result.svg_text  # SVG may start with XML declaration
         
         # Step 4: Update ImageTask with results
         image_task.chart_data = chart_result.chart_data

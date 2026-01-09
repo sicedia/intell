@@ -56,7 +56,7 @@ class TestTopPatentCountries:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'horizontal_bar'
         assert 'series' in result.chart_data
@@ -96,7 +96,7 @@ class TestTopPatentInventors:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'horizontal_bar'
         assert 'series' in result.chart_data
@@ -138,7 +138,7 @@ class TestTopPatentApplicants:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'horizontal_bar'
         assert 'series' in result.chart_data
@@ -166,7 +166,7 @@ class TestPatentEvolution:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'line'
         assert 'series' in result.chart_data
@@ -195,7 +195,7 @@ class TestPatentCumulative:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'line'
         assert 'series' in result.chart_data
@@ -224,7 +224,7 @@ class TestPatentTrendsCumulative:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'dual_axis_line'
         assert 'series' in result.chart_data
@@ -254,7 +254,7 @@ class TestPatentForecast:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'forecast_line'
         assert 'historical_series' in result.chart_data
@@ -299,7 +299,7 @@ class TestCPCTreemap:
         assert result.png_bytes is not None
         assert len(result.png_bytes) > 0
         assert result.svg_text is not None
-        assert result.svg_text.startswith('<svg')
+        assert '<svg' in result.svg_text  # SVG may start with XML declaration
         assert result.chart_data is not None
         assert result.chart_data['type'] == 'treemap'
         assert 'series' in result.chart_data

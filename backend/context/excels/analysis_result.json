@@ -1,0 +1,2294 @@
+{
+  "Filters_20250331_1141.xlsx": {
+    "file_path": "C:\\Projects\\intell\\backend\\context\\excels\\Filters_20250331_1141.xlsx",
+    "sheet_count": 14,
+    "sheets": {
+      "Query": {
+        "name": "Query",
+        "rows": 6,
+        "columns": [
+          "Espacenet"
+        ],
+        "column_count": 1,
+        "column_details": {
+          "Espacenet": {
+            "name": "Espacenet",
+            "dtype": "object",
+            "non_null_count": 5,
+            "null_count": 1,
+            "unique_values": 5,
+            "sample_values": [
+              "Patent search",
+              "241 results found for (ctxt all \"plant*\" OR ctxt all \"phytorem*\") AND ctxt=(\"heavy\" prox/distance<3 \"metal\") AND (cpc any \"G01N27\" OR cpc any \"G01N33\")",
+              "Query language: en / de / fr",
+              "Filters: ",
+              "Open the \"Results\" sheet (select tab below) to view the results."
+            ]
+          }
+        },
+        "sample_data": [
+          {
+            "Espacenet": "Patent search"
+          },
+          {
+            "Espacenet": "241 results found for (ctxt all \"plant*\" OR ctxt all \"phytorem*\") AND ctxt=(\"heavy\" prox/distance<3 \"metal\") AND (cpc any \"G01N27\" OR cpc any \"G01N33\")"
+          },
+          {
+            "Espacenet": NaN
+          },
+          {
+            "Espacenet": "Query language: en / de / fr"
+          },
+          {
+            "Espacenet": "Filters: "
+          },
+          {
+            "Espacenet": "Open the \"Results\" sheet (select tab below) to view the results."
+          }
+        ],
+        "potential_use": null
+      },
+      "Countries (family)": {
+        "name": "Countries (family)",
+        "rows": 35,
+        "columns": [
+          "Countries (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Countries (family)": {
+            "name": "Countries (family)",
+            "dtype": "object",
+            "non_null_count": 35,
+            "null_count": 0,
+            "unique_values": 35,
+            "sample_values": [
+              "CN",
+              "WO",
+              "US",
+              "EP",
+              "KR"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 35,
+            "null_count": 0,
+            "unique_values": 13,
+            "sample_values": [
+              "192",
+              "30",
+              "29",
+              "18",
+              "13"
+            ],
+            "min": 1.0,
+            "max": 192.0,
+            "mean": 10.4
+          }
+        },
+        "sample_data": [
+          {
+            "Countries (family)": "CN",
+            "Number of documents": 192
+          },
+          {
+            "Countries (family)": "WO",
+            "Number of documents": 30
+          },
+          {
+            "Countries (family)": "US",
+            "Number of documents": 29
+          },
+          {
+            "Countries (family)": "EP",
+            "Number of documents": 18
+          },
+          {
+            "Countries (family)": "KR",
+            "Number of documents": 13
+          },
+          {
+            "Countries (family)": "CA",
+            "Number of documents": 11
+          },
+          {
+            "Countries (family)": "JP",
+            "Number of documents": 10
+          },
+          {
+            "Countries (family)": "AU",
+            "Number of documents": 8
+          },
+          {
+            "Countries (family)": "DE",
+            "Number of documents": 6
+          },
+          {
+            "Countries (family)": "AT",
+            "Number of documents": 4
+          }
+        ],
+        "potential_use": null
+      },
+      "Languages (family)": {
+        "name": "Languages (family)",
+        "rows": 12,
+        "columns": [
+          "Languages (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Languages (family)": {
+            "name": "Languages (family)",
+            "dtype": "object",
+            "non_null_count": 12,
+            "null_count": 0,
+            "unique_values": 12,
+            "sample_values": [
+              "en",
+              "zh",
+              "de",
+              "ko",
+              "fr"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 12,
+            "null_count": 0,
+            "unique_values": 8,
+            "sample_values": [
+              "238",
+              "192",
+              "13",
+              "11",
+              "9"
+            ],
+            "min": 1.0,
+            "max": 238.0,
+            "mean": 39.833333333333336
+          }
+        },
+        "sample_data": [
+          {
+            "Languages (family)": "en",
+            "Number of documents": 238
+          },
+          {
+            "Languages (family)": "zh",
+            "Number of documents": 192
+          },
+          {
+            "Languages (family)": "de",
+            "Number of documents": 13
+          },
+          {
+            "Languages (family)": "ko",
+            "Number of documents": 11
+          },
+          {
+            "Languages (family)": "fr",
+            "Number of documents": 9
+          },
+          {
+            "Languages (family)": "ja",
+            "Number of documents": 6
+          },
+          {
+            "Languages (family)": "es",
+            "Number of documents": 2
+          },
+          {
+            "Languages (family)": "ru",
+            "Number of documents": 2
+          },
+          {
+            "Languages (family)": "sv",
+            "Number of documents": 2
+          },
+          {
+            "Languages (family)": "it",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": null
+      },
+      "Earliest publication date (fam": {
+        "name": "Earliest publication date (fam",
+        "rows": 22,
+        "columns": [
+          "Earliest publication date (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Earliest publication date (family)": {
+            "name": "Earliest publication date (family)",
+            "dtype": "int64",
+            "non_null_count": 22,
+            "null_count": 0,
+            "unique_values": 22,
+            "sample_values": [
+              "1973",
+              "1989",
+              "1990",
+              "1994",
+              "1998"
+            ],
+            "min": 1973.0,
+            "max": 2023.0,
+            "mean": 2008.4545454545455,
+            "looks_like_year": true
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 22,
+            "null_count": 0,
+            "unique_values": 12,
+            "sample_values": [
+              "2",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "min": 1.0,
+            "max": 43.0,
+            "mean": 10.954545454545455
+          }
+        },
+        "sample_data": [
+          {
+            "Earliest publication date (family)": 1973,
+            "Number of documents": 2
+          },
+          {
+            "Earliest publication date (family)": 1989,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 1990,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 1994,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 1998,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 1999,
+            "Number of documents": 2
+          },
+          {
+            "Earliest publication date (family)": 2006,
+            "Number of documents": 2
+          },
+          {
+            "Earliest publication date (family)": 2007,
+            "Number of documents": 3
+          },
+          {
+            "Earliest publication date (family)": 2009,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 2011,
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "YEAR_COUNT_DATA (evolution/cumulative charts)"
+      },
+      "Earliest priority date": {
+        "name": "Earliest priority date",
+        "rows": 26,
+        "columns": [
+          "Earliest priority date",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Earliest priority date": {
+            "name": "Earliest priority date",
+            "dtype": "int64",
+            "non_null_count": 26,
+            "null_count": 0,
+            "unique_values": 26,
+            "sample_values": [
+              "1971",
+              "1972",
+              "1987",
+              "1992",
+              "1997"
+            ],
+            "min": 1971.0,
+            "max": 2023.0,
+            "mean": 2007.2307692307693,
+            "looks_like_year": true
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 26,
+            "null_count": 0,
+            "unique_values": 12,
+            "sample_values": [
+              "1",
+              "1",
+              "2",
+              "1",
+              "2"
+            ],
+            "min": 1.0,
+            "max": 34.0,
+            "mean": 9.26923076923077
+          }
+        },
+        "sample_data": [
+          {
+            "Earliest priority date": 1971,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 1972,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 1987,
+            "Number of documents": 2
+          },
+          {
+            "Earliest priority date": 1992,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 1997,
+            "Number of documents": 2
+          },
+          {
+            "Earliest priority date": 1999,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 2004,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 2005,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 2006,
+            "Number of documents": 2
+          },
+          {
+            "Earliest priority date": 2007,
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "YEAR_COUNT_DATA (evolution/cumulative charts)"
+      },
+      "IPC main groups": {
+        "name": "IPC main groups",
+        "rows": 101,
+        "columns": [
+          "IPC main groups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "IPC main groups": {
+            "name": "IPC main groups",
+            "dtype": "object",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 101,
+            "sample_values": [
+              "G01N33",
+              "G01N1",
+              "G01N27",
+              "G01N21",
+              "G06Q50"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 20,
+            "sample_values": [
+              "211",
+              "47",
+              "41",
+              "33",
+              "26"
+            ],
+            "min": 1.0,
+            "max": 211.0,
+            "mean": 7.148514851485149
+          }
+        },
+        "sample_data": [
+          {
+            "IPC main groups": "G01N33",
+            "Number of documents": 211
+          },
+          {
+            "IPC main groups": "G01N1",
+            "Number of documents": 47
+          },
+          {
+            "IPC main groups": "G01N27",
+            "Number of documents": 41
+          },
+          {
+            "IPC main groups": "G01N21",
+            "Number of documents": 33
+          },
+          {
+            "IPC main groups": "G06Q50",
+            "Number of documents": 26
+          },
+          {
+            "IPC main groups": "C12Q1",
+            "Number of documents": 20
+          },
+          {
+            "IPC main groups": "G06Q10",
+            "Number of documents": 20
+          },
+          {
+            "IPC main groups": "B09C1",
+            "Number of documents": 18
+          },
+          {
+            "IPC main groups": "C12N15",
+            "Number of documents": 13
+          },
+          {
+            "IPC main groups": "C02F101",
+            "Number of documents": 12
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "IPC subgroups": {
+        "name": "IPC subgroups",
+        "rows": 151,
+        "columns": [
+          "IPC subgroups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "IPC subgroups": {
+            "name": "IPC subgroups",
+            "dtype": "object",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 151,
+            "sample_values": [
+              "G01N33/24",
+              "G01N33/00",
+              "G01N33/18",
+              "G01N1/28",
+              "G06Q50/02"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 17,
+            "sample_values": [
+              "97",
+              "52",
+              "50",
+              "21",
+              "15"
+            ],
+            "min": 2.0,
+            "max": 97.0,
+            "mean": 5.311258278145695
+          }
+        },
+        "sample_data": [
+          {
+            "IPC subgroups": "G01N33/24",
+            "Number of documents": 97
+          },
+          {
+            "IPC subgroups": "G01N33/00",
+            "Number of documents": 52
+          },
+          {
+            "IPC subgroups": "G01N33/18",
+            "Number of documents": 50
+          },
+          {
+            "IPC subgroups": "G01N1/28",
+            "Number of documents": 21
+          },
+          {
+            "IPC subgroups": "G06Q50/02",
+            "Number of documents": 15
+          },
+          {
+            "IPC subgroups": "G06Q50/26",
+            "Number of documents": 14
+          },
+          {
+            "IPC subgroups": "G01N33/68",
+            "Number of documents": 12
+          },
+          {
+            "IPC subgroups": "B09C1/10",
+            "Number of documents": 11
+          },
+          {
+            "IPC subgroups": "C02F101/20",
+            "Number of documents": 11
+          },
+          {
+            "IPC subgroups": "G01N27/626",
+            "Number of documents": 11
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC main groups": {
+        "name": "CPC main groups",
+        "rows": 101,
+        "columns": [
+          "CPC main groups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC main groups": {
+            "name": "CPC main groups",
+            "dtype": "object",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 101,
+            "sample_values": [
+              "G01N33",
+              "G01N1",
+              "G01N27",
+              "G01N21",
+              "G06Q50"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 20,
+            "sample_values": [
+              "217",
+              "45",
+              "39",
+              "33",
+              "27"
+            ],
+            "min": 1.0,
+            "max": 217.0,
+            "mean": 7.544554455445544
+          }
+        },
+        "sample_data": [
+          {
+            "CPC main groups": "G01N33",
+            "Number of documents": 217
+          },
+          {
+            "CPC main groups": "G01N1",
+            "Number of documents": 45
+          },
+          {
+            "CPC main groups": "G01N27",
+            "Number of documents": 39
+          },
+          {
+            "CPC main groups": "G01N21",
+            "Number of documents": 33
+          },
+          {
+            "CPC main groups": "G06Q50",
+            "Number of documents": 27
+          },
+          {
+            "CPC main groups": "G06Q10",
+            "Number of documents": 20
+          },
+          {
+            "CPC main groups": "B09C1",
+            "Number of documents": 19
+          },
+          {
+            "CPC main groups": "C02F2101",
+            "Number of documents": 14
+          },
+          {
+            "CPC main groups": "C12Q1",
+            "Number of documents": 12
+          },
+          {
+            "CPC main groups": "C02F1",
+            "Number of documents": 11
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC subgroups": {
+        "name": "CPC subgroups",
+        "rows": 151,
+        "columns": [
+          "CPC subgroups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC subgroups": {
+            "name": "CPC subgroups",
+            "dtype": "object",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 151,
+            "sample_values": [
+              "G01N33/24",
+              "G01N33/18",
+              "G01N33/0098",
+              "G01N33/245",
+              "G01N1/28"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 17,
+            "sample_values": [
+              "98",
+              "40",
+              "39",
+              "27",
+              "17"
+            ],
+            "min": 2.0,
+            "max": 98.0,
+            "mean": 5.026490066225166
+          }
+        },
+        "sample_data": [
+          {
+            "CPC subgroups": "G01N33/24",
+            "Number of documents": 98
+          },
+          {
+            "CPC subgroups": "G01N33/18",
+            "Number of documents": 40
+          },
+          {
+            "CPC subgroups": "G01N33/0098",
+            "Number of documents": 39
+          },
+          {
+            "CPC subgroups": "G01N33/245",
+            "Number of documents": 27
+          },
+          {
+            "CPC subgroups": "G01N1/28",
+            "Number of documents": 17
+          },
+          {
+            "CPC subgroups": "G01N33/1813",
+            "Number of documents": 17
+          },
+          {
+            "CPC subgroups": "G06Q50/02",
+            "Number of documents": 16
+          },
+          {
+            "CPC subgroups": "C02F2101/20",
+            "Number of documents": 13
+          },
+          {
+            "CPC subgroups": "B09C1/105",
+            "Number of documents": 12
+          },
+          {
+            "CPC subgroups": "G06Q50/26",
+            "Number of documents": 12
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC assigning offices": {
+        "name": "CPC assigning offices",
+        "rows": 7,
+        "columns": [
+          "CPC assigning offices",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC assigning offices": {
+            "name": "CPC assigning offices",
+            "dtype": "object",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 7,
+            "sample_values": [
+              "CN",
+              "EP",
+              "US",
+              "KR",
+              "RU"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 6,
+            "sample_values": [
+              "187",
+              "68",
+              "31",
+              "13",
+              "2"
+            ],
+            "min": 1.0,
+            "max": 187.0,
+            "mean": 43.285714285714285
+          }
+        },
+        "sample_data": [
+          {
+            "CPC assigning offices": "CN",
+            "Number of documents": 187
+          },
+          {
+            "CPC assigning offices": "EP",
+            "Number of documents": 68
+          },
+          {
+            "CPC assigning offices": "US",
+            "Number of documents": 31
+          },
+          {
+            "CPC assigning offices": "KR",
+            "Number of documents": 13
+          },
+          {
+            "CPC assigning offices": "RU",
+            "Number of documents": 2
+          },
+          {
+            "CPC assigning offices": "AU",
+            "Number of documents": 1
+          },
+          {
+            "CPC assigning offices": "EA",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "Applicants": {
+        "name": "Applicants",
+        "rows": 278,
+        "columns": [
+          "Applicants",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Applicants": {
+            "name": "Applicants",
+            "dtype": "object",
+            "non_null_count": 278,
+            "null_count": 0,
+            "unique_values": 278,
+            "sample_values": [
+              "UNIV ZHEJIANG",
+              "UNIV CENTRAL SOUTH",
+              "NANJING UNIVERSITY OF TECHNOLOGY",
+              "NANJING INST OF ENVIRONMENTAL SCIENCES MEE",
+              "UNIV KUNMING SCIENCE & TECHNOLOGY"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 278,
+            "null_count": 0,
+            "unique_values": 6,
+            "sample_values": [
+              "7",
+              "6",
+              "5",
+              "3",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 7.0,
+            "mean": 1.129496402877698
+          }
+        },
+        "sample_data": [
+          {
+            "Applicants": "UNIV ZHEJIANG",
+            "Number of documents": 7
+          },
+          {
+            "Applicants": "UNIV CENTRAL SOUTH",
+            "Number of documents": 6
+          },
+          {
+            "Applicants": "NANJING UNIVERSITY OF TECHNOLOGY",
+            "Number of documents": 5
+          },
+          {
+            "Applicants": "NANJING INST OF ENVIRONMENTAL SCIENCES MEE",
+            "Number of documents": 3
+          },
+          {
+            "Applicants": "UNIV KUNMING SCIENCE & TECHNOLOGY",
+            "Number of documents": 3
+          },
+          {
+            "Applicants": "UNIV YUNNAN",
+            "Number of documents": 3
+          },
+          {
+            "Applicants": "AGRO ENVIRONMENTAL PROT INSTITUTE MINISTRY OF AGRICULTURE AND RURAL AFFAIRS",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "CHINESE RES ACAD ENV SCIENCES",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "CHO SUNG KOOK",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "ESSENLIX CORP",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "TOP_APPLICANTS"
+      },
+      "Inventors": {
+        "name": "Inventors",
+        "rows": 1000,
+        "columns": [
+          "Inventors",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Inventors": {
+            "name": "Inventors",
+            "dtype": "object",
+            "non_null_count": 1000,
+            "null_count": 0,
+            "unique_values": 1000,
+            "sample_values": [
+              "MA LI",
+              "CHEN WEI",
+              "DUAN CHANGQUN",
+              "GU XUEYUAN",
+              "LIU CHANG'E"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 1000,
+            "null_count": 0,
+            "unique_values": 4,
+            "sample_values": [
+              "4",
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 4.0,
+            "mean": 1.086
+          }
+        },
+        "sample_data": [
+          {
+            "Inventors": "MA LI",
+            "Number of documents": 4
+          },
+          {
+            "Inventors": "CHEN WEI",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "DUAN CHANGQUN",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "GU XUEYUAN",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "LIU CHANG'E",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "WEI QIUPING",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "AN JUNG SU",
+            "Number of documents": 2
+          },
+          {
+            "Inventors": "AN YI",
+            "Number of documents": 2
+          },
+          {
+            "Inventors": "BRYANT JR JERRY L",
+            "Number of documents": 2
+          },
+          {
+            "Inventors": "CAO JIAN",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "TOP_INVENTORS"
+      },
+      "Applicants - country": {
+        "name": "Applicants - country",
+        "rows": 10,
+        "columns": [
+          "Applicants - country",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Applicants - country": {
+            "name": "Applicants - country",
+            "dtype": "object",
+            "non_null_count": 10,
+            "null_count": 0,
+            "unique_values": 10,
+            "sample_values": [
+              "US",
+              "KR",
+              "CN",
+              "DE",
+              "CA"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 10,
+            "null_count": 0,
+            "unique_values": 7,
+            "sample_values": [
+              "63",
+              "11",
+              "9",
+              "8",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 63.0,
+            "mean": 10.1
+          }
+        },
+        "sample_data": [
+          {
+            "Applicants - country": "US",
+            "Number of documents": 63
+          },
+          {
+            "Applicants - country": "KR",
+            "Number of documents": 11
+          },
+          {
+            "Applicants - country": "CN",
+            "Number of documents": 9
+          },
+          {
+            "Applicants - country": "DE",
+            "Number of documents": 8
+          },
+          {
+            "Applicants - country": "CA",
+            "Number of documents": 3
+          },
+          {
+            "Applicants - country": "IT",
+            "Number of documents": 2
+          },
+          {
+            "Applicants - country": "RU",
+            "Number of documents": 2
+          },
+          {
+            "Applicants - country": "FR",
+            "Number of documents": 1
+          },
+          {
+            "Applicants - country": "JP",
+            "Number of documents": 1
+          },
+          {
+            "Applicants - country": "TR",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "TOP_APPLICANTS"
+      },
+      "Inventors - country": {
+        "name": "Inventors - country",
+        "rows": 16,
+        "columns": [
+          "Inventors - country",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Inventors - country": {
+            "name": "Inventors - country",
+            "dtype": "object",
+            "non_null_count": 16,
+            "null_count": 0,
+            "unique_values": 16,
+            "sample_values": [
+              "US",
+              "CN",
+              "KR",
+              "DE",
+              "CA"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 16,
+            "null_count": 0,
+            "unique_values": 6,
+            "sample_values": [
+              "62",
+              "9",
+              "9",
+              "6",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 62.0,
+            "mean": 7.0
+          }
+        },
+        "sample_data": [
+          {
+            "Inventors - country": "US",
+            "Number of documents": 62
+          },
+          {
+            "Inventors - country": "CN",
+            "Number of documents": 9
+          },
+          {
+            "Inventors - country": "KR",
+            "Number of documents": 9
+          },
+          {
+            "Inventors - country": "DE",
+            "Number of documents": 6
+          },
+          {
+            "Inventors - country": "CA",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "CH",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "EE",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "FI",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "GB",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "ES",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "TOP_INVENTORS"
+      }
+    }
+  },
+  "Filters_20250522_1212.xlsx": {
+    "file_path": "C:\\Projects\\intell\\backend\\context\\excels\\Filters_20250522_1212.xlsx",
+    "sheet_count": 14,
+    "sheets": {
+      "Query": {
+        "name": "Query",
+        "rows": 6,
+        "columns": [
+          "Espacenet"
+        ],
+        "column_count": 1,
+        "column_details": {
+          "Espacenet": {
+            "name": "Espacenet",
+            "dtype": "object",
+            "non_null_count": 5,
+            "null_count": 1,
+            "unique_values": 5,
+            "sample_values": [
+              "Patent search",
+              "101 results found for (ctxt = \"biofilament*\" OR ctxt = \"biopol?mer*\" OR ctxt = \"bioplastic*\" OR ctxt = \"natural*\" OR ctxt = \"organi*\") AND (ta = \"nanocel?ulose\" OR ta = \"cel?ulose*\") AND (ta = \"3D print*\" OR ta = \"ad?itive manufactur*\") AND (cl =/low \"B33Y70/00\" OR cl =/low \"C08L1/00\" OR cl =/low \"B82Y30/00\" OR cl =/low \"B82Y40/00\" OR cl =/low \"B29C64/00\" OR cl =/low \"Y02W30/00\")",
+              "Query language: en / de / fr",
+              "Filters: ",
+              "Open the \"Results\" sheet (select tab below) to view the results."
+            ]
+          }
+        },
+        "sample_data": [
+          {
+            "Espacenet": "Patent search"
+          },
+          {
+            "Espacenet": "101 results found for (ctxt = \"biofilament*\" OR ctxt = \"biopol?mer*\" OR ctxt = \"bioplastic*\" OR ctxt = \"natural*\" OR ctxt = \"organi*\") AND (ta = \"nanocel?ulose\" OR ta = \"cel?ulose*\") AND (ta = \"3D print*\" OR ta = \"ad?itive manufactur*\") AND (cl =/low \"B33Y70/00\" OR cl =/low \"C08L1/00\" OR cl =/low \"B82Y30/00\" OR cl =/low \"B82Y40/00\" OR cl =/low \"B29C64/00\" OR cl =/low \"Y02W30/00\")"
+          },
+          {
+            "Espacenet": NaN
+          },
+          {
+            "Espacenet": "Query language: en / de / fr"
+          },
+          {
+            "Espacenet": "Filters: "
+          },
+          {
+            "Espacenet": "Open the \"Results\" sheet (select tab below) to view the results."
+          }
+        ],
+        "potential_use": null
+      },
+      "Countries (family)": {
+        "name": "Countries (family)",
+        "rows": 15,
+        "columns": [
+          "Countries (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Countries (family)": {
+            "name": "Countries (family)",
+            "dtype": "object",
+            "non_null_count": 15,
+            "null_count": 0,
+            "unique_values": 15,
+            "sample_values": [
+              "CN",
+              "US",
+              "WO",
+              "EP",
+              "KR"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 15,
+            "null_count": 0,
+            "unique_values": 6,
+            "sample_values": [
+              "82",
+              "13",
+              "13",
+              "8",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 82.0,
+            "mean": 8.933333333333334
+          }
+        },
+        "sample_data": [
+          {
+            "Countries (family)": "CN",
+            "Number of documents": 82
+          },
+          {
+            "Countries (family)": "US",
+            "Number of documents": 13
+          },
+          {
+            "Countries (family)": "WO",
+            "Number of documents": 13
+          },
+          {
+            "Countries (family)": "EP",
+            "Number of documents": 8
+          },
+          {
+            "Countries (family)": "KR",
+            "Number of documents": 3
+          },
+          {
+            "Countries (family)": "CA",
+            "Number of documents": 2
+          },
+          {
+            "Countries (family)": "DE",
+            "Number of documents": 2
+          },
+          {
+            "Countries (family)": "JP",
+            "Number of documents": 2
+          },
+          {
+            "Countries (family)": "PH",
+            "Number of documents": 2
+          },
+          {
+            "Countries (family)": "SE",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": null
+      },
+      "Languages (family)": {
+        "name": "Languages (family)",
+        "rows": 7,
+        "columns": [
+          "Languages (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Languages (family)": {
+            "name": "Languages (family)",
+            "dtype": "object",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 7,
+            "sample_values": [
+              "en",
+              "zh",
+              "ja",
+              "ko",
+              "de"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 5,
+            "sample_values": [
+              "99",
+              "83",
+              "3",
+              "3",
+              "2"
+            ],
+            "min": 1.0,
+            "max": 99.0,
+            "mean": 27.428571428571427
+          }
+        },
+        "sample_data": [
+          {
+            "Languages (family)": "en",
+            "Number of documents": 99
+          },
+          {
+            "Languages (family)": "zh",
+            "Number of documents": 83
+          },
+          {
+            "Languages (family)": "ja",
+            "Number of documents": 3
+          },
+          {
+            "Languages (family)": "ko",
+            "Number of documents": 3
+          },
+          {
+            "Languages (family)": "de",
+            "Number of documents": 2
+          },
+          {
+            "Languages (family)": "fr",
+            "Number of documents": 1
+          },
+          {
+            "Languages (family)": "ru",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": null
+      },
+      "Earliest publication date (fam": {
+        "name": "Earliest publication date (fam",
+        "rows": 11,
+        "columns": [
+          "Earliest publication date (family)",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Earliest publication date (family)": {
+            "name": "Earliest publication date (family)",
+            "dtype": "int64",
+            "non_null_count": 11,
+            "null_count": 0,
+            "unique_values": 11,
+            "sample_values": [
+              "2007",
+              "2015",
+              "2016",
+              "2017",
+              "2018"
+            ],
+            "min": 2007.0,
+            "max": 2024.0,
+            "mean": 2018.3636363636363,
+            "looks_like_year": true
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 11,
+            "null_count": 0,
+            "unique_values": 9,
+            "sample_values": [
+              "1",
+              "2",
+              "9",
+              "12",
+              "8"
+            ],
+            "min": 1.0,
+            "max": 15.0,
+            "mean": 9.181818181818182
+          }
+        },
+        "sample_data": [
+          {
+            "Earliest publication date (family)": 2007,
+            "Number of documents": 1
+          },
+          {
+            "Earliest publication date (family)": 2015,
+            "Number of documents": 2
+          },
+          {
+            "Earliest publication date (family)": 2016,
+            "Number of documents": 9
+          },
+          {
+            "Earliest publication date (family)": 2017,
+            "Number of documents": 12
+          },
+          {
+            "Earliest publication date (family)": 2018,
+            "Number of documents": 8
+          },
+          {
+            "Earliest publication date (family)": 2019,
+            "Number of documents": 8
+          },
+          {
+            "Earliest publication date (family)": 2020,
+            "Number of documents": 14
+          },
+          {
+            "Earliest publication date (family)": 2021,
+            "Number of documents": 12
+          },
+          {
+            "Earliest publication date (family)": 2022,
+            "Number of documents": 13
+          },
+          {
+            "Earliest publication date (family)": 2023,
+            "Number of documents": 15
+          }
+        ],
+        "potential_use": "YEAR_COUNT_DATA (evolution/cumulative charts)"
+      },
+      "Earliest priority date": {
+        "name": "Earliest priority date",
+        "rows": 11,
+        "columns": [
+          "Earliest priority date",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Earliest priority date": {
+            "name": "Earliest priority date",
+            "dtype": "int64",
+            "non_null_count": 11,
+            "null_count": 0,
+            "unique_values": 11,
+            "sample_values": [
+              "2006",
+              "2014",
+              "2015",
+              "2016",
+              "2017"
+            ],
+            "min": 2006.0,
+            "max": 2023.0,
+            "mean": 2017.3636363636363,
+            "looks_like_year": true
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 11,
+            "null_count": 0,
+            "unique_values": 9,
+            "sample_values": [
+              "1",
+              "2",
+              "7",
+              "12",
+              "6"
+            ],
+            "min": 1.0,
+            "max": 16.0,
+            "mean": 9.181818181818182
+          }
+        },
+        "sample_data": [
+          {
+            "Earliest priority date": 2006,
+            "Number of documents": 1
+          },
+          {
+            "Earliest priority date": 2014,
+            "Number of documents": 2
+          },
+          {
+            "Earliest priority date": 2015,
+            "Number of documents": 7
+          },
+          {
+            "Earliest priority date": 2016,
+            "Number of documents": 12
+          },
+          {
+            "Earliest priority date": 2017,
+            "Number of documents": 6
+          },
+          {
+            "Earliest priority date": 2018,
+            "Number of documents": 7
+          },
+          {
+            "Earliest priority date": 2019,
+            "Number of documents": 14
+          },
+          {
+            "Earliest priority date": 2020,
+            "Number of documents": 15
+          },
+          {
+            "Earliest priority date": 2021,
+            "Number of documents": 12
+          },
+          {
+            "Earliest priority date": 2022,
+            "Number of documents": 9
+          }
+        ],
+        "potential_use": "YEAR_COUNT_DATA (evolution/cumulative charts)"
+      },
+      "IPC main groups": {
+        "name": "IPC main groups",
+        "rows": 101,
+        "columns": [
+          "IPC main groups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "IPC main groups": {
+            "name": "IPC main groups",
+            "dtype": "object",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 101,
+            "sample_values": [
+              "B33Y70",
+              "C08L1",
+              "B33Y10",
+              "C08K3",
+              "B29C64"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 101,
+            "null_count": 0,
+            "unique_values": 18,
+            "sample_values": [
+              "88",
+              "39",
+              "33",
+              "22",
+              "20"
+            ],
+            "min": 1.0,
+            "max": 88.0,
+            "mean": 5.346534653465347
+          }
+        },
+        "sample_data": [
+          {
+            "IPC main groups": "B33Y70",
+            "Number of documents": 88
+          },
+          {
+            "IPC main groups": "C08L1",
+            "Number of documents": 39
+          },
+          {
+            "IPC main groups": "B33Y10",
+            "Number of documents": 33
+          },
+          {
+            "IPC main groups": "C08K3",
+            "Number of documents": 22
+          },
+          {
+            "IPC main groups": "B29C64",
+            "Number of documents": 20
+          },
+          {
+            "IPC main groups": "B33Y80",
+            "Number of documents": 20
+          },
+          {
+            "IPC main groups": "C04B28",
+            "Number of documents": 19
+          },
+          {
+            "IPC main groups": "C08L67",
+            "Number of documents": 15
+          },
+          {
+            "IPC main groups": "A61L27",
+            "Number of documents": 14
+          },
+          {
+            "IPC main groups": "C08J3",
+            "Number of documents": 12
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "IPC subgroups": {
+        "name": "IPC subgroups",
+        "rows": 151,
+        "columns": [
+          "IPC subgroups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "IPC subgroups": {
+            "name": "IPC subgroups",
+            "dtype": "object",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 151,
+            "sample_values": [
+              "B33Y70/10",
+              "B33Y70/00",
+              "B33Y10/00",
+              "B33Y80/00",
+              "C08L67/04"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 151,
+            "null_count": 0,
+            "unique_values": 16,
+            "sample_values": [
+              "50",
+              "44",
+              "33",
+              "20",
+              "14"
+            ],
+            "min": 1.0,
+            "max": 50.0,
+            "mean": 3.794701986754967
+          }
+        },
+        "sample_data": [
+          {
+            "IPC subgroups": "B33Y70/10",
+            "Number of documents": 50
+          },
+          {
+            "IPC subgroups": "B33Y70/00",
+            "Number of documents": 44
+          },
+          {
+            "IPC subgroups": "B33Y10/00",
+            "Number of documents": 33
+          },
+          {
+            "IPC subgroups": "B33Y80/00",
+            "Number of documents": 20
+          },
+          {
+            "IPC subgroups": "C08L67/04",
+            "Number of documents": 14
+          },
+          {
+            "IPC subgroups": "C08L1/02",
+            "Number of documents": 13
+          },
+          {
+            "IPC subgroups": "C08L1/04",
+            "Number of documents": 13
+          },
+          {
+            "IPC subgroups": "B28B1/00",
+            "Number of documents": 11
+          },
+          {
+            "IPC subgroups": "C04B28/04",
+            "Number of documents": 11
+          },
+          {
+            "IPC subgroups": "C08K3/36",
+            "Number of documents": 9
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC main groups": {
+        "name": "CPC main groups",
+        "rows": 100,
+        "columns": [
+          "CPC main groups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC main groups": {
+            "name": "CPC main groups",
+            "dtype": "object",
+            "non_null_count": 100,
+            "null_count": 0,
+            "unique_values": 100,
+            "sample_values": [
+              "B33Y70",
+              "B33Y10",
+              "B33Y80",
+              "C04B28",
+              "C08L1"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 100,
+            "null_count": 0,
+            "unique_values": 19,
+            "sample_values": [
+              "78",
+              "32",
+              "20",
+              "18",
+              "18"
+            ],
+            "min": 1.0,
+            "max": 78.0,
+            "mean": 5.41
+          }
+        },
+        "sample_data": [
+          {
+            "CPC main groups": "B33Y70",
+            "Number of documents": 78
+          },
+          {
+            "CPC main groups": "B33Y10",
+            "Number of documents": 32
+          },
+          {
+            "CPC main groups": "B33Y80",
+            "Number of documents": 20
+          },
+          {
+            "CPC main groups": "C04B28",
+            "Number of documents": 18
+          },
+          {
+            "CPC main groups": "C08L1",
+            "Number of documents": 18
+          },
+          {
+            "CPC main groups": "C08K2201",
+            "Number of documents": 17
+          },
+          {
+            "CPC main groups": "C08L2205",
+            "Number of documents": 16
+          },
+          {
+            "CPC main groups": "B29C64",
+            "Number of documents": 15
+          },
+          {
+            "CPC main groups": "C04B2111",
+            "Number of documents": 14
+          },
+          {
+            "CPC main groups": "C04B2201",
+            "Number of documents": 12
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC subgroups": {
+        "name": "CPC subgroups",
+        "rows": 150,
+        "columns": [
+          "CPC subgroups",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC subgroups": {
+            "name": "CPC subgroups",
+            "dtype": "object",
+            "non_null_count": 150,
+            "null_count": 0,
+            "unique_values": 150,
+            "sample_values": [
+              "B33Y70/10",
+              "B33Y70/00",
+              "B33Y10/00",
+              "B33Y80/00",
+              "C08K2201/011"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 150,
+            "null_count": 0,
+            "unique_values": 17,
+            "sample_values": [
+              "44",
+              "39",
+              "32",
+              "20",
+              "14"
+            ],
+            "min": 1.0,
+            "max": 44.0,
+            "mean": 3.7533333333333334
+          }
+        },
+        "sample_data": [
+          {
+            "CPC subgroups": "B33Y70/10",
+            "Number of documents": 44
+          },
+          {
+            "CPC subgroups": "B33Y70/00",
+            "Number of documents": 39
+          },
+          {
+            "CPC subgroups": "B33Y10/00",
+            "Number of documents": 32
+          },
+          {
+            "CPC subgroups": "B33Y80/00",
+            "Number of documents": 20
+          },
+          {
+            "CPC subgroups": "C08K2201/011",
+            "Number of documents": 14
+          },
+          {
+            "CPC subgroups": "C04B2111/00181",
+            "Number of documents": 13
+          },
+          {
+            "CPC subgroups": "C04B2201/50",
+            "Number of documents": 12
+          },
+          {
+            "CPC subgroups": "C08L1/02",
+            "Number of documents": 12
+          },
+          {
+            "CPC subgroups": "B28B1/001",
+            "Number of documents": 11
+          },
+          {
+            "CPC subgroups": "C04B28/04",
+            "Number of documents": 10
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "CPC assigning offices": {
+        "name": "CPC assigning offices",
+        "rows": 7,
+        "columns": [
+          "CPC assigning offices",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "CPC assigning offices": {
+            "name": "CPC assigning offices",
+            "dtype": "object",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 7,
+            "sample_values": [
+              "CN",
+              "EP",
+              "US",
+              "SE",
+              "FI"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 7,
+            "null_count": 0,
+            "unique_values": 5,
+            "sample_values": [
+              "71",
+              "34",
+              "15",
+              "2",
+              "1"
+            ],
+            "min": 1.0,
+            "max": 71.0,
+            "mean": 17.857142857142858
+          }
+        },
+        "sample_data": [
+          {
+            "CPC assigning offices": "CN",
+            "Number of documents": 71
+          },
+          {
+            "CPC assigning offices": "EP",
+            "Number of documents": 34
+          },
+          {
+            "CPC assigning offices": "US",
+            "Number of documents": 15
+          },
+          {
+            "CPC assigning offices": "SE",
+            "Number of documents": 2
+          },
+          {
+            "CPC assigning offices": "FI",
+            "Number of documents": 1
+          },
+          {
+            "CPC assigning offices": "GB",
+            "Number of documents": 1
+          },
+          {
+            "CPC assigning offices": "KR",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "CPC_CLASSIFICATION"
+      },
+      "Applicants": {
+        "name": "Applicants",
+        "rows": 111,
+        "columns": [
+          "Applicants",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Applicants": {
+            "name": "Applicants",
+            "dtype": "object",
+            "non_null_count": 111,
+            "null_count": 0,
+            "unique_values": 111,
+            "sample_values": [
+              "UNIV TONGJI",
+              "UNIV NORTHEASTERN",
+              "CHINA CONSTR 8TH ENG DIVISION",
+              "CHINA PETROLEUM & CHEM CORP",
+              "DEPARTMENT OF SCIENCE AND TECH INDUSTRIAL TECH DEVELOPMENT INSTITUTE"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 111,
+            "null_count": 0,
+            "unique_values": 4,
+            "sample_values": [
+              "4",
+              "3",
+              "2",
+              "2",
+              "2"
+            ],
+            "min": 1.0,
+            "max": 4.0,
+            "mean": 1.162162162162162
+          }
+        },
+        "sample_data": [
+          {
+            "Applicants": "UNIV TONGJI",
+            "Number of documents": 4
+          },
+          {
+            "Applicants": "UNIV NORTHEASTERN",
+            "Number of documents": 3
+          },
+          {
+            "Applicants": "CHINA CONSTR 8TH ENG DIVISION",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "CHINA PETROLEUM & CHEM CORP",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "DEPARTMENT OF SCIENCE AND TECH INDUSTRIAL TECH DEVELOPMENT INSTITUTE",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "HEFEI SKE INTELLIGENT TECH CO LTD",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "KYUNGPOOK NAT UNIV IND ACADEMIC COOP FOUND",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "LANZHOU INST CHEMICAL PHYSICS CAS",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "NANJING GREEN ADDITIVE INTELLIGENT MANUFACTURING RES INSTITUTE LIMITED COMPANY",
+            "Number of documents": 2
+          },
+          {
+            "Applicants": "SINOPEC SHANGHAI RES INSTF PETROCHEMICAL TECH",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "TOP_APPLICANTS"
+      },
+      "Inventors": {
+        "name": "Inventors",
+        "rows": 404,
+        "columns": [
+          "Inventors",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Inventors": {
+            "name": "Inventors",
+            "dtype": "object",
+            "non_null_count": 404,
+            "null_count": 0,
+            "unique_values": 404,
+            "sample_values": [
+              "XIAO JIANZHUANG",
+              "DING TAO",
+              "DONG XIANMING",
+              "DUAN ZHENHUA",
+              "GAO WENYUAN"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 404,
+            "null_count": 0,
+            "unique_values": 4,
+            "sample_values": [
+              "4",
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 4.0,
+            "mean": 1.1386138613861385
+          }
+        },
+        "sample_data": [
+          {
+            "Inventors": "XIAO JIANZHUANG",
+            "Number of documents": 4
+          },
+          {
+            "Inventors": "DING TAO",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "DONG XIANMING",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "DUAN ZHENHUA",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "GAO WENYUAN",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "HUANG FEI",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "LONG HAIBO",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "ZHOU WUYI",
+            "Number of documents": 3
+          },
+          {
+            "Inventors": "BAI JIE",
+            "Number of documents": 2
+          },
+          {
+            "Inventors": "BAI YU",
+            "Number of documents": 2
+          }
+        ],
+        "potential_use": "TOP_INVENTORS"
+      },
+      "Applicants - country": {
+        "name": "Applicants - country",
+        "rows": 14,
+        "columns": [
+          "Applicants - country",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Applicants - country": {
+            "name": "Applicants - country",
+            "dtype": "object",
+            "non_null_count": 14,
+            "null_count": 0,
+            "unique_values": 14,
+            "sample_values": [
+              "US",
+              "DE",
+              "SE",
+              "KR",
+              "CN"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 14,
+            "null_count": 0,
+            "unique_values": 7,
+            "sample_values": [
+              "13",
+              "6",
+              "5",
+              "4",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 13.0,
+            "mean": 3.2142857142857144
+          }
+        },
+        "sample_data": [
+          {
+            "Applicants - country": "US",
+            "Number of documents": 13
+          },
+          {
+            "Applicants - country": "DE",
+            "Number of documents": 6
+          },
+          {
+            "Applicants - country": "SE",
+            "Number of documents": 5
+          },
+          {
+            "Applicants - country": "KR",
+            "Number of documents": 4
+          },
+          {
+            "Applicants - country": "CN",
+            "Number of documents": 3
+          },
+          {
+            "Applicants - country": "GB",
+            "Number of documents": 3
+          },
+          {
+            "Applicants - country": "FI",
+            "Number of documents": 2
+          },
+          {
+            "Applicants - country": "JP",
+            "Number of documents": 2
+          },
+          {
+            "Applicants - country": "PH",
+            "Number of documents": 2
+          },
+          {
+            "Applicants - country": "CA",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "TOP_APPLICANTS"
+      },
+      "Inventors - country": {
+        "name": "Inventors - country",
+        "rows": 14,
+        "columns": [
+          "Inventors - country",
+          "Number of documents"
+        ],
+        "column_count": 2,
+        "column_details": {
+          "Inventors - country": {
+            "name": "Inventors - country",
+            "dtype": "object",
+            "non_null_count": 14,
+            "null_count": 0,
+            "unique_values": 14,
+            "sample_values": [
+              "US",
+              "DE",
+              "SE",
+              "CN",
+              "GB"
+            ]
+          },
+          "Number of documents": {
+            "name": "Number of documents",
+            "dtype": "int64",
+            "non_null_count": 14,
+            "null_count": 0,
+            "unique_values": 6,
+            "sample_values": [
+              "12",
+              "7",
+              "5",
+              "3",
+              "3"
+            ],
+            "min": 1.0,
+            "max": 12.0,
+            "mean": 3.0
+          }
+        },
+        "sample_data": [
+          {
+            "Inventors - country": "US",
+            "Number of documents": 12
+          },
+          {
+            "Inventors - country": "DE",
+            "Number of documents": 7
+          },
+          {
+            "Inventors - country": "SE",
+            "Number of documents": 5
+          },
+          {
+            "Inventors - country": "CN",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "GB",
+            "Number of documents": 3
+          },
+          {
+            "Inventors - country": "FI",
+            "Number of documents": 2
+          },
+          {
+            "Inventors - country": "JP",
+            "Number of documents": 2
+          },
+          {
+            "Inventors - country": "PH",
+            "Number of documents": 2
+          },
+          {
+            "Inventors - country": "CA",
+            "Number of documents": 1
+          },
+          {
+            "Inventors - country": "IL",
+            "Number of documents": 1
+          }
+        ],
+        "potential_use": "TOP_INVENTORS"
+      }
+    }
+  }
+}

@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import { useWizardStore } from "../stores/useWizardStore";
-import { createJob, cancelJob } from "../api/jobs";
 import { useJobProgress } from "../hooks/useJobProgress";
+import { useJobCreation } from "../hooks/useJobCreation";
 import { JobProgress } from "./JobProgress";
 import { JobResults } from "./JobResults";
 import { Button } from "@/shared/components/ui/button";
@@ -13,72 +11,8 @@ interface RunStepProps {
 }
 
 export const RunStep = ({ onReset }: RunStepProps) => {
-    const {
-        sourceFile,
-        sourceType,
-        selectedAlgorithms,
-        jobId,
-        setJobId
-    } = useWizardStore();
-
-    const [createError, setCreateError] = useState<string | null>(null);
-    const [isCreating, setIsCreating] = useState(false);
-
-    // Idempotency key generation (simple)
-    const [idempotencyKey] = useState(() =>
-        `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    );
-
-    // Track if we've attempted to start to prevent loops
-    const [hasStarted, setHasStarted] = useState(false);
-
+    const { jobId, isCreating, createError, handleRetry, handleCancel } = useJobCreation();
     const { job, events, connectionStatus } = useJobProgress(jobId);
-
-    // Auto-start job if not started
-    useEffect(() => {
-        const startJob = async () => {
-            // If we already have a job ID, or are currently creating, or missing file, or ALREADY ATTEMPTED
-            if (jobId || isCreating || !sourceFile || hasStarted) return;
-
-            try {
-                setIsCreating(true);
-                setHasStarted(true); // Mark as started immediately
-                setCreateError(null);
-
-                const formData = new FormData();
-                formData.append("source_type", sourceType);
-                formData.append("source_data", sourceFile);
-                formData.append("images", JSON.stringify(selectedAlgorithms));
-                formData.append("idempotency_key", idempotencyKey);
-
-                const res = await createJob(formData);
-                setJobId(res.job_id);
-            } catch (err: any) {
-                console.error("Job Creation Failed:", err);
-                setCreateError(err.message || "Failed to create generation job");
-                // We do NOT reset hasStarted, so it doesn't retry automatically. 
-                // User must use "Try Again" or Reset.
-            } finally {
-                setIsCreating(false);
-            }
-        };
-
-        startJob();
-    }, [jobId, isCreating, sourceFile, sourceType, selectedAlgorithms, idempotencyKey, setJobId, hasStarted]);
-
-    const handleRetry = () => {
-        setHasStarted(false);
-        setCreateError(null);
-    };
-
-    const handleCancel = async () => {
-        if (!jobId) return;
-        try {
-            await cancelJob(jobId);
-        } catch (err) {
-            console.error("Failed to cancel", err);
-        }
-    };
 
     const isFinished = job?.status && [
         JobStatus.SUCCESS,
@@ -138,12 +72,12 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                     </div>
 
                     {/* Progress / Events */}
-                    {/* Only show progress if running or failed to debug */}
-                    <JobProgress events={events} />
+                    <JobProgress events={events} job={job} />
 
-                    {/* Results */}
-                    {isFinished && job && (
+                    {/* Results - Show if job has any completed images, even if not fully finished */}
+                    {job && (isFinished || (job.images && job.images.some(img => img.status === JobStatus.SUCCESS))) && (
                         <div className="pt-6 border-t">
+                            <h2 className="text-xl font-bold mb-4">Generated Images</h2>
                             <JobResults job={job} />
                         </div>
                     )}

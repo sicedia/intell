@@ -1,6 +1,7 @@
 """
 Celery tasks for job orchestration.
 """
+import logging
 from celery import group, chord
 from celery import shared_task
 from django.core.files.base import ContentFile
@@ -9,24 +10,41 @@ from apps.algorithms.registry import AlgorithmRegistry
 from apps.audit.helpers import emit_event
 import traceback
 
+logger = logging.getLogger(__name__)
+
 
 @shared_task(bind=True, name='apps.jobs.tasks.generate_image_task')
 def generate_image_task(self, image_task_id: int):
     """
     Generate chart image for an ImageTask.
-    Consumes Dataset from Job.dataset.
+    Consumes Dataset - either from params._dataset_id or Job.dataset.
     
     Args:
         image_task_id: ImageTask ID
     """
+    from apps.datasets.models import Dataset
+    
     try:
         # Get ImageTask and Job
         image_task = ImageTask.objects.select_related('job', 'job__dataset').get(id=image_task_id)
         job = image_task.job
-        dataset = job.dataset
         
-        # Check cancellation
+        # Check if task has a specific dataset_id (for multi-sheet Excel support)
+        dataset_id = image_task.params.get('_dataset_id')
+        if dataset_id:
+            try:
+                dataset = Dataset.objects.get(id=dataset_id)
+            except Dataset.DoesNotExist:
+                logger.warning(f"Dataset {dataset_id} not found, falling back to job dataset")
+                dataset = job.dataset
+        else:
+            dataset = job.dataset
+        
+        # Check cancellation at start
+        job.refresh_from_db()
         if job.status == Job.Status.CANCELLED:
+            image_task.status = ImageTask.Status.CANCELLED
+            image_task.save(update_fields=['status', 'updated_at'])
             emit_event(
                 job_id=job.id,
                 image_task_id=image_task_id,
@@ -129,8 +147,19 @@ def generate_image_task(self, image_task_id: int):
         )
         
     except Exception as e:
-        # Emit ERROR event
+        # Log error to Django logger
         error_trace = traceback.format_exc()
+        logger.error(
+            f'Image generation failed for ImageTask {image_task_id}: {str(e)}',
+            exc_info=True,
+            extra={
+                'image_task_id': image_task_id,
+                'job_id': job.id if 'job' in locals() else None,
+                'algorithm_key': image_task.algorithm_key if 'image_task' in locals() else None,
+            }
+        )
+        
+        # Emit ERROR event
         emit_event(
             job_id=job.id if 'job' in locals() else None,
             image_task_id=image_task_id,
@@ -189,24 +218,33 @@ def run_job(job_id: int):
             return
         
         # Create group of tasks
-        task_group = group(
-            generate_image_task.s(task.id) for task in image_tasks
-        )
+        task_signatures = [generate_image_task.s(task.id) for task in image_tasks]
+        task_group = group(task_signatures)
+        
+        # Store task IDs in ImageTasks for cancellation support
+        # Note: Celery doesn't provide task IDs before execution, so we'll check cancellation in the task itself
         
         # Create chord with callback using immutable signature
-        chord(task_group)(finalize_job.s(job_id))
+        chord_result = chord(task_group)(finalize_job.s(job_id))
         
-        # Emit PROGRESS event
+        # Emit PROGRESS event with initial progress based on task count
+        # Start at 0% since tasks haven't started yet
         emit_event(
             job_id=job_id,
             event_type='PROGRESS',
             level='INFO',
             message=f'Enqueued {image_tasks.count()} image tasks',
-            progress=10
+            progress=0
         )
         
     except Exception as e:
         error_trace = traceback.format_exc()
+        logger.error(
+            f'Job execution failed for Job {job_id}: {str(e)}',
+            exc_info=True,
+            extra={'job_id': job_id}
+        )
+        
         emit_event(
             job_id=job_id,
             event_type='ERROR',
@@ -254,7 +292,9 @@ def finalize_job(self, task_results, job_id: int):
         # Count statuses
         success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
         failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
+        cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
         total_count = image_tasks.count()
+        completed_count = success_count + failed_count + cancelled_count
         
         # Calculate final status
         if success_count == total_count:
@@ -264,10 +304,16 @@ def finalize_job(self, task_results, job_id: int):
         else:
             job.status = Job.Status.FAILED
         
-        # Recalculate progress_total as average of ImageTask progress
+        # Set progress_total: 100 if all tasks completed, otherwise average
+        # When finalize_job runs, all tasks should be complete, so set to 100
         if total_count > 0:
-            avg_progress = sum(task.progress for task in image_tasks) / total_count
-            job.progress_total = int(avg_progress)
+            if completed_count == total_count:
+                # All tasks have completed (success/failed/cancelled), so job is 100% complete
+                job.progress_total = 100
+            else:
+                # Some tasks still pending/running (shouldn't happen, but handle gracefully)
+                avg_progress = sum(task.progress for task in image_tasks) / total_count
+                job.progress_total = int(avg_progress)
         else:
             job.progress_total = 0
         
@@ -299,6 +345,12 @@ def finalize_job(self, task_results, job_id: int):
         
     except Exception as e:
         error_trace = traceback.format_exc()
+        logger.error(
+            f'Job finalization failed for Job {job_id}: {str(e)}',
+            exc_info=True,
+            extra={'job_id': job_id}
+        )
+        
         emit_event(
             job_id=job_id,
             event_type='ERROR',

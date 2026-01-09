@@ -1,0 +1,606 @@
+[
+  {
+    "CPC subgroups": "G01N33/24",
+    "Number of documents": 98
+  },
+  {
+    "CPC subgroups": "G01N33/18",
+    "Number of documents": 40
+  },
+  {
+    "CPC subgroups": "G01N33/0098",
+    "Number of documents": 39
+  },
+  {
+    "CPC subgroups": "G01N33/245",
+    "Number of documents": 27
+  },
+  {
+    "CPC subgroups": "G01N1/28",
+    "Number of documents": 17
+  },
+  {
+    "CPC subgroups": "G01N33/1813",
+    "Number of documents": 17
+  },
+  {
+    "CPC subgroups": "G06Q50/02",
+    "Number of documents": 16
+  },
+  {
+    "CPC subgroups": "C02F2101/20",
+    "Number of documents": 13
+  },
+  {
+    "CPC subgroups": "B09C1/105",
+    "Number of documents": 12
+  },
+  {
+    "CPC subgroups": "G06Q50/26",
+    "Number of documents": 12
+  },
+  {
+    "CPC subgroups": "G01D21/02",
+    "Number of documents": 10
+  },
+  {
+    "CPC subgroups": "G01N1/08",
+    "Number of documents": 9
+  },
+  {
+    "CPC subgroups": "G01N33/00",
+    "Number of documents": 9
+  },
+  {
+    "CPC subgroups": "G01N27/626",
+    "Number of documents": 8
+  },
+  {
+    "CPC subgroups": "B09C2101/00",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G01N1/04",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G01N1/286",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G01N27/62",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G01N33/1806",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G06Q10/0635",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "G16C20/70",
+    "Number of documents": 7
+  },
+  {
+    "CPC subgroups": "B09C1/08",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "C02F3/32",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "G01N1/34",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "G01N1/44",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "G01N21/3103",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "Y02A50/20",
+    "Number of documents": 6
+  },
+  {
+    "CPC subgroups": "A01B79/02",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N2001/2866",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N21/25",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N21/31",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N21/78",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N33/02",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N33/1866",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G01N33/246",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "G06Q10/04",
+    "Number of documents": 5
+  },
+  {
+    "CPC subgroups": "A01G7/00",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "B09C1/02",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G01N1/38",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G01N21/33",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G01N27/26",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G01N33/15",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G01N33/5097",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G06F17/18",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G06F30/20",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "G06Q10/063",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "Y02A20/152",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "Y02A90/10",
+    "Number of documents": 4
+  },
+  {
+    "CPC subgroups": "A01B79/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A01C1/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A01G17/005",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A01G22/20",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A61K2039/505",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A61P35/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "B09C1/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "B09C1/10",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "B82Y15/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F1/008",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F1/281",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F1/283",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F1/32",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F2001/007",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F2101/30",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C02F9/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C07K14/415",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C07K16/18",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C07K2317/76",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C07K2317/92",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C09K2101/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C12Q1/025",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C12Q1/6895",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C12Q2600/13",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "C23C14/35",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N1/10",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N2001/386",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N2021/8466",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N21/3563",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N21/6404",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N27/00",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N27/308",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N27/48",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N31/22",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/0004",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/2028",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/53",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/5308",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/54326",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/569",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/56972",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G01N33/68",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G06F17/10",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G06Q50/10",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G06T7/0004",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G16C20/20",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "G16C20/30",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "Y02A20/20",
+    "Number of documents": 3
+  },
+  {
+    "CPC subgroups": "A01B77/00",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A01G22/00",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A01G7/045",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A01G7/06",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A61K39/395",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A61K45/06",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "A61P31/10",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "B01L2300/123",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "B01L2300/168",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F1/285",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F1/42",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F2101/105",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F2101/16",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F2103/008",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F2209/16",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F2209/18",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F3/006",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C02F3/327",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C05G3/00",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C07K14/705",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C07K2317/33",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C09K17/40",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12N11/14",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12N15/70",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12N15/8271",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12N15/8273",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12Q1/02",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12Q1/06",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12Q1/6806",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C12Q1/6897",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C23C14/185",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C23C16/271",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C23C16/278",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "C23C28/322",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N1/14",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N1/16",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N1/30",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N1/4044",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N15/08",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N2021/3572",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/01",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/17",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/251",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/3586",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/6486",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/73",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N21/84",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N23/2251",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N2520/00",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N27/041",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N27/06",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N27/327",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N27/628",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N30/02",
+    "Number of documents": 2
+  },
+  {
+    "CPC subgroups": "G01N33/025",
+    "Number of documents": 2
+  }
+]

@@ -1,38 +1,89 @@
+import Image from "next/image";
 import { Job, ImageTask, JobStatus } from "../constants/job";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
-import { Button } from "@/shared/components/ui/button";
-import { Download, ExternalLink } from "lucide-react";
+import { buttonVariants } from "@/shared/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { env } from "@/shared/lib/env";
+import { cn } from "@/shared/lib/utils";
 
 // Helper to construct full URL if backend returns relative path
 const getFullUrl = (path?: string) => {
     if (!path) return undefined;
     if (path.startsWith("http")) return path;
-    // If undefined NEXT_PUBLIC_API_BASE_URL, fallback
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-    // If base ends with /api, we might need to be careful. 
-    // Typically backend media URLs are root-relative e.g. /media/...
-    // We want http://localhost:8000/media/...
-    // We can strip /api from base if present to find root, or assume BASE_URL is root of API not server.
-    // Let's assume passed env var is server root or close to it.
-
-    // Actually, usually Django returns full absolute URL if configured well, OR /media/ path.
-    // We'll safely join.
-    const origin = new URL(base).origin;
+    
+    // Get base URL from env, remove /api if present to get server root
+    const base = env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+    const baseUrl = base.replace(/\/api\/?$/, "");
+    const origin = new URL(baseUrl).origin;
     return `${origin}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
+// Format algorithm key for display
+const formatAlgorithmKey = (key: string): string => {
+    return key
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 };
 
 export const JobResults = ({ job }: { job: Job }) => {
     if (!job.images || job.images.length === 0) {
-        return <div className="text-center text-muted-foreground">No images generated.</div>;
+        return (
+            <div className="text-center text-muted-foreground p-8 border rounded-lg">
+                <p>No images generated.</p>
+                {job.status === JobStatus.RUNNING && (
+                    <p className="text-sm mt-2">Images are still being generated...</p>
+                )}
+            </div>
+        );
     }
 
+    const successfulImages = job.images.filter(img => img.status === JobStatus.SUCCESS);
+    const failedImages = job.images.filter(img => img.status === JobStatus.FAILED);
+    const pendingImages = job.images.filter(img => img.status === JobStatus.PENDING || img.status === JobStatus.RUNNING);
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {job.images.map((task) => (
-                <TaskResultCard key={task.id} task={task} />
-            ))}
+        <div className="space-y-6">
+            {successfulImages.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-medium mb-4">
+                        Generated Images ({successfulImages.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {successfulImages.map((task) => (
+                            <TaskResultCard key={task.id} task={task} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {pendingImages.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-medium mb-4">
+                        In Progress ({pendingImages.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {pendingImages.map((task) => (
+                            <TaskResultCard key={task.id} task={task} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {failedImages.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-medium mb-4 text-red-500">
+                        Failed ({failedImages.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {failedImages.map((task) => (
+                            <TaskResultCard key={task.id} task={task} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -40,32 +91,48 @@ export const JobResults = ({ job }: { job: Job }) => {
 const TaskResultCard = ({ task }: { task: ImageTask }) => {
     const pngUrl = getFullUrl(task.result_urls.png);
     const svgUrl = getFullUrl(task.result_urls.svg);
+    const hasImages = pngUrl || svgUrl;
+    const hasBoth = pngUrl && svgUrl;
 
     return (
         <Card className="overflow-hidden">
             <CardHeader className="py-4 bg-muted/30">
                 <div className="flex justify-between items-center">
                     <CardTitle className="text-base font-medium truncate" title={task.algorithm_key}>
-                        {task.algorithm_key}
+                        {formatAlgorithmKey(task.algorithm_key)}
                     </CardTitle>
                     <StatusBadge status={task.status} />
                 </div>
             </CardHeader>
             <CardContent className="p-0">
-                {task.status === JobStatus.SUCCESS ? (
+                {task.status === JobStatus.SUCCESS && hasImages ? (
                     <Tabs defaultValue={svgUrl ? "svg" : "png"} className="w-full">
-                        <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b">
+                        <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b relative">
                             <TabsContent value="png" className="mt-0 w-full flex justify-center">
                                 {pngUrl ? (
-                                    <img src={pngUrl} alt="Result" className="max-h-[300px] object-contain" />
+                                    <div className="relative w-full max-w-full h-[300px]">
+                                        <Image 
+                                            src={pngUrl} 
+                                            alt={`${formatAlgorithmKey(task.algorithm_key)} - PNG`} 
+                                            fill
+                                            className="object-contain"
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                        />
+                                    </div>
                                 ) : (
                                     <span className="text-sm text-muted-foreground">No PNG available</span>
                                 )}
                             </TabsContent>
                             <TabsContent value="svg" className="mt-0 w-full flex justify-center">
                                 {svgUrl ? (
-                                    <object data={svgUrl} type="image/svg+xml" className="max-h-[300px] max-w-full">
-                                        <img src={svgUrl} alt="Fallback" />
+                                    <object 
+                                        data={svgUrl} 
+                                        type="image/svg+xml" 
+                                        className="max-h-[300px] max-w-full"
+                                        aria-label={`${formatAlgorithmKey(task.algorithm_key)} - SVG`}
+                                    >
+                                        {/* Fallback for browsers that don't support object */}
+                                        <div className="text-sm text-muted-foreground">SVG not supported</div>
                                     </object>
                                 ) : (
                                     <span className="text-sm text-muted-foreground">No SVG available</span>
@@ -73,40 +140,56 @@ const TaskResultCard = ({ task }: { task: ImageTask }) => {
                             </TabsContent>
                         </div>
 
-                        {(pngUrl && svgUrl) && (
+                        {hasBoth && (
                             <TabsList className="w-full rounded-none border-b">
                                 <TabsTrigger value="svg" className="flex-1">SVG</TabsTrigger>
                                 <TabsTrigger value="png" className="flex-1">PNG</TabsTrigger>
                             </TabsList>
                         )}
                     </Tabs>
+                ) : task.status === JobStatus.RUNNING || task.status === JobStatus.PENDING ? (
+                    <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p>Generating image...</p>
+                        <p className="text-xs">Progress: {task.progress}%</p>
+                    </div>
                 ) : (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
-                        <p>Generation Failed</p>
+                        <p className="font-medium">Generation Failed</p>
                         {task.error_message && (
-                            <p className="text-xs text-red-500 bg-red-50 p-2 rounded">{task.error_message}</p>
+                            <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 p-2 rounded max-w-md">
+                                {task.error_message}
+                            </p>
                         )}
                     </div>
                 )}
             </CardContent>
             <CardFooter className="flex justify-between p-4 bg-muted/10">
                 <div className="text-xs text-muted-foreground">
-                    ID: {task.id}
+                    Task ID: {task.id}
                 </div>
                 <div className="flex gap-2">
                     {pngUrl && (
-                        <Button size="sm" variant="outline" asChild>
-                            <a href={pngUrl} target="_blank" rel="noopener noreferrer">
-                                Open PNG
-                            </a>
-                        </Button>
+                        <a
+                            href={pngUrl}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                        >
+                            Download PNG
+                        </a>
                     )}
                     {svgUrl && (
-                        <Button size="sm" variant="outline" asChild>
-                            <a href={svgUrl} target="_blank" rel="noopener noreferrer">
-                                Open SVG
-                            </a>
-                        </Button>
+                        <a
+                            href={svgUrl}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                        >
+                            Download SVG
+                        </a>
                     )}
                 </div>
             </CardFooter>

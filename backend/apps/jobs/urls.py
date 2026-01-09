@@ -3,7 +3,7 @@ URL configuration for jobs app.
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import JobViewSet, ImageTaskViewSet, DescriptionTaskViewSet, AIDescribeView
+from .views import JobViewSet, ImageTaskViewSet, DescriptionTaskViewSet, AIDescribeView, serve_test_excel
 
 router = DefaultRouter()
 router.register(r'jobs', JobViewSet, basename='job')
@@ -13,5 +13,7 @@ router.register(r'ai/describe', AIDescribeView, basename='ai-describe')
 
 urlpatterns = [
     path('', include(router.urls)),
+    # TEMPORARY: Test endpoint - remove after testing
+    path('test-excel/', serve_test_excel, name='test-excel'),
 ]
 

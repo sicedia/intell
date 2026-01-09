@@ -1,108 +1,77 @@
-"use client";
+"use client"
 
-import { Link, usePathname } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
-import { useUIStore } from "@/shared/store/ui-store";
-import { Button } from "@/shared/components/ui/button";
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from "@/shared/lib/utils";
 import {
-  LayoutDashboard,
-  Sparkles,
-  Image as ImageIcon,
-  Palette,
-  FileText,
-  Settings,
-  Menu,
-  X,
-} from "lucide-react";
+    LayoutDashboard,
+    Sparkles,
+    Image as ImageIcon,
+    Palette,
+    FileText,
+    Settings,
+} from 'lucide-react';
 
-const navigation = [
-  { name: "dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "generate", href: "/generate", icon: Sparkles },
-  { name: "images", href: "/images", icon: ImageIcon },
-  { name: "themes", href: "/themes", icon: Palette },
-  { name: "reports", href: "/reports", icon: FileText },
-  { name: "settings", href: "/settings", icon: Settings },
+const navItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/generate', label: 'Generate', icon: Sparkles },
+    { href: '/images', label: 'Images', icon: ImageIcon },
+    { href: '/themes', label: 'Themes', icon: Palette },
+    { href: '/reports', label: 'Reports', icon: FileText },
+    { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar() {
-  const t = useTranslations("common");
-  const pathname = usePathname();
-  const { sidebarOpen, toggleSidebar } = useUIStore();
-  const localeSegment = pathname?.split("/")[1] ?? "";
+export function Sidebar({ className, onClose }: { className?: string, onClose?: () => void }) {
+    const pathname = usePathname();
+    const localeSegment = pathname?.split("/")[1] ?? "";
 
-  return (
-    <>
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={toggleSidebar}
-        />
-      )}
+    return (
+        <div className={cn("flex flex-col h-full bg-card border-r", className)}>
+            <div className="p-6 flex items-center gap-2 border-b">
+                <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                    <span className="text-primary-foreground font-bold text-lg">I</span>
+                </div>
+                <span className="text-xl font-bold tracking-tight">Intell.AI</span>
+            </div>
 
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transition-transform duration-300 lg:translate-x-0",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="flex h-full flex-col">
-          {/* Header */}
-          <div className="flex h-16 items-center justify-between border-b border-border px-6">
-            <h1 className="text-xl font-bold">{t("appName")}</h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleSidebar}
-              className="lg:hidden"
-            >
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
+            <div className="flex-1 overflow-y-auto py-4">
+                <nav className="space-y-1 px-2">
+                    {navItems.map((item) => {
+                        const Icon = item.icon;
+                        const targetHref = `/${localeSegment}${item.href}`;
+                        const isActive = pathname === targetHref || pathname?.startsWith(`${targetHref}/`);
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-1 px-3 py-4">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const targetPath = `/${localeSegment}${item.href}`;
-              const isActive =
-                pathname === targetPath || pathname?.startsWith(`${targetPath}/`);
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                  onClick={() => {
-                    if (window.innerWidth < 1024) {
-                      toggleSidebar();
-                    }
-                  }}
-                >
-                  <Icon className="h-5 w-5" />
-                  {t(item.name)}
-                </Link>
-              );
-            })}
-          </nav>
+                        return (
+                            <Link
+                                key={item.href}
+                                href={targetHref}
+                                onClick={onClose}
+                                className={cn(
+                                    "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                    isActive
+                                        ? "bg-primary/10 text-primary"
+                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                )}
+                            >
+                                <Icon className="h-4 w-4" />
+                                {item.label}
+                            </Link>
+                        );
+                    })}
+                </nav>
+            </div>
+
+            <div className="p-4 border-t">
+                {/* User profile stub */}
+                <div className="flex items-center gap-3 px-2 py-2">
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs">U</div>
+                    <div className="text-sm">
+                        <p className="font-medium">User Profile</p>
+                        <p className="text-xs text-muted-foreground">Admin</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </aside>
-
-      {/* Mobile menu button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-30 lg:hidden"
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
-    </>
-  );
+    );
 }

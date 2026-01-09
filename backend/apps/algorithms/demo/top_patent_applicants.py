@@ -64,6 +64,44 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
         
         return df
     
+    def _detect_name_column(self, df: pd.DataFrame) -> str:
+        """Detect which column contains applicant names."""
+        name_keywords = ['applicant', 'solicitante', 'name', 'nombre', 'company', 'empresa', 'organization']
+        
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in name_keywords):
+                return col
+        
+        # Fallback to first column if it contains strings
+        if len(df.columns) > 0 and df[df.columns[0]].dtype == 'object':
+            return df.columns[0]
+        
+        return df.columns[0] if len(df.columns) > 0 else None
+    
+    def _detect_count_column(self, df: pd.DataFrame, name_col: str) -> str:
+        """Detect which column contains count/number data."""
+        count_keywords = ['number', 'count', 'documents', 'cantidad', 'total', 'publications', 'patentes']
+        
+        for col in df.columns:
+            if col == name_col:
+                continue
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in count_keywords):
+                return col
+        
+        # Fallback: return first numeric column that is not the name column
+        for col in df.columns:
+            if col != name_col and df[col].dtype in ['int64', 'float64']:
+                return col
+        
+        # Last fallback
+        for col in df.columns:
+            if col != name_col:
+                return col
+        
+        return None
+    
     def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
@@ -71,16 +109,70 @@ class TopPatentApplicantsAlgorithm(BaseAlgorithm):
         
         top_n = params.get('top_n', 15)
         if not isinstance(top_n, int) or top_n < 1:
-            raise ValueError("top_n must be a positive integer")
+            raise ValueError(
+                f"El parámetro 'top_n' debe ser un número entero positivo. "
+                f"Valor recibido: {top_n}"
+            )
         
         # Load data
         df = self._load_dataset(dataset)
         
-        # Rename columns if needed
-        if len(df.columns) >= 2:
-            if df.columns[0] != self.first_column_name or df.columns[1] != self.second_column_name:
-                df.rename(columns={df.columns[0]: self.first_column_name, 
-                                 df.columns[1]: self.second_column_name}, inplace=True)
+        # Validate dataset
+        if df.empty:
+            raise ValueError(
+                "El dataset está vacío. No se puede generar el gráfico de solicitantes. "
+                "Por favor, verifique que el archivo Excel contenga datos en la hoja de 'Applicants'."
+            )
+        
+        if len(df.columns) < 2:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"El dataset debe tener al menos 2 columnas. "
+                f"Se encontraron {len(df.columns)} columna(s): {available_columns}. "
+                f"Se esperaba: una columna con nombres de solicitantes y otra con el número de documentos."
+            )
+        
+        # Detect columns
+        name_col = self._detect_name_column(df)
+        count_col = self._detect_count_column(df, name_col)
+        
+        if name_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de nombres de solicitantes. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con nombres (ej: 'Applicants', 'Solicitantes')."
+            )
+        
+        if count_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de conteo de documentos. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con números (ej: 'Number of documents')."
+            )
+        
+        # Rename columns for processing
+        df = df.rename(columns={name_col: self.first_column_name, count_col: self.second_column_name})
+        
+        # Ensure count column is numeric
+        df[self.second_column_name] = pd.to_numeric(df[self.second_column_name], errors='coerce')
+        
+        # Check for valid numeric data
+        if df[self.second_column_name].isna().all():
+            raise ValueError(
+                f"La columna de conteo '{count_col}' no contiene valores numéricos válidos. "
+                f"Por favor, verifique que los datos sean números."
+            )
+        
+        df[self.second_column_name] = df[self.second_column_name].fillna(0)
+        
+        # Check if we have enough data
+        if len(df) < top_n:
+            raise ValueError(
+                f"No hay suficientes solicitantes en el dataset. "
+                f"Se solicitaron los top {top_n}, pero solo hay {len(df)} solicitantes disponibles."
+            )
         
         # Select top n applicants
         top_n_applicants = df.nlargest(top_n, self.second_column_name)

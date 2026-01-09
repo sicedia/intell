@@ -64,6 +64,57 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         
         return df
     
+    def _detect_year_column(self, df: pd.DataFrame) -> str:
+        """Detect which column contains year data."""
+        # Try to find a column that looks like years
+        year_keywords = ['year', 'año', 'date', 'fecha', 'publication', 'publicación', 'earliest', 'priority']
+        
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in year_keywords):
+                # Try to convert to numeric to verify it's years
+                test_series = pd.to_numeric(df[col], errors='coerce')
+                if not test_series.isna().all():
+                    # Check if values are in reasonable year range (1900-2100)
+                    valid_years = test_series.dropna()
+                    if len(valid_years) > 0:
+                        min_val = valid_years.min()
+                        max_val = valid_years.max()
+                        if 1900 <= min_val <= 2100 and 1900 <= max_val <= 2100:
+                            return col
+        
+        # Fallback: check all columns for year-like values
+        for col in df.columns:
+            test_series = pd.to_numeric(df[col], errors='coerce')
+            if not test_series.isna().all():
+                valid_years = test_series.dropna()
+                if len(valid_years) > 0:
+                    min_val = valid_years.min()
+                    max_val = valid_years.max()
+                    if 1900 <= min_val <= 2100 and 1900 <= max_val <= 2100:
+                        return col
+        
+        # Fallback to first column
+        return df.columns[0] if len(df.columns) > 0 else None
+    
+    def _detect_count_column(self, df: pd.DataFrame, year_col: str) -> str:
+        """Detect which column contains count/number data."""
+        count_keywords = ['number', 'count', 'documents', 'cantidad', 'total', 'publications']
+        
+        for col in df.columns:
+            if col == year_col:
+                continue
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in count_keywords):
+                return col
+        
+        # Fallback: return first column that is not the year column
+        for col in df.columns:
+            if col != year_col:
+                return col
+        
+        return None
+    
     def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
@@ -72,24 +123,111 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         # Load data
         df = self._load_dataset(dataset)
         
-        # Rename columns if needed
-        if len(df.columns) >= 2:
-            if df.columns[0] != self.first_column_name or df.columns[1] != self.second_column_name:
-                df.rename(columns={df.columns[0]: self.first_column_name, 
-                                 df.columns[1]: self.second_column_name}, inplace=True)
+        # Validate dataset has columns
+        if df.empty:
+            available_columns = list(df.columns) if hasattr(df, 'columns') else []
+            raise ValueError(
+                f"El dataset está vacío. No se puede generar el gráfico de tendencias. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Verifique que el archivo Excel contenga datos en la hoja 'Earliest publication date'."
+            )
+        
+        if len(df.columns) < 2:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"El dataset debe tener al menos 2 columnas. "
+                f"Se encontraron {len(df.columns)} columna(s): {available_columns}. "
+                f"Se esperaba: una columna con años y otra con el número de publicaciones."
+            )
+        
+        # Detect year column
+        year_col = self._detect_year_column(df)
+        if year_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de años en el dataset. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con años (ej: 'Year', 'Año', 'Earliest publication date')."
+            )
+        
+        # Detect count column
+        count_col = self._detect_count_column(df, year_col)
+        if count_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de conteo de documentos. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con números (ej: 'Number of documents')."
+            )
+        
+        # Rename columns for processing
+        df = df.rename(columns={year_col: self.first_column_name, count_col: self.second_column_name})
+        
+        # Convert first column to numeric (handles string years)
+        df[self.first_column_name] = pd.to_numeric(df[self.first_column_name], errors='coerce')
+        
+        # Drop rows where conversion failed (NaN values)
+        original_count = len(df)
+        df = df.dropna(subset=[self.first_column_name])
+        dropped_count = original_count - len(df)
+        
+        # Check if we have valid data after conversion
+        if df.empty:
+            raise ValueError(
+                f"No se encontraron datos de años válidos después de la conversión. "
+                f"La columna original '{year_col}' no pudo ser convertida a años numéricos. "
+                f"Asegúrese de que la columna de años contenga valores numéricos (ej: 2020, 2021, 2022)."
+            )
+        
+        if dropped_count > 0:
+            # Log warning but continue
+            pass
+        
+        # Convert to int for year operations
+        df[self.first_column_name] = df[self.first_column_name].astype(int)
+        
+        # Get year range before filtering for better error messages
+        min_year_before_filter = int(df[self.first_column_name].min())
+        max_year_before_filter = int(df[self.first_column_name].max())
         
         # Filter data
         df = df[(df[self.first_column_name] <= self.cutoff_year) & 
                 (df[self.first_column_name] > (self.cutoff_year - self.historical_years))]
         
-        # Complete years range
+        # Check if we have data after filtering
+        if df.empty:
+            raise ValueError(
+                f"No se encontraron datos en el rango de años especificado ({self.cutoff_year - self.historical_years} a {self.cutoff_year}). "
+                f"Su dataset contiene años desde {min_year_before_filter} hasta {max_year_before_filter}. "
+                f"Este algoritmo analiza los últimos {self.historical_years} años hasta {self.cutoff_year} (excluyendo años recientes incompletos). "
+                f"Por favor, use un dataset con datos en el rango {self.cutoff_year - self.historical_years} a {self.cutoff_year}."
+            )
+        
+        # Complete years range (ensure min and max are integers and not NaN)
+        min_val = df[self.first_column_name].min()
+        max_val = df[self.first_column_name].max()
+        
+        if pd.isna(min_val) or pd.isna(max_val):
+            raise ValueError(
+                f"Valores de año inválidos después del filtrado: mínimo={min_val}, máximo={max_val}. "
+                f"Verifique que los datos del archivo Excel sean correctos."
+            )
+        
+        min_year = int(min_val)
+        max_year = int(max_val)
         complete_years = pd.DataFrame({
-            self.first_column_name: range(df[self.first_column_name].min(), df[self.first_column_name].max() + 1)
+            self.first_column_name: range(min_year, max_year + 1)
         })
         
         # Merge to ensure all years present
         df = pd.merge(complete_years, df, on=self.first_column_name, how='left')
+        
+        # Convert count column to numeric (in case JSON has strings)
+        df[self.second_column_name] = pd.to_numeric(df[self.second_column_name], errors='coerce')
         df[self.second_column_name] = df[self.second_column_name].fillna(0)
+        
+        # Sort by year to ensure proper line plotting
+        df = df.sort_values(by=self.first_column_name).reset_index(drop=True)
         
         # Calculate cumulative
         df[self.y_axis_label_2] = df[self.second_column_name].cumsum()

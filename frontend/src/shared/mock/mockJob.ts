@@ -1,5 +1,5 @@
 
-import { Job, EventLogPayload, ImageTask } from "@/shared/types/backend";
+import { LegacyJob, EventLogPayload, LegacyImageTask as LegacyImageTaskType, JobStatus } from "@/features/generation/constants/job";
 
 export const MOCK_CHART_DATA = {
     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
@@ -9,11 +9,11 @@ export const MOCK_CHART_DATA = {
     ]
 };
 
-export const MOCK_IMAGE_TASKS: ImageTask[] = [
+export const MOCK_IMAGE_TASKS: LegacyImageTaskType[] = [
     {
         id: 'task-1',
         algorithm_key: 'clustering_kmeans',
-        status: 'SUCCESS',
+        status: JobStatus.SUCCESS,
         artifact_png_url: 'https://placehold.co/600x400/png',
         chart_data: MOCK_CHART_DATA,
         params: { k: 5 }
@@ -21,15 +21,15 @@ export const MOCK_IMAGE_TASKS: ImageTask[] = [
     {
         id: 'task-2',
         algorithm_key: 'regression_linear',
-        status: 'RUNNING',
+        status: JobStatus.RUNNING,
         // No artifacts yet
         params: { target: 'price' }
     }
 ];
 
-export const MOCK_JOB: Job = {
+export const MOCK_JOB: LegacyJob = {
     id: 'job-123',
-    status: 'RUNNING',
+    status: JobStatus.RUNNING,
     progress_total: 45,
     dataset_id: 'ds-001',
     created_at: new Date().toISOString(),

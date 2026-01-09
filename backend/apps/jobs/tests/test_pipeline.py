@@ -26,7 +26,10 @@ class JobPipelineTestCase(TestCase):
         registry.register("top_patent_countries", "1.0", TopPatentCountriesAlgorithm())
         
         # Path to test Excel file
-        self.excel_path = Path(__file__).parent.parent.parent / 'context' / 'Filters_20250522_1212.xlsx'
+        self.excel_path = Path(__file__).parent.parent.parent.parent / 'context' / 'excels' / 'Filters_20250522_1212.xlsx'
+        if not self.excel_path.exists():
+            # Fallback path
+            self.excel_path = Path(__file__).parent.parent.parent.parent / 'context' / 'Filters_20250522_1212.xlsx'
     
     def test_end_to_end_pipeline(self):
         """Test complete pipeline: Excel → Dataset → Job → ImageTask → DescriptionTask."""
@@ -127,4 +130,3 @@ class JobPipelineTestCase(TestCase):
         self.assertIn('series', image_task.chart_data)
         if 'totals' in image_task.chart_data:
             self.assertIsInstance(image_task.chart_data['totals'], dict)
-

@@ -109,10 +109,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django REST Framework configuration
+# NOTE: DEFAULT_PERMISSION_CLASSES is set per environment (development.py / production.py)
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Change to IsAuthenticated in production
-    ],
+    'DEFAULT_PERMISSION_CLASSES': [],  # Override in environment-specific settings
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -179,64 +178,13 @@ LOGGING = {
 }
 
 # Celery Configuration
+# NOTE: Task routes, annotations, and queues are configured in config/celery.py
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
-
-# Celery Task Routes
-CELERY_TASK_ROUTES = {
-    'apps.ingestion.*': {'queue': 'ingestion_io'},
-    'apps.jobs.tasks.generate_image_task': {'queue': 'charts_cpu'},
-    'apps.jobs.tasks.run_job': {'queue': 'charts_cpu'},
-    'apps.jobs.tasks.finalize_job': {'queue': 'charts_cpu'},
-    'apps.ai_descriptions.*': {'queue': 'ai'},
-}
-
-# Celery Task Queues (using kombu.Queue format)
-from kombu import Queue
-
-CELERY_TASK_QUEUES = (
-    Queue('ingestion_io'),
-    Queue('charts_cpu'),
-    Queue('ai'),
-)
-
-# Celery Task Annotations
-CELERY_TASK_ANNOTATIONS = {
-    'apps.ingestion.*': {
-        'time_limit': 60,
-        'soft_time_limit': 50,
-        'acks_late': False,
-    },
-    'apps.jobs.tasks.generate_image_task': {
-        'time_limit': 120,
-        'soft_time_limit': 100,
-        'acks_late': True,
-    },
-    'apps.jobs.tasks.run_job': {
-        'time_limit': 120,
-        'soft_time_limit': 100,
-        'acks_late': True,
-    },
-    'apps.jobs.tasks.finalize_job': {
-        'time_limit': 60,
-        'soft_time_limit': 50,
-        'acks_late': True,
-    },
-    'apps.ai_descriptions.*': {
-        'time_limit': 60,
-        'soft_time_limit': 50,
-        'acks_late': True,
-    },
-}
-
-# Celery Broker Transport Options
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'visibility_timeout': 180,
-}
 
 # Django Channels Configuration
 CHANNEL_LAYERS = {

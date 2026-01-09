@@ -4,15 +4,18 @@ import { useDropzone } from "react-dropzone";
 import * as XLSX from "xlsx";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
-// Assuming ui components exist based on package structure "shared/components/ui"
+import { env } from "@/shared/lib/env";
 
 interface SourceStepProps {
     onNext: () => void;
 }
 
+// Type for Excel row data (array of cells)
+type ExcelRow = (string | number | boolean | null | undefined)[];
+
 export const SourceStep = ({ onNext }: SourceStepProps) => {
     const { setSourceFile, sourceFile, sourceType, setSourceType } = useWizardStore();
-    const [previewData, setPreviewData] = useState<any[]>([]);
+    const [previewData, setPreviewData] = useState<ExcelRow[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -37,7 +40,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                 const wsname = wb.SheetNames[0];
                 const ws = wb.Sheets[wsname];
                 // Get header and first 10 rows
-                const allData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                const allData = XLSX.utils.sheet_to_json(ws, { header: 1 }) as ExcelRow[];
                 setPreviewData(allData.slice(0, 11));
             } catch (err) {
                 console.error("Error reading file", err);
@@ -109,21 +112,23 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="bg-muted">
-                                            {/* Render Headers */
-                                                (previewData[0] as any[]).map((cell: any, i: number) => (
-                                                    <th key={i} className="p-2 border-b text-left font-medium">{cell}</th>
-                                                ))}
+                                            {previewData[0]?.map((cell, i) => (
+                                                <th key={i} className="p-2 border-b text-left font-medium">
+                                                    {String(cell ?? "")}
+                                                </th>
+                                            ))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* Render Rows */
-                                            previewData.slice(1).map((row: any[], i: number) => (
-                                                <tr key={i} className="hover:bg-muted/50">
-                                                    {row.map((cell: any, j: number) => (
-                                                        <td key={j} className="p-2 border-b">{cell}</td>
-                                                    ))}
-                                                </tr>
-                                            ))}
+                                        {previewData.slice(1).map((row, i) => (
+                                            <tr key={i} className="hover:bg-muted/50">
+                                                {row.map((cell, j) => (
+                                                    <td key={j} className="p-2 border-b">
+                                                        {String(cell ?? "")}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                                 <p className="text-xs text-muted-foreground mt-2 p-2">
@@ -135,7 +140,38 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                 </Card>
             )}
 
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center">
+                {/* Test button - only in development - loads test file from backend */}
+                {process.env.NODE_ENV === 'development' && !sourceFile && (
+                    <Button
+                        variant="outline"
+                        onClick={async () => {
+                            try {
+                                setError(null);
+                                // Load test file from backend endpoint
+                                const apiUrl = env.NEXT_PUBLIC_API_BASE_URL;
+                                const response = await fetch(`${apiUrl}/test-excel/`);
+                                if (!response.ok) {
+                                    const errorText = await response.text();
+                                    throw new Error(`Failed to load test file: ${response.status} ${response.statusText} - ${errorText}`);
+                                }
+                                const blob = await response.blob();
+                                const file = new File([blob], 'Filters_20250331_1141.xlsx', { 
+                                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                                });
+                                onDrop([file]);
+                            } catch (err) {
+                                console.error('Error loading test file:', err);
+                                const errorMessage = err instanceof Error 
+                                    ? err.message 
+                                    : 'Could not load test file. Please upload manually.';
+                                setError(errorMessage);
+                            }
+                        }}
+                    >
+                        🧪 Load Test File
+                    </Button>
+                )}
                 <Button onClick={onNext} disabled={!sourceFile}>
                     Next: Choose Visualizations
                 </Button>

@@ -196,6 +196,9 @@ class JobDetailSerializer(serializers.ModelSerializer):
         read_only=True,
         help_text='Lista de tareas de imagen asociadas al trabajo'
     )
+    images = serializers.SerializerMethodField(
+        help_text='Alias for image_tasks (frontend compatibility)'
+    )
     description_tasks = serializers.SerializerMethodField(
         help_text='Lista de tareas de descripci?n asociadas al trabajo'
     )
@@ -203,6 +206,14 @@ class JobDetailSerializer(serializers.ModelSerializer):
         source='dataset.id',
         read_only=True,
         help_text='ID del dataset asociado al trabajo'
+    )
+    source_type = serializers.SerializerMethodField(
+        help_text='Source type from dataset (lens, espacenet_excel, custom)'
+    )
+    progress = serializers.IntegerField(
+        source='progress_total',
+        read_only=True,
+        help_text='Overall progress (0-100), alias for progress_total'
     )
     events = EventLogSerializer(
         source='event_logs',
@@ -214,14 +225,28 @@ class JobDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = [
-            'id', 'created_by', 'dataset_id', 'status', 'progress_total',
-            'idempotency_key', 'image_tasks', 'description_tasks', 'events',
-            'created_at', 'updated_at'
+            'id', 'created_by', 'dataset_id', 'status', 'progress_total', 'progress',
+            'idempotency_key', 'image_tasks', 'images', 'description_tasks', 'events',
+            'source_type', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'status', 'progress_total', 'image_tasks', 'description_tasks', 'events',
-            'created_at', 'updated_at'
+            'id', 'status', 'progress_total', 'progress', 'image_tasks', 'images',
+            'description_tasks', 'events', 'source_type', 'created_at', 'updated_at'
         ]
+    
+    def get_images(self, obj):
+        """Get images as alias for image_tasks (frontend compatibility)."""
+        return ImageTaskSerializer(
+            obj.image_tasks.all(),
+            many=True,
+            context=self.context
+        ).data
+    
+    def get_source_type(self, obj):
+        """Get source_type from dataset."""
+        if obj.dataset:
+            return obj.dataset.source_type
+        return None
     
     def get_description_tasks(self, obj):
         """Get description tasks through image tasks."""
@@ -255,16 +280,34 @@ class ImageTaskRequestSerializer(serializers.Serializer):
     )
     algorithm_version = serializers.CharField(
         default='1.0',
-        help_text='Versi?n del algoritmo a utilizar'
+        help_text='Versión del algoritmo a utilizar'
     )
     params = serializers.DictField(
-        help_text='Par?metros espec?ficos del algoritmo en formato JSON'
+        help_text='Parámetros específicos del algoritmo en formato JSON'
     )
     output_format = serializers.ChoiceField(
         choices=ImageTask.OutputFormat.choices,
         default=ImageTask.OutputFormat.BOTH,
         help_text='Formato de salida: png, svg o both'
     )
+    
+    def validate(self, attrs):
+        """Validate that algorithm exists in registry."""
+        from apps.algorithms.registry import AlgorithmRegistry
+        
+        algorithm_key = attrs.get('algorithm_key')
+        algorithm_version = attrs.get('algorithm_version', '1.0')
+        
+        registry = AlgorithmRegistry()
+        algorithm = registry.get(algorithm_key, algorithm_version)
+        
+        if algorithm is None:
+            raise serializers.ValidationError({
+                'algorithm_key': f"Algorithm '{algorithm_key}' version '{algorithm_version}' not found in registry. "
+                                 f"Available algorithms: {list(registry.list_algorithms().keys())}"
+            })
+        
+        return attrs
 
 
 @extend_schema_serializer(

@@ -33,6 +33,37 @@ class AIProvider(ABC):
             Generated description text
         """
         pass
+    
+    def _build_prompt(self, chart_data: Dict[str, Any], user_context: Optional[str]) -> str:
+        """
+        Build prompt from chart_data and user_context.
+        
+        This is a shared implementation used by all AI providers.
+        
+        Args:
+            chart_data: Structured chart data
+            user_context: User-provided context
+            
+        Returns:
+            Formatted prompt string
+        """
+        prompt = f"Describe this chart:\n\n"
+        prompt += f"Chart Type: {chart_data.get('type', 'unknown')}\n"
+        prompt += f"Title: {chart_data.get('title', 'Untitled')}\n"
+        
+        if 'series' in chart_data:
+            prompt += f"Series: {len(chart_data['series'])} data series\n"
+        
+        if 'totals' in chart_data:
+            totals = chart_data['totals']
+            for key, value in totals.items():
+                if value is not None:
+                    prompt += f"{key}: {value}\n"
+        
+        if user_context:
+            prompt += f"\nUser Context: {user_context}\n"
+        
+        return prompt
 
 
 class OpenAIProvider(AIProvider):
@@ -67,26 +98,6 @@ class OpenAIProvider(AIProvider):
             except ImportError:
                 raise ImportError("langchain-openai not installed")
         return self._client
-    
-    def _build_prompt(self, chart_data: Dict[str, Any], user_context: Optional[str]) -> str:
-        """Build prompt from chart_data and user_context."""
-        prompt = f"Describe this chart:\n\n"
-        prompt += f"Chart Type: {chart_data.get('type', 'unknown')}\n"
-        prompt += f"Title: {chart_data.get('title', 'Untitled')}\n"
-        
-        if 'series' in chart_data:
-            prompt += f"Series: {len(chart_data['series'])} data series\n"
-        
-        if 'totals' in chart_data:
-            totals = chart_data['totals']
-            for key, value in totals.items():
-                if value is not None:
-                    prompt += f"{key}: {value}\n"
-        
-        if user_context:
-            prompt += f"\nUser Context: {user_context}\n"
-        
-        return prompt
     
     def generate_description(
         self, 
@@ -154,26 +165,6 @@ class AnthropicProvider(AIProvider):
                 raise ImportError("langchain-anthropic not installed")
         return self._client
     
-    def _build_prompt(self, chart_data: Dict[str, Any], user_context: Optional[str]) -> str:
-        """Build prompt from chart_data and user_context."""
-        prompt = f"Describe this chart:\n\n"
-        prompt += f"Chart Type: {chart_data.get('type', 'unknown')}\n"
-        prompt += f"Title: {chart_data.get('title', 'Untitled')}\n"
-        
-        if 'series' in chart_data:
-            prompt += f"Series: {len(chart_data['series'])} data series\n"
-        
-        if 'totals' in chart_data:
-            totals = chart_data['totals']
-            for key, value in totals.items():
-                if value is not None:
-                    prompt += f"{key}: {value}\n"
-        
-        if user_context:
-            prompt += f"\nUser Context: {user_context}\n"
-        
-        return prompt
-    
     def generate_description(
         self, 
         chart_data: Dict[str, Any], 
@@ -233,10 +224,6 @@ class MockProvider(AIProvider):
         description += "This is a mock description for MVP testing."
         
         return description
-    
-    def _build_prompt(self, chart_data: Dict[str, Any], user_context: Optional[str]) -> str:
-        """Not used in mock provider."""
-        return ""
 
 
 class AIProviderRouter:

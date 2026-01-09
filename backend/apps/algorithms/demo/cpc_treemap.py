@@ -67,6 +67,44 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
         
         return df
     
+    def _detect_cpc_column(self, df: pd.DataFrame) -> str:
+        """Detect which column contains CPC codes."""
+        cpc_keywords = ['cpc', 'ipc', 'subgroup', 'classification', 'code', 'codigo', 'clase']
+        
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in cpc_keywords):
+                return col
+        
+        # Fallback to first column if it contains strings
+        if len(df.columns) > 0 and df[df.columns[0]].dtype == 'object':
+            return df.columns[0]
+        
+        return df.columns[0] if len(df.columns) > 0 else None
+    
+    def _detect_count_column(self, df: pd.DataFrame, cpc_col: str) -> str:
+        """Detect which column contains count/number data."""
+        count_keywords = ['number', 'count', 'documents', 'cantidad', 'total', 'publications', 'patentes']
+        
+        for col in df.columns:
+            if col == cpc_col:
+                continue
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in count_keywords):
+                return col
+        
+        # Fallback: return first numeric column that is not the cpc column
+        for col in df.columns:
+            if col != cpc_col and df[col].dtype in ['int64', 'float64']:
+                return col
+        
+        # Last fallback
+        for col in df.columns:
+            if col != cpc_col:
+                return col
+        
+        return None
+    
     def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
@@ -75,19 +113,84 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
         
         num_groups = params.get('num_groups', 15)
         if not isinstance(num_groups, int) or num_groups < 1:
-            raise ValueError("num_groups must be a positive integer")
+            raise ValueError(
+                f"El parámetro 'num_groups' debe ser un número entero positivo. "
+                f"Valor recibido: {num_groups}"
+            )
         
         if not HAS_SQUARIFY:
-            raise ImportError("squarify package is required for treemap visualization. Install with: pip install squarify")
+            raise ImportError(
+                "El paquete 'squarify' es necesario para generar visualizaciones de treemap. "
+                "Instálelo con: pip install squarify"
+            )
         
         # Load data
         df = self._load_dataset(dataset)
         
-        # Rename columns if needed
-        if len(df.columns) >= 2:
-            if df.columns[0] != self.first_column_name or df.columns[1] != self.second_column_name:
-                df.rename(columns={df.columns[0]: self.first_column_name, 
-                                 df.columns[1]: self.second_column_name}, inplace=True)
+        # Validate dataset
+        if df.empty:
+            raise ValueError(
+                "El dataset está vacío. No se puede generar el treemap de clasificación CPC. "
+                "Por favor, verifique que el archivo Excel contenga datos en la hoja de 'CPC subgroups'."
+            )
+        
+        if len(df.columns) < 2:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"El dataset debe tener al menos 2 columnas. "
+                f"Se encontraron {len(df.columns)} columna(s): {available_columns}. "
+                f"Se esperaba: una columna con códigos CPC y otra con el número de documentos."
+            )
+        
+        # Detect columns
+        cpc_col = self._detect_cpc_column(df)
+        count_col = self._detect_count_column(df, cpc_col)
+        
+        if cpc_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de clasificación CPC. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con códigos CPC (ej: 'CPC subgroups', 'CPC')."
+            )
+        
+        if count_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de conteo de documentos. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con números (ej: 'Number of documents')."
+            )
+        
+        # Rename columns for processing
+        df = df.rename(columns={cpc_col: self.first_column_name, count_col: self.second_column_name})
+        
+        # Ensure count column is numeric
+        df[self.second_column_name] = pd.to_numeric(df[self.second_column_name], errors='coerce')
+        
+        # Check for valid numeric data
+        if df[self.second_column_name].isna().all():
+            raise ValueError(
+                f"La columna de conteo '{count_col}' no contiene valores numéricos válidos. "
+                f"Por favor, verifique que los datos sean números."
+            )
+        
+        df[self.second_column_name] = df[self.second_column_name].fillna(0)
+        
+        # Check if we have enough data
+        if len(df) < num_groups:
+            raise ValueError(
+                f"No hay suficientes clasificaciones CPC en el dataset. "
+                f"Se solicitaron {num_groups} grupos, pero solo hay {len(df)} clasificaciones disponibles."
+            )
+        
+        # Check for positive values (treemap requires positive values)
+        if df[self.second_column_name].sum() <= 0:
+            raise ValueError(
+                "El treemap requiere valores positivos. "
+                "La suma de todos los conteos es cero o negativa. "
+                "Por favor, verifique los datos del archivo Excel."
+            )
         
         # Select top n CPCs
         top_n_cpcs = df.nlargest(num_groups, self.second_column_name).copy()

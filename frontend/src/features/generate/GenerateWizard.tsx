@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { ProgressPanel } from "@/shared/ui/ProgressPanel";
@@ -8,8 +8,8 @@ import { EventTimeline, TimelineEvent } from "@/shared/ui/EventTimeline";
 import { StateBlock } from "@/shared/ui/StateBlock";
 import { features } from "@/shared/lib/flags";
 import { MOCK_EVENTS } from "@/shared/mock/mockJob";
-import { EventLogPayload } from "@/shared/types/backend";
-import { CheckCircle2, Circle, FileSpreadsheet, Database } from "lucide-react";
+import { EventLogPayload } from "@/features/generation/constants/job";
+import { CheckCircle2, FileSpreadsheet, Database } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 const STEPS = [

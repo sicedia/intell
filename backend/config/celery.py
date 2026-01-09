@@ -58,6 +58,15 @@ app.conf.task_annotations = {
     },
 }
 
+# Task queues (using kombu.Queue format)
+from kombu import Queue
+
+app.conf.task_queues = (
+    Queue('ingestion_io'),
+    Queue('charts_cpu'),
+    Queue('ai'),
+)
+
 # Broker transport options
 app.conf.broker_transport_options = {
     'visibility_timeout': 180,  # >= time_limit más alto (120s)

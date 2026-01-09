@@ -62,18 +62,21 @@ CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=boo
 # Remove this in production!
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 
-# Django REST Framework - enable browsable API in development
+# Django REST Framework - enable browsable API and AllowAny in development
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Only for development
+    ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',  # Enable browsable API
     ],
 }
 
-# Logging - more verbose in development
-LOGGING['root']['level'] = 'DEBUG'
-LOGGING['loggers']['django']['level'] = 'DEBUG'
+# Logging - reduced verbosity in development
+LOGGING['root']['level'] = 'WARNING'
+LOGGING['loggers']['django']['level'] = 'WARNING'
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = BASE_DIR / 'logs'
@@ -87,13 +90,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_ROOT.mkdir(exist_ok=True)
 
 # Development-specific settings
-if DEBUG:
-    # Show SQL queries in console
-    LOGGING['loggers']['django.db.backends'] = {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-        'propagate': False,
-    }
+# SQL queries logging disabled to reduce console output
+# Uncomment the following if you need to debug SQL queries:
+# if DEBUG:
+#     LOGGING['loggers']['django.db.backends'] = {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#         'propagate': False,
+#     }
 
 # Execute Celery tasks synchronously in development
 CELERY_TASK_ALWAYS_EAGER = True

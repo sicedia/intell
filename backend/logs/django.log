@@ -1,45 +1,819 @@
-INFO 2025-12-13 12:04:14,789 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [2.55, 127.0.0.1:55799][0m
-INFO 2025-12-13 12:04:14,807 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/71/ 200 [0.00, 127.0.0.1:55799][0m
-INFO 2025-12-13 12:04:14,816 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/71/ 200 [0.01, 127.0.0.1:55799][0m
-INFO 2025-12-13 12:04:14,884 runserver 23956 8008 [mHTTP GET /api/jobs/71/ 200 [0.07, 127.0.0.1:55799][0m
-INFO 2025-12-13 12:04:14,963 runserver 23956 8008 [mHTTP GET /api/jobs/71/ 200 [0.08, 127.0.0.1:55799][0m
-INFO 2025-12-13 12:04:15,068 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [2.82, 127.0.0.1:64763][0m
-INFO 2025-12-13 12:04:15,086 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/70/ 200 [0.01, 127.0.0.1:64763][0m
-INFO 2025-12-13 12:04:15,153 runserver 23956 8008 [mHTTP GET /api/jobs/70/ 200 [0.07, 127.0.0.1:64763][0m
-INFO 2025-12-13 12:04:15,492 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/70/ [127.0.0.1:55161]
-INFO 2025-12-13 12:04:15,497 runserver 23956 8008 WebSocket CONNECT /ws/jobs/70/ [127.0.0.1:55161]
-INFO 2025-12-13 12:08:19,445 runserver 23956 8008 [mHTTP GET /api/jobs/58/ 200 [0.08, 127.0.0.1:53235][0m
-INFO 2025-12-13 12:08:19,453 runserver 23956 8008 [mHTTP GET /api/jobs/70/ 200 [0.06, 127.0.0.1:52348][0m
-INFO 2025-12-13 12:08:24,775 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/70/ [127.0.0.1:55161]
-INFO 2025-12-13 12:08:38,526 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.60, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:08:38,532 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.61, 127.0.0.1:52348][0m
-INFO 2025-12-13 12:08:38,548 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/73/ 200 [0.01, 127.0.0.1:52348][0m
-INFO 2025-12-13 12:08:38,550 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/73/ 200 [0.01, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:08:38,565 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/72/ 200 [0.01, 127.0.0.1:52348][0m
-INFO 2025-12-13 12:08:38,620 runserver 23956 8008 [mHTTP GET /api/jobs/73/ 200 [0.07, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:08:38,643 runserver 23956 8008 [mHTTP GET /api/jobs/72/ 200 [0.07, 127.0.0.1:52348][0m
-INFO 2025-12-13 12:08:38,702 runserver 23956 8008 [mHTTP GET /api/jobs/73/ 200 [0.08, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:08:38,989 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/72/ [127.0.0.1:63428]
-INFO 2025-12-13 12:08:38,993 runserver 23956 8008 WebSocket CONNECT /ws/jobs/72/ [127.0.0.1:63428]
-INFO 2025-12-13 12:09:01,191 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/72/cancel/ 200 [0.00, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:09:01,246 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:09:01,714 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:09:02,342 runserver 23956 8008 [mHTTP POST /api/jobs/72/cancel/ 200 [0.05, 127.0.0.1:61211][0m
-INFO 2025-12-13 12:09:03,216 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/72/ [127.0.0.1:63428]
-INFO 2025-12-13 18:51:15,033 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.32, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:15,037 runserver 23956 8008 [mHTTP POST /api/jobs/ 201 [0.32, 127.0.0.1:55068][0m
-INFO 2025-12-13 18:51:15,051 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/75/ 200 [0.01, 127.0.0.1:55068][0m
-INFO 2025-12-13 18:51:15,052 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/75/ 200 [0.01, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:15,061 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/74/ 200 [0.00, 127.0.0.1:55068][0m
-INFO 2025-12-13 18:51:15,125 runserver 23956 8008 [mHTTP GET /api/jobs/74/ 200 [0.06, 127.0.0.1:55068][0m
-INFO 2025-12-13 18:51:15,127 runserver 23956 8008 [mHTTP GET /api/jobs/75/ 200 [0.07, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:15,198 runserver 23956 8008 [mHTTP GET /api/jobs/75/ 200 [0.07, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:15,465 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/74/ [127.0.0.1:55796]
-INFO 2025-12-13 18:51:15,470 runserver 23956 8008 WebSocket CONNECT /ws/jobs/74/ [127.0.0.1:55796]
-INFO 2025-12-13 18:51:26,437 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/74/ [127.0.0.1:55796]
-INFO 2025-12-13 18:51:27,397 runserver 23956 8008 [mHTTP GET /api/jobs/74/ 200 [0.06, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:27,751 runserver 23956 8008 WebSocket HANDSHAKING /ws/jobs/74/ [127.0.0.1:62936]
-INFO 2025-12-13 18:51:27,757 runserver 23956 8008 WebSocket CONNECT /ws/jobs/74/ [127.0.0.1:62936]
-INFO 2025-12-13 18:51:29,497 runserver 23956 8008 [mHTTP OPTIONS /api/jobs/74/cancel/ 200 [0.00, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:29,540 runserver 23956 8008 [mHTTP POST /api/jobs/74/cancel/ 200 [0.04, 127.0.0.1:58978][0m
-INFO 2025-12-13 18:51:30,479 runserver 23956 8008 WebSocket DISCONNECT /ws/jobs/74/ [127.0.0.1:62936]
+WARNING 2025-12-16 10:55:47,667 runserver 37212 4240 [33mHTTP GET / 404 [0.10, 127.0.0.1:63829][0m
+WARNING 2025-12-16 10:55:47,816 runserver 37212 4240 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:63829][0m
+WARNING 2025-12-16 10:56:11,204 runserver 37212 4240 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:57841][0m
+WARNING 2025-12-16 11:55:18,640 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:64343][0m
+WARNING 2025-12-16 11:55:32,122 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:64343][0m
+WARNING 2025-12-16 11:55:49,764 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:64343][0m
+WARNING 2025-12-16 11:57:37,149 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:57:41,762 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:57:55,016 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:58:09,498 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:58:22,634 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:55215][0m
+ERROR 2025-12-16 11:58:33,432 log 53748 12248 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 450, in login
+    return LoginView.as_view(**defaults)(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 145, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\edit.py", line 150, in post
+    if form.is_valid():
+       ~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 201, in errors
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 338, in full_clean
+    self._clean_form()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\forms.py", line 349, in clean
+    self.user_cache = authenticate(
+                      ~~~~~~~~~~~~^
+        self.request, username=username, password=password
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+ERROR 2025-12-16 11:58:33,457 runserver 53748 38936 [35;1mHTTP POST /admin/login/?next=/admin/events/event/ 500 [0.40, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:58:40,748 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:59:02,791 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.02, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:59:06,076 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:59:07,807 runserver 53748 38936 [33mHTTP GET /api/v1/events/ 404 [0.01, 127.0.0.1:55215][0m
+WARNING 2025-12-16 11:59:16,295 runserver 53748 38936 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:50435][0m
+ERROR 2025-12-16 11:59:25,713 log 53748 12248 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 450, in login
+    return LoginView.as_view(**defaults)(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 145, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\edit.py", line 150, in post
+    if form.is_valid():
+       ~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 201, in errors
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 338, in full_clean
+    self._clean_form()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\forms.py", line 349, in clean
+    self.user_cache = authenticate(
+                      ~~~~~~~~~~~~^
+        self.request, username=username, password=password
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+ERROR 2025-12-16 11:59:25,731 runserver 53748 38936 [35;1mHTTP POST /admin/login/?next=/admin/ 500 [0.37, 127.0.0.1:50435][0m
+ERROR 2025-12-16 11:59:38,741 log 53748 12248 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 450, in login
+    return LoginView.as_view(**defaults)(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 145, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\edit.py", line 150, in post
+    if form.is_valid():
+       ~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 201, in errors
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 338, in full_clean
+    self._clean_form()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\forms.py", line 349, in clean
+    self.user_cache = authenticate(
+                      ~~~~~~~~~~~~^
+        self.request, username=username, password=password
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+ERROR 2025-12-16 11:59:38,757 runserver 53748 38936 [35;1mHTTP POST /admin/login/?next=/admin/ 500 [0.37, 127.0.0.1:50435][0m
+WARNING 2025-12-16 11:59:38,992 runserver 53748 38936 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.02, 127.0.0.1:50435][0m
+ERROR 2025-12-16 12:00:55,223 log 53748 12248 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 450, in login
+    return LoginView.as_view(**defaults)(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 145, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\edit.py", line 150, in post
+    if form.is_valid():
+       ~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 201, in errors
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 338, in full_clean
+    self._clean_form()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\forms.py", line 349, in clean
+    self.user_cache = authenticate(
+                      ~~~~~~~~~~~~^
+        self.request, username=username, password=password
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+ERROR 2025-12-16 12:00:55,239 runserver 53748 38936 [35;1mHTTP POST /admin/login/?next=/admin/ 500 [0.34, 127.0.0.1:56210][0m
+WARNING 2025-12-16 12:00:55,462 runserver 53748 38936 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:56210][0m
+WARNING 2025-12-16 12:01:12,226 runserver 53748 38936 [33mHTTP GET / 404 [0.02, 127.0.0.1:56210][0m
+WARNING 2025-12-16 12:01:25,067 runserver 53748 38936 [33mHTTP GET / 404 [0.01, 127.0.0.1:56210][0m
+ERROR 2025-12-16 12:01:36,571 log 53748 12248 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 450, in login
+    return LoginView.as_view(**defaults)(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\views.py", line 89, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\base.py", line 145, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\generic\edit.py", line 150, in post
+    if form.is_valid():
+       ~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+                                 ^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 201, in errors
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 338, in full_clean
+    self._clean_form()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\forms\forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\forms.py", line 349, in clean
+    self.user_cache = authenticate(
+                      ~~~~~~~~~~~~^
+        self.request, username=username, password=password
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\debug.py", line 75, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 114, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 65, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 37, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 279, in ensure_connection
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 333, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+  File "C:\Projects\intell\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "intell_user"
+
+ERROR 2025-12-16 12:01:36,586 runserver 53748 38936 [35;1mHTTP POST /admin/login/?next=/admin/ 500 [0.38, 127.0.0.1:56210][0m
+WARNING 2026-01-09 09:24:24,383 runserver 17816 18100 [33mHTTP GET / 404 [0.04, 127.0.0.1:60279][0m
+WARNING 2026-01-09 09:24:24,796 runserver 17816 18100 [33mHTTP GET / 404 [0.01, 127.0.0.1:60279][0m
+WARNING 2026-01-09 09:24:52,180 runserver 17816 18100 [33mHTTP GET / 404 [0.02, 127.0.0.1:60279][0m
+WARNING 2026-01-09 09:24:52,545 runserver 17816 18100 [33mHTTP GET / 404 [0.01, 127.0.0.1:60279][0m
+ERROR 2026-01-09 09:27:18,244 log 23040 42620 Internal Server Error: /api/jobs/69/cancel/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 253, in cancel
+    job.cancel()
+    ~~~~~~~~~~^^
+  File "C:\Projects\intell\backend\apps\jobs\models.py", line 83, in cancel
+    image_tasks = self.imagetask_set.all()
+                  ^^^^^^^^^^^^^^^^^^
+AttributeError: 'Job' object has no attribute 'imagetask_set'. Did you mean: 'image_tasks'?
+ERROR 2026-01-09 09:27:18,260 runserver 23040 50892 [35;1mHTTP POST /api/jobs/69/cancel/ 500 [0.13, 127.0.0.1:52925][0m
+WARNING 2026-01-09 09:35:04,872 runserver 50152 3260 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:60375][0m
+WARNING 2026-01-09 09:50:07,265 runserver 53192 35212 [33mHTTP GET / 404 [0.03, 127.0.0.1:57433][0m
+WARNING 2026-01-09 09:50:07,638 runserver 53192 35212 [33mHTTP GET / 404 [0.01, 127.0.0.1:57433][0m
+WARNING 2026-01-09 10:05:57,418 runserver 5596 20108 [33mHTTP GET / 404 [0.02, 127.0.0.1:64879][0m
+WARNING 2026-01-09 10:05:57,796 runserver 5596 20108 [33mHTTP GET / 404 [0.01, 127.0.0.1:64879][0m

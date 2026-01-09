@@ -101,17 +101,41 @@ def algorithm_registry():
 @pytest.fixture
 def job_factory(db):
     """Factory function to create Job instances."""
+    created_files = []
+    
     def _create_job(dataset=None, **kwargs):
         if dataset is None:
-            # Create a minimal dataset if not provided
+            # Create a minimal dataset with actual file
             from apps.datasets.models import Dataset
+            import uuid
+            
+            # Ensure datasets directory exists
+            media_root = Path(settings.MEDIA_ROOT)
+            datasets_dir = media_root / 'datasets'
+            datasets_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Create a minimal valid JSON file
+            filename = f"test_job_dataset_{uuid.uuid4().hex[:8]}.json"
+            file_path = datasets_dir / filename
+            
+            test_data = [
+                {"Country": "US", "Number of Publications": 100},
+                {"Country": "CN", "Number of Publications": 80},
+                {"Country": "JP", "Number of Publications": 60},
+            ]
+            
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(test_data, f)
+            
+            created_files.append(file_path)
+            
             dataset = Dataset.objects.create(
                 source_type='espacenet_excel',
                 schema_version='v1',
                 normalized_format='json',
-                storage_path='datasets/test.json',
-                summary_stats={'total_rows': 0, 'total_columns': 0},
-                columns_map={}
+                storage_path=f'datasets/{filename}',
+                summary_stats={'total_rows': 3, 'total_columns': 2, 'columns': ['Country', 'Number of Publications']},
+                columns_map={'Country': 'Country', 'Number of Publications': 'Number of Publications'}
             )
         
         defaults = {
@@ -122,25 +146,21 @@ def job_factory(db):
         
         return Job.objects.create(dataset=dataset, **defaults)
     
-    return _create_job
+    yield _create_job
+    
+    # Cleanup created files
+    for file_path in created_files:
+        if file_path.exists():
+            file_path.unlink()
 
 
 @pytest.fixture
-def image_task_factory(db):
+def image_task_factory(db, job_factory):
     """Factory function to create ImageTask instances."""
     def _create_image_task(job=None, **kwargs):
         if job is None:
-            # Create a job if not provided
-            from apps.datasets.models import Dataset
-            dataset = Dataset.objects.create(
-                source_type='espacenet_excel',
-                schema_version='v1',
-                normalized_format='json',
-                storage_path='datasets/test.json',
-                summary_stats={'total_rows': 0, 'total_columns': 0},
-                columns_map={}
-            )
-            job = Job.objects.create(dataset=dataset, status=Job.Status.PENDING)
+            # Create a job with valid dataset file
+            job = job_factory()
         
         defaults = {
             'algorithm_key': 'top_patent_countries',
@@ -158,29 +178,12 @@ def image_task_factory(db):
 
 
 @pytest.fixture
-def description_task_factory(db):
+def description_task_factory(db, image_task_factory):
     """Factory function to create DescriptionTask instances."""
     def _create_description_task(image_task=None, **kwargs):
         if image_task is None:
-            # Create image_task if not provided
-            from apps.datasets.models import Dataset
-            dataset = Dataset.objects.create(
-                source_type='espacenet_excel',
-                schema_version='v1',
-                normalized_format='json',
-                storage_path='datasets/test.json',
-                summary_stats={'total_rows': 0, 'total_columns': 0},
-                columns_map={}
-            )
-            job = Job.objects.create(dataset=dataset, status=Job.Status.PENDING)
-            image_task = ImageTask.objects.create(
-                job=job,
-                algorithm_key='top_patent_countries',
-                algorithm_version='1.0',
-                params={},
-                output_format=ImageTask.OutputFormat.BOTH,
-                status=ImageTask.Status.SUCCESS
-            )
+            # Create image_task with valid job and dataset
+            image_task = image_task_factory(status=ImageTask.Status.SUCCESS)
         
         defaults = {
             'status': DescriptionTask.Status.PENDING,

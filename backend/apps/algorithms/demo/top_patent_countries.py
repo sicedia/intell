@@ -78,6 +78,44 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         
         return df
     
+    def _detect_country_column(self, df: pd.DataFrame) -> str:
+        """Detect which column contains country codes."""
+        country_keywords = ['country', 'countries', 'pais', 'país', 'jurisdiction', 'family', 'code', 'codigo']
+        
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in country_keywords):
+                return col
+        
+        # Fallback to first column if it contains strings
+        if len(df.columns) > 0 and df[df.columns[0]].dtype == 'object':
+            return df.columns[0]
+        
+        return df.columns[0] if len(df.columns) > 0 else None
+    
+    def _detect_count_column(self, df: pd.DataFrame, country_col: str) -> str:
+        """Detect which column contains count/number data."""
+        count_keywords = ['number', 'count', 'documents', 'cantidad', 'total', 'publications', 'patentes']
+        
+        for col in df.columns:
+            if col == country_col:
+                continue
+            col_lower = str(col).lower()
+            if any(keyword in col_lower for keyword in count_keywords):
+                return col
+        
+        # Fallback: return first numeric column that is not the country column
+        for col in df.columns:
+            if col != country_col and df[col].dtype in ['int64', 'float64']:
+                return col
+        
+        # Last fallback
+        for col in df.columns:
+            if col != country_col:
+                return col
+        
+        return None
+    
     def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
         """
         Execute algorithm on dataset.
@@ -95,16 +133,70 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         # Validate params
         top_n = params.get('top_n', 15)
         if not isinstance(top_n, int) or top_n < 1:
-            raise ValueError("top_n must be a positive integer")
+            raise ValueError(
+                f"El parámetro 'top_n' debe ser un número entero positivo. "
+                f"Valor recibido: {top_n}"
+            )
         
         # Load data from Dataset
         df = self._load_dataset(dataset)
         
-        # Rename columns if needed
-        if len(df.columns) >= 2:
-            if df.columns[0] != self.first_column_name or df.columns[1] != self.second_column_name:
-                df.rename(columns={df.columns[0]: self.first_column_name, 
-                                 df.columns[1]: self.second_column_name}, inplace=True)
+        # Validate dataset
+        if df.empty:
+            raise ValueError(
+                "El dataset está vacío. No se puede generar el gráfico de países/jurisdicciones. "
+                "Por favor, verifique que el archivo Excel contenga datos en la hoja de 'Countries'."
+            )
+        
+        if len(df.columns) < 2:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"El dataset debe tener al menos 2 columnas. "
+                f"Se encontraron {len(df.columns)} columna(s): {available_columns}. "
+                f"Se esperaba: una columna con códigos de país y otra con el número de documentos."
+            )
+        
+        # Detect columns
+        country_col = self._detect_country_column(df)
+        count_col = self._detect_count_column(df, country_col)
+        
+        if country_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de países/jurisdicciones. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con códigos de país (ej: 'Countries', 'Country')."
+            )
+        
+        if count_col is None:
+            available_columns = list(df.columns)
+            raise ValueError(
+                f"No se pudo detectar la columna de conteo de documentos. "
+                f"Columnas disponibles: {available_columns}. "
+                f"Asegúrese de que el archivo Excel tenga una columna con números (ej: 'Number of documents')."
+            )
+        
+        # Rename columns for processing
+        df = df.rename(columns={country_col: self.first_column_name, count_col: self.second_column_name})
+        
+        # Ensure count column is numeric
+        df[self.second_column_name] = pd.to_numeric(df[self.second_column_name], errors='coerce')
+        
+        # Check for valid numeric data
+        if df[self.second_column_name].isna().all():
+            raise ValueError(
+                f"La columna de conteo '{count_col}' no contiene valores numéricos válidos. "
+                f"Por favor, verifique que los datos sean números."
+            )
+        
+        df[self.second_column_name] = df[self.second_column_name].fillna(0)
+        
+        # Check if we have enough data
+        if len(df) < 1:
+            raise ValueError(
+                "No hay datos de países/jurisdicciones en el dataset. "
+                "Por favor, verifique que el archivo Excel contenga información válida."
+            )
         
         # Check if Ecuador is present
         ecuador_rank, ecuador_publications = None, None
