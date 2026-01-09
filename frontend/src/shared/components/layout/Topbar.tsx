@@ -1,17 +1,68 @@
-
 "use client"
 
 import React from 'react';
-import { Menu, Search, Bell } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, Search, Bell, ChevronRight, Home } from 'lucide-react';
 import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
+import { Separator } from "@/shared/components/ui/separator";
 import { Sidebar } from './Sidebar';
+import { cn } from "@/shared/lib/utils";
+
+// Map path segments to readable labels
+const pathLabels: Record<string, string> = {
+  dashboard: 'Dashboard',
+  generate: 'Generate',
+  images: 'Image Library',
+  themes: 'Themes & Styling',
+  settings: 'Settings',
+  reports: 'Reports',
+  diag: 'Diagnostics',
+};
+
+function Breadcrumbs() {
+  const pathname = usePathname();
+  
+  // Extract path segments, skipping locale
+  const segments = pathname?.split('/').filter(Boolean) || [];
+  const locale = segments[0];
+  const pathSegments = segments.slice(1);
+
+  if (pathSegments.length === 0) {
+    return null;
+  }
+
+  return (
+    <nav className="flex items-center space-x-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
+      <Home className="h-4 w-4" />
+      <ChevronRight className="h-4 w-4" />
+      {pathSegments.map((segment, index) => {
+        const isLast = index === pathSegments.length - 1;
+        const label = pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+        
+        return (
+          <React.Fragment key={segment}>
+            {isLast ? (
+              <span className="font-medium text-foreground">{label}</span>
+            ) : (
+              <>
+                <span>{label}</span>
+                <ChevronRight className="h-4 w-4" />
+              </>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </nav>
+  );
+}
 
 export function Topbar() {
     const [open, setOpen] = React.useState(false);
 
     return (
         <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-[40] flex items-center px-4 md:px-6">
+            {/* Mobile Menu */}
             <div className="md:hidden mr-4">
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild>
@@ -29,9 +80,16 @@ export function Topbar() {
                 </Sheet>
             </div>
 
-            <div className="flex-1 flex justify-end md:justify-between items-center">
-                <div className="hidden md:flex items-center text-muted-foreground bg-muted/40 rounded-md px-3 py-1.5 w-64 text-sm border focus-within:ring-1">
-                    <Search className="h-4 w-4 mr-2" />
+            {/* Desktop Layout */}
+            <div className="flex-1 flex items-center justify-between gap-4">
+                {/* Breadcrumbs - Desktop */}
+                <div className="hidden md:flex items-center">
+                    <Breadcrumbs />
+                </div>
+
+                {/* Search Bar */}
+                <div className="hidden md:flex items-center text-muted-foreground bg-muted/40 rounded-md px-3 py-1.5 w-64 text-sm border focus-within:ring-1 focus-within:ring-ring transition-all">
+                    <Search className="h-4 w-4 mr-2 shrink-0" />
                     <input
                         type="text"
                         placeholder="Search resources..."
@@ -39,9 +97,13 @@ export function Topbar() {
                     />
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground">
+                {/* Right Side Actions */}
+                <div className="flex items-center gap-2 ml-auto">
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
                         <Bell className="h-5 w-5" />
+                        {/* Notification badge could go here */}
+                        <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" aria-label="New notifications" />
+                        <span className="sr-only">Notifications</span>
                     </Button>
                 </div>
             </div>

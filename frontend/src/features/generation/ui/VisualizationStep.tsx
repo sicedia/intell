@@ -2,6 +2,8 @@ import { useWizardStore } from "../stores/useWizardStore";
 import { ALGORITHMS, AlgorithmConfig } from "../constants/algorithms";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { cn } from "@/shared/lib/utils";
 
 interface VisualizationStepProps {
     onNext: () => void;
@@ -42,27 +44,28 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {ALGORITHMS.map((algo) => (
-                            <div
+                            <Card
                                 key={algo.key}
-                                className={`
-                   flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-colors
-                   ${isSelected(algo.key) ? "border-primary bg-primary/5" : "hover:border-primary/50"}
-                 `}
+                                className={cn(
+                                    "cursor-pointer transition-all hover:shadow-md",
+                                    isSelected(algo.key) && "border-primary bg-primary/5 shadow-sm"
+                                )}
                                 onClick={() => toggleAlgorithm(algo.key)}
                             >
-                                <input
-                                    type="checkbox"
-                                    className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                    checked={isSelected(algo.key)}
-                                    onChange={() => toggleAlgorithm(algo.key)}
-                                />
-                                <div className="space-y-1">
-                                    <h4 className="font-medium leading-none">{algo.label}</h4>
-                                    <p className="text-xs text-muted-foreground">
-                                        Generate {algo.label.toLowerCase()} chart
-                                    </p>
-                                </div>
-                            </div>
+                                <CardContent className="flex items-start space-x-3 p-4">
+                                    <Checkbox
+                                        checked={isSelected(algo.key)}
+                                        onCheckedChange={() => toggleAlgorithm(algo.key)}
+                                        className="mt-1"
+                                    />
+                                    <div className="space-y-1 flex-1">
+                                        <h4 className="font-medium leading-none">{algo.label}</h4>
+                                        <p className="text-xs text-muted-foreground">
+                                            Generate {algo.label.toLowerCase()} chart
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 </CardContent>

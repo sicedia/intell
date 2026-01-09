@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import * as XLSX from "xlsx";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
+import { FormField } from "@/shared/ui/FormField";
 import { env } from "@/shared/lib/env";
 
 interface SourceStepProps {
@@ -102,7 +103,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                         </div>
 
                         {error && (
-                            <div className="p-3 bg-red-100 text-red-800 rounded-md text-sm">
+                            <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm border border-destructive/20">
                                 {error}
                             </div>
                         )}

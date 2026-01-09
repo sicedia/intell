@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from "@/shared/lib/utils";
@@ -11,7 +11,16 @@ import {
     Palette,
     FileText,
     Settings,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
+import { Button } from "@/shared/components/ui/button";
 
 const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,51 +34,140 @@ const navItems = [
 export function Sidebar({ className, onClose }: { className?: string, onClose?: () => void }) {
     const pathname = usePathname();
     const localeSegment = pathname?.split("/")[1] ?? "";
+    const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <div className={cn("flex flex-col h-full bg-card border-r", className)}>
+        <div 
+            className={cn(
+                "flex flex-col h-full bg-card border-r transition-all duration-300 relative",
+                collapsed ? "w-16" : "w-64",
+                className
+            )}
+            data-sidebar
+        >
+            {/* Header */}
             <div className="p-6 flex items-center gap-2 border-b">
-                <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-                    <span className="text-primary-foreground font-bold text-lg">I</span>
-                </div>
-                <span className="text-xl font-bold tracking-tight">Intell.AI</span>
+                {!collapsed && (
+                    <>
+                        <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                            <span className="text-primary-foreground font-bold text-lg">I</span>
+                        </div>
+                        <span className="text-xl font-bold tracking-tight">Intell.AI</span>
+                    </>
+                )}
+                {collapsed && (
+                    <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mx-auto">
+                        <span className="text-primary-foreground font-bold text-lg">I</span>
+                    </div>
+                )}
             </div>
 
+            {/* Collapse Toggle Button */}
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                                "absolute top-20 -right-3 h-6 w-6 rounded-full border bg-background shadow-md z-10",
+                                collapsed ? "rotate-180" : ""
+                            )}
+                            onClick={() => setCollapsed(!collapsed)}
+                        >
+                            {collapsed ? (
+                                <ChevronRight className="h-4 w-4" />
+                            ) : (
+                                <ChevronLeft className="h-4 w-4" />
+                            )}
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                        <p>{collapsed ? "Expand sidebar" : "Collapse sidebar"}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
+            {/* Navigation */}
             <div className="flex-1 overflow-y-auto py-4">
                 <nav className="space-y-1 px-2">
-                    {navItems.map((item) => {
-                        const Icon = item.icon;
-                        const targetHref = `/${localeSegment}${item.href}`;
-                        const isActive = pathname === targetHref || pathname?.startsWith(`${targetHref}/`);
+                    <TooltipProvider>
+                        {navItems.map((item) => {
+                            const Icon = item.icon;
+                            const targetHref = `/${localeSegment}${item.href}`;
+                            const isActive = pathname === targetHref || pathname?.startsWith(`${targetHref}/`);
 
-                        return (
-                            <Link
-                                key={item.href}
-                                href={targetHref}
-                                onClick={onClose}
-                                className={cn(
-                                    "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                                    isActive
-                                        ? "bg-primary/10 text-primary"
-                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                )}
-                            >
-                                <Icon className="h-4 w-4" />
-                                {item.label}
-                            </Link>
-                        );
-                    })}
+                            const linkContent = (
+                                <Link
+                                    href={targetHref}
+                                    onClick={onClose}
+                                    className={cn(
+                                        "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                        collapsed && "justify-center",
+                                        isActive
+                                            ? "bg-primary/10 text-primary"
+                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    )}
+                                >
+                                    <Icon className="h-4 w-4 shrink-0" />
+                                    {!collapsed && <span>{item.label}</span>}
+                                </Link>
+                            );
+
+                            if (collapsed) {
+                                return (
+                                    <Tooltip key={item.href}>
+                                        <TooltipTrigger asChild>
+                                            {linkContent}
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right">
+                                            <p>{item.label}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                );
+                            }
+
+                            return (
+                                <div key={item.href}>
+                                    {linkContent}
+                                </div>
+                            );
+                        })}
+                    </TooltipProvider>
                 </nav>
             </div>
 
+            {/* User Profile */}
             <div className="p-4 border-t">
-                {/* User profile stub */}
-                <div className="flex items-center gap-3 px-2 py-2">
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs">U</div>
-                    <div className="text-sm">
-                        <p className="font-medium">User Profile</p>
-                        <p className="text-xs text-muted-foreground">Admin</p>
-                    </div>
+                <div className={cn(
+                    "flex items-center gap-3",
+                    collapsed ? "justify-center" : "px-2"
+                )}>
+                    {collapsed ? (
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs cursor-pointer hover:bg-muted/80 transition-colors">
+                                        U
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent side="right">
+                                    <div>
+                                        <p className="font-medium">User Profile</p>
+                                        <p className="text-xs text-muted-foreground">Admin</p>
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    ) : (
+                        <>
+                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs">U</div>
+                            <div className="text-sm">
+                                <p className="font-medium">User Profile</p>
+                                <p className="text-xs text-muted-foreground">Admin</p>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

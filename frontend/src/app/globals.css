@@ -29,13 +29,30 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    /* Design System Tokens */
+    /* Semantic Color Tokens */
     --success: 142 71% 45%;
     --success-foreground: 144 70% 98%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
+    --info: 217 91% 60%;
+    --info-foreground: 222 47% 11%;
     --pending: 217 33% 17%;
-    /* same as secondary for now, or specific */
+
+    /* Typography Tokens */
+    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: var(--font-inter);
+    --font-mono: 'Fira Code', 'Courier New', monospace;
+
+    /* Animation & Transition Tokens */
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 200ms ease-in-out;
+    --transition-slow: 300ms ease-in-out;
+    --transition-slower: 500ms ease-in-out;
+
+    /* Opacity Tokens */
+    --opacity-disabled: 0.5;
+    --opacity-hover: 0.8;
+    --opacity-pressed: 0.9;
   }
 
   .dark {
@@ -64,11 +81,14 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    /* Design System Tokens */
+    /* Semantic Color Tokens - Dark Mode */
     --success: 142 70% 50%;
     --success-foreground: 144 70% 10%;
     --warning: 48 96% 89%;
     --warning-foreground: 38 92% 50%;
+    --info: 217 91% 65%;
+    --info-foreground: 210 40% 98%;
+    --pending: 217 33% 40%;
   }
 }
 
@@ -79,5 +99,22 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .dark .glass-effect {
+    background: rgba(0, 0, 0, 0.2);
   }
 }
