@@ -13,10 +13,11 @@ from pathlib import Path
 import json
 import io
 import textwrap
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 
@@ -107,11 +108,19 @@ class TopPatentInventorsAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
         start_time = time.time()
         
+        # Get visualization config
+        viz = self._get_viz_config(viz_config)
+
         top_n = params.get('top_n', 10)
         if not isinstance(top_n, int) or top_n < 1:
             raise ValueError(
@@ -183,8 +192,24 @@ class TopPatentInventorsAlgorithm(BaseAlgorithm):
         top_n_inventors = df.nlargest(top_n, self.second_column_name)
         top_n_inventors = top_n_inventors.sort_values(by=self.second_column_name, ascending=True)
         
-        # Generate colormap
-        cmap = mcolors.LinearSegmentedColormap.from_list("mycmap", [self.gradient_color_min, self.gradient_color_max])
+        # Get colors from visualization config
+        palette_colors = viz.get_colors()
+        primary_color = viz.get_primary_color()
+        secondary_color = viz.get_secondary_color()
+        text_color = viz.get_text_color()
+        grid_color = viz.get_grid_color()
+        bg_color = viz.get_background_color()
+        axis_fontsize = viz.get_axis_label_fontsize()
+        tick_fontsize = viz.get_tick_fontsize()
+        bar_label_fontsize = viz.get_annotation_fontsize()
+        annotation_fontsize = viz.get_annotation_fontsize()
+        
+        # Generate colormap using viz config colors
+        cmap = mcolors.LinearSegmentedColormap.from_list(
+            "mycmap", 
+            [palette_colors[0] if len(palette_colors) > 0 else primary_color, 
+             palette_colors[-1] if len(palette_colors) > 1 else secondary_color]
+        )
         
         # Normalize values
         min_val = top_n_inventors[self.second_column_name].min()
@@ -215,11 +240,14 @@ class TopPatentInventorsAlgorithm(BaseAlgorithm):
         )
         top_n_inventors[self.first_column_name] = top_n_inventors[self.first_column_name].apply(lambda x: x.strip().title())
         
-        # Create chart
+        # Create chart with visualization config
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
         fig, ax = plt.subplots(figsize=[self.chart_width, self.chart_height])
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
+        
         bars = ax.barh(top_n_inventors[self.first_column_name], top_n_inventors[self.second_column_name], color=colors)
         
         # Format X-axis
@@ -229,7 +257,7 @@ class TopPatentInventorsAlgorithm(BaseAlgorithm):
         # Calculate total
         total_publications = df[self.second_column_name].sum()
         
-        # Add labels
+        # Add labels with viz config
         for i, bar in enumerate(bars):
             num_publications = top_n_inventors[self.second_column_name].iloc[i]
             percentage = (num_publications / total_publications) * 100
@@ -238,32 +266,35 @@ class TopPatentInventorsAlgorithm(BaseAlgorithm):
                 bar.get_y() + bar.get_height() / 2,
                 f'{num_publications:,.0f} ({percentage:.1f}%)',
                 ha='left', va='center',
-                fontsize=self.bar_label_fontsize
+                fontsize=bar_label_fontsize,
+                color=text_color
             )
         
         # Adjust x-axis limit to fit labels
         ax.set_xlim(0, max_val * 1.25)
-        ax.tick_params(axis='y', labelsize=self.tick_fontsize)
-        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
+        ax.tick_params(axis='y', labelsize=tick_fontsize, labelcolor=text_color)
+        ax.tick_params(axis='x', labelsize=tick_fontsize, labelcolor=text_color)
         
-        # Remove spines
+        # Remove spines and style
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_color(grid_color)
+        ax.spines['bottom'].set_color(grid_color)
         ax.xaxis.set_ticks_position('none')
         ax.yaxis.set_ticks_position('none')
         
-        # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
-        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
+        # Labels with viz config
+        ax.set_xlabel(self.x_axis_label, fontsize=axis_fontsize, labelpad=12, color=text_color)
+        ax.set_ylabel(self.y_axis_label, fontsize=axis_fontsize, labelpad=12, color=text_color)
         
-        # Annotations
+        # Annotations with viz config
         plt.figtext(0.02, -0.06,
                     '* Los inventores son las personas físicas que realizaron la creación de la invención.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         plt.figtext(0.02, -0.10,
                     '** Un inventor contribuye de manera original y directa a la concepción de la invención.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

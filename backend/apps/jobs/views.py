@@ -123,7 +123,7 @@ class JobViewSet(viewsets.ViewSet):
         logger.debug("Job creation request received: keys=%s", list(data.keys()))
 
         # Parse JSON fields if they are strings (common in multipart/form-data)
-        for field in ['images', 'source_params']:
+        for field in ['images', 'source_params', 'visualization_config']:
             if field in data and isinstance(data[field], str):
                 try:
                     parsed_val = json.loads(data[field])
@@ -231,11 +231,13 @@ class JobViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 
-                # Create Job with main dataset
+                # Create Job with main dataset and visualization config
+                visualization_config = data.get('visualization_config')
                 job = Job.objects.create(
                     dataset=main_dataset,
                     created_by=created_by,
                     idempotency_key=idempotency_key,
+                    visualization_config=visualization_config,
                     status=Job.Status.PENDING
                 )
                 

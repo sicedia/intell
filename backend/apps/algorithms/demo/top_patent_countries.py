@@ -13,10 +13,11 @@ from matplotlib.ticker import MaxNLocator, FuncFormatter
 from pathlib import Path
 import json
 import io
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 
@@ -119,19 +120,28 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """
         Execute algorithm on dataset.
         
         Args:
             dataset: Dataset instance
             params: Must contain 'top_n' (int)
+            viz_config: Optional visualization configuration
             
         Returns:
             ChartResult with PNG bytes, SVG text, and chart_data
         """
         import time
         start_time = time.time()
+        
+        # Get visualization config
+        viz = self._get_viz_config(viz_config)
         
         # Validate params
         top_n = params.get('top_n', 15)
@@ -242,10 +252,25 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
             }])
             top_n_and_ecuador = pd.concat([others_row, top_n_and_ecuador], ignore_index=True)
         
-        # Generate colormap
+        # Get colors from visualization config
+        palette_colors = viz.get_colors()
+        primary_color = viz.get_primary_color()
+        secondary_color = viz.get_secondary_color()
+        accent_color = viz.get_accent_color()
+        text_color = viz.get_text_color()
+        grid_color = viz.get_grid_color()
+        bg_color = viz.get_background_color()
+        
+        # Font sizes from viz config
+        axis_fontsize = viz.get_axis_label_fontsize()
+        tick_fontsize = viz.get_tick_fontsize()
+        bar_label_fontsize = viz.get_annotation_fontsize()
+        
+        # Generate colormap using palette colors
         cmap = mcolors.LinearSegmentedColormap.from_list(
             "mycmap", 
-            [self.gradient_color_min, self.gradient_color_max]
+            [palette_colors[0] if len(palette_colors) > 0 else primary_color, 
+             palette_colors[-1] if len(palette_colors) > 1 else secondary_color]
         )
         
         # Normalize values for gradient
@@ -256,21 +281,24 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
             for x in top_n_and_ecuador[self.second_column_name]
         ]
         
-        # Assign colors
+        # Assign colors (use accent for special items)
         bar_colors = []
         for norm_val, country in zip(normalized_vals, top_n_and_ecuador[self.first_column_name]):
             if country == 'EC':
-                bar_colors.append(self.ecuador_bar_color)
+                bar_colors.append(accent_color)
             elif country == 'Others':
-                bar_colors.append(self.others_bar_color)
+                bar_colors.append(secondary_color)
             else:
                 bar_colors.append(cmap(norm_val))
         
-        # Create chart
+        # Create chart with visualization config
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
         fig, ax = plt.subplots(figsize=[self.chart_width, self.chart_height])
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
+        
         bars = ax.barh(
             top_n_and_ecuador[self.first_column_name], 
             top_n_and_ecuador[self.second_column_name], 
@@ -284,7 +312,7 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
         # Calculate total
         total_publications = top_n_and_ecuador[self.second_column_name].sum()
         
-        # Add labels
+        # Add labels with viz config
         label_offset = np.round(0.025 * max_val)
         for i, bar in enumerate(bars):
             num_publications = top_n_and_ecuador[self.second_column_name].iloc[i]
@@ -294,23 +322,26 @@ class TopPatentCountriesAlgorithm(BaseAlgorithm):
                 bar.get_y() + bar.get_height() / 2,
                 f'{num_publications:,.0f} ({percentage:.1f}%)',
                 ha='left', va='center',
-                fontsize=self.bar_label_fontsize
+                fontsize=bar_label_fontsize,
+                color=text_color
             )
         
         # Adjust x-axis limit to fit labels
         ax.set_xlim(0, max_val * 1.25)
-        ax.tick_params(axis='y', labelsize=self.tick_fontsize)
-        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
+        ax.tick_params(axis='y', labelsize=tick_fontsize, labelcolor=text_color)
+        ax.tick_params(axis='x', labelsize=tick_fontsize, labelcolor=text_color)
         
-        # Remove top and right spines
+        # Remove top and right spines, style remaining
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_color(grid_color)
+        ax.spines['bottom'].set_color(grid_color)
         ax.xaxis.set_ticks_position('none')
         ax.yaxis.set_ticks_position('none')
         
-        # Add axis labels
-        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
-        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize, labelpad=12, color="black")
+        # Add axis labels with viz config
+        ax.set_xlabel(self.x_axis_label, fontsize=axis_fontsize, labelpad=12, color=text_color)
+        ax.set_ylabel(self.y_axis_label, fontsize=axis_fontsize, labelpad=12, color=text_color)
         
         # Generate PNG bytes
         png_buffer = io.BytesIO()

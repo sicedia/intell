@@ -16,6 +16,7 @@ from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 # Optional imports for forecasting
@@ -134,12 +135,20 @@ class PatentForecastAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
         start_time = time.time()
         warnings = []
         
+        # Get visualization config
+        viz = self._get_viz_config(viz_config)
+
         # Load data
         df = self._load_dataset(dataset)
         
@@ -330,83 +339,105 @@ class PatentForecastAlgorithm(BaseAlgorithm):
                 "CAGR_Projected_Line": projected_cagr_line
             })
         
-        # Create chart
+        # Get colors and font sizes from visualization config
+        palette_colors = viz.get_colors()
+        primary_color = viz.get_primary_color()
+        secondary_color = viz.get_secondary_color()
+        accent_color = viz.get_accent_color()
+        text_color = viz.get_text_color()
+        grid_color = viz.get_grid_color()
+        bg_color = viz.get_background_color()
+        axis_fontsize = viz.get_axis_label_fontsize()
+        tick_fontsize = viz.get_tick_fontsize()
+        legend_fontsize = viz.get_legend_fontsize()
+        annotation_fontsize = viz.get_annotation_fontsize()
+        
+        # Get additional colors from palette for different lines
+        forecast_color_1 = palette_colors[2] if len(palette_colors) > 2 else accent_color
+        forecast_color_2 = palette_colors[3] if len(palette_colors) > 3 else secondary_color
+        
+        # Create chart with visualization config
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
         fig, ax = plt.subplots(figsize=(self.chart_width, self.chart_height))
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
         
-        # Plot historical data
+        # Plot historical data with viz config
         ax.plot(df[self.first_column_name], df[self.second_column_name], 
-                color=self.trend_line_color, marker='o', markersize=4, 
+                color=primary_color, marker='o', markersize=4, 
                 label="Número de Familias de Patentes Publicadas", linewidth=1.5)
         
-        # Plot CAGR line
+        # Plot CAGR line with viz config
         if df_extended_cagr is not None:
             ax.plot(df_extended_cagr[self.first_column_name], df_extended_cagr["CAGR_Projected_Line"], 
-                    color=self.cagr_line_color, linestyle='dotted', 
+                    color=secondary_color, linestyle='dotted', 
                     label="Línea Proyectada CAGR", linewidth=2.5)
         
-        # Plot ETS forecast
+        # Plot ETS forecast with viz config
         if df_forecast_ets is not None and not df_forecast_ets["Forecast_ETS"].isna().all():
             ax.plot(df_forecast_ets[self.first_column_name], df_forecast_ets["Forecast_ETS"], 
-                    color=self.forecast_ets_color, linestyle='dotted', 
+                    color=forecast_color_1, linestyle='dotted', 
                     label="Forecast ETS", linewidth=2.5)
         
-        # Plot ARIMA forecast
+        # Plot ARIMA forecast with viz config
         if df_forecast_arima is not None and not df_forecast_arima["Forecast_ARIMA"].isna().all():
             ax.plot(df_forecast_arima[self.first_column_name], df_forecast_arima["Forecast_ARIMA"], 
-                    color=self.forecast_arima_color, linestyle='dotted', 
+                    color=forecast_color_2, linestyle='dotted', 
                     label="Forecast ARIMA", linewidth=2.5)
         
         # Shade forecast area
         start_forecast_year = self.cutoff_year
         end_forecast_year = max(forecast_years) if forecast_years else self.cutoff_year + 5
-        ax.axvspan(start_forecast_year, end_forecast_year, color='gray', alpha=0.1)
+        ax.axvspan(start_forecast_year, end_forecast_year, color=grid_color, alpha=0.2)
         
-        # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
-        ax.set_ylabel(self.y_axis_label, fontsize=self.axis_label_fontsize)
-        ax.tick_params(axis='both', labelsize=self.tick_fontsize)
+        # Labels with viz config
+        ax.set_xlabel(self.x_axis_label, fontsize=axis_fontsize, color=text_color)
+        ax.set_ylabel(self.y_axis_label, fontsize=axis_fontsize, color=text_color)
+        ax.tick_params(axis='both', labelsize=tick_fontsize, labelcolor=text_color)
         
-        # Grid
-        ax.grid(True, color='lightgrey', linestyle='-', linewidth=0.35)
+        # Grid with viz config
+        ax.grid(True, color=grid_color, linestyle='-', linewidth=0.35)
         
-        # Legend
+        # Legend with viz config
         def wrap_labels(labels, text_wrap_width=30):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=self.legend_fontsize, frameon=False)
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=legend_fontsize, frameon=False)
         wrapped_labels1 = wrap_labels([text.get_text() for text in legend.get_texts()])
         for text, wrapped_label in zip(legend.get_texts(), wrapped_labels1):
             text.set_text(wrapped_label)
+            text.set_color(text_color)
         
         # X-axis - include both historical and forecast years
         all_years = sorted(set(df[self.first_column_name].tolist() + forecast_years))
         ax.set_xticks(all_years)
         ax.tick_params(axis='x', rotation=45)
         
-        # Remove spines
+        # Remove spines and style
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_color(grid_color)
+        ax.spines['bottom'].set_color(grid_color)
         
-        # Annotations - positioned to avoid overflow
+        # Annotations with viz config
         plt.figtext(0.02, -0.08,
                     '*El crecimiento anual compuesto (CAGR) indica la tasa de crecimiento promedio de un valor entre dos puntos en el tiempo.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         plt.figtext(0.02, -0.12,
                     '** El modelo ARIMA proyecta series temporales considerando patrones históricos de autocorrelación y tendencias.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         plt.figtext(0.02, -0.16,
                     '*** El modelo ETS utiliza descomposición exponencial para prever tendencias y nivel de una serie temporal.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         if cagr_rate is not None:
             plt.figtext(0.02, -0.20,
                         f'**** CAGR de {round(cagr_rate * 100, 2)}% para el periodo {start_year}-{end_year}.',
-                        ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                        ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

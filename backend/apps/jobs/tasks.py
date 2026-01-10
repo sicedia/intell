@@ -183,8 +183,12 @@ def generate_image_task(self, image_task_id: int):
             progress=30
         )
         
-        # Execute algorithm (consumes Dataset)
-        result = algorithm.run(dataset, image_task.params)
+        # Get visualization config from job
+        from apps.algorithms.visualization import VisualizationConfig
+        viz_config = VisualizationConfig.from_dict(job.visualization_config)
+        
+        # Execute algorithm (consumes Dataset with visualization config)
+        result = algorithm.run(dataset, image_task.params, viz_config=viz_config)
         
         # Check cancellation again
         job.refresh_from_db()

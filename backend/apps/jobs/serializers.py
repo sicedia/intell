@@ -372,6 +372,11 @@ class JobCreateSerializer(serializers.Serializer):
         allow_null=True,
         help_text='Clave de idempotencia para prevenir duplicados (opcional)'
     )
+    visualization_config = serializers.DictField(
+        required=False,
+        allow_null=True,
+        help_text='Configuracion de visualizacion para todas las graficas (color_palette, font_size, custom_params)'
+    )
     
     def validate(self, attrs):
         """Validate that source_data or source_params is provided."""

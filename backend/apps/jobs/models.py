@@ -51,6 +51,12 @@ class Job(models.Model):
         blank=True,
         help_text="Idempotency key for duplicate request prevention"
     )
+    visualization_config = models.JSONField(
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Visualization settings (color palette, font size, etc.) applied to all charts"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

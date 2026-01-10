@@ -19,6 +19,7 @@ export function useJobCreation(): UseJobCreationReturn {
         sourceFile,
         sourceType,
         selectedAlgorithms,
+        visualizationConfig,
         jobId,
         setJobId,
     } = useWizardStore();
@@ -48,6 +49,7 @@ export function useJobCreation(): UseJobCreationReturn {
                 formData.append("source_data", sourceFile);
                 formData.append("images", JSON.stringify(selectedAlgorithms));
                 formData.append("idempotency_key", idempotencyKey);
+                formData.append("visualization_config", JSON.stringify(visualizationConfig));
 
                 const res = await createJob(formData);
                 setJobId(res.job_id);
@@ -64,7 +66,7 @@ export function useJobCreation(): UseJobCreationReturn {
         };
 
         startJob();
-    }, [jobId, isCreating, sourceFile, sourceType, selectedAlgorithms, idempotencyKey, setJobId, hasStarted]);
+    }, [jobId, isCreating, sourceFile, sourceType, selectedAlgorithms, visualizationConfig, idempotencyKey, setJobId, hasStarted]);
 
     const handleRetry = useCallback(() => {
         setHasStarted(false);

@@ -10,10 +10,11 @@ import math
 from pathlib import Path
 import json
 import io
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 # Optional import for treemap
@@ -105,12 +106,20 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
         start_time = time.time()
         warnings = []
         
+        # Get visualization config
+        viz = self._get_viz_config(viz_config)
+
         num_groups = params.get('num_groups', 15)
         if not isinstance(num_groups, int) or num_groups < 1:
             raise ValueError(
@@ -196,11 +205,21 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
         top_n_cpcs = df.nlargest(num_groups, self.second_column_name).copy()
         top_n_cpcs[self.first_column_name] = top_n_cpcs[self.first_column_name].str.title()
         
-        # Create figure and axes
+        # Get colors and font sizes from visualization config
+        palette_colors = viz.get_colors()
+        primary_color = viz.get_primary_color()
+        secondary_color = viz.get_secondary_color()
+        text_color = viz.get_text_color()
+        bg_color = viz.get_background_color()
+        annotation_fontsize = viz.get_annotation_fontsize()
+        
+        # Create figure and axes with visualization config
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
         fig, ax = plt.subplots(figsize=(self.chart_width, self.chart_height))
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
         
         # Get plotting area dimensions
         x_axis_min, x_axis_max = ax.get_xlim()
@@ -220,9 +239,11 @@ class CPCTreemapAlgorithm(BaseAlgorithm):
             rects_data = []
             warnings.append("No positive values to plot")
         
-        # Color mapping
+        # Color mapping using viz config colors
         norm_color = plt.Normalize(top_n_cpcs[self.second_column_name].min(), top_n_cpcs[self.second_column_name].max())
-        cmap = plt.cm.colors.LinearSegmentedColormap.from_list("custom_blue", ['#44b9be', '#0234a5', '#001f3f'])
+        # Use palette colors for treemap gradient
+        gradient_colors = [palette_colors[0], palette_colors[-1]] if len(palette_colors) >= 2 else [primary_color, secondary_color]
+        cmap = plt.cm.colors.LinearSegmentedColormap.from_list("custom_palette", gradient_colors)
         bar_colors = [cmap(norm_color(value)) for value in top_n_cpcs[self.second_column_name]]
         
         # Helper function to truncate text to fit within rectangle

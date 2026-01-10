@@ -4,8 +4,11 @@ All algorithms must implement BaseAlgorithm and consume datasets.Dataset.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Dict, Any
-from apps.datasets.models import Dataset
+from typing import Optional, Dict, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from apps.datasets.models import Dataset
+    from apps.algorithms.visualization import VisualizationConfig
 
 
 @dataclass
@@ -33,6 +36,7 @@ class BaseAlgorithm(ABC):
     
     All algorithms must:
     - Receive datasets.Dataset (never raw data)
+    - Accept optional VisualizationConfig for styling
     - Return ChartResult with png_bytes, svg_text, chart_data, and meta
     """
     
@@ -48,13 +52,19 @@ class BaseAlgorithm(ABC):
         self.algorithm_version = algorithm_version
     
     @abstractmethod
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: "Dataset", 
+        params: Dict[str, Any],
+        viz_config: Optional["VisualizationConfig"] = None
+    ) -> ChartResult:
         """
         Execute algorithm on dataset.
         
         Args:
             dataset: Dataset instance (canonical format)
             params: Algorithm-specific parameters
+            viz_config: Optional visualization configuration for styling
             
         Returns:
             ChartResult with generated chart and metadata
@@ -72,4 +82,23 @@ class BaseAlgorithm(ABC):
             True if valid, raises ValueError otherwise
         """
         return True
+    
+    def _get_viz_config(
+        self, 
+        viz_config: Optional["VisualizationConfig"] = None
+    ) -> "VisualizationConfig":
+        """
+        Get visualization config, using defaults if not provided.
+        
+        Args:
+            viz_config: Optional visualization configuration
+            
+        Returns:
+            VisualizationConfig instance (provided or default)
+        """
+        if viz_config is not None:
+            return viz_config
+        
+        from apps.algorithms.visualization import DEFAULT_VISUALIZATION_CONFIG
+        return DEFAULT_VISUALIZATION_CONFIG
 

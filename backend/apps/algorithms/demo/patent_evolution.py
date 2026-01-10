@@ -11,10 +11,11 @@ import textwrap
 from pathlib import Path
 import json
 import io
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 
@@ -35,15 +36,10 @@ class PatentEvolutionAlgorithm(BaseAlgorithm):
         self.second_column_name = "Number of Publications"
         self.historical_years = 20
         self.cutoff_year = datetime.datetime.now().year - 2
-        self.trend_line_color = '#44b9be'
         self.chart_width = 12
         self.chart_height = 8
         self.x_axis_label = 'Año'
         self.y_axis_label = 'Número de Patentes Publicadas'
-        self.axis_label_fontsize = 14
-        self.tick_fontsize = 10
-        self.legend_fontsize = 10
-        self.annotation_fontsize = 10
     
     def _load_dataset(self, dataset: Dataset) -> pd.DataFrame:
         """Load data from Dataset."""
@@ -117,10 +113,18 @@ class PatentEvolutionAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
         start_time = time.time()
+        
+        # Get visualization config (use defaults if not provided)
+        viz = self._get_viz_config(viz_config)
         
         # Load data
         df = self._load_dataset(dataset)
@@ -231,36 +235,52 @@ class PatentEvolutionAlgorithm(BaseAlgorithm):
         # Sort by year to ensure proper line plotting
         df = df.sort_values(by=self.first_column_name).reset_index(drop=True)
         
-        # Create chart
+        # Create chart with visualization config
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
+        # Get colors and font sizes from visualization config
+        primary_color = viz.get_primary_color()
+        text_color = viz.get_text_color()
+        grid_color = viz.get_grid_color()
+        bg_color = viz.get_background_color()
+        axis_fontsize = viz.get_axis_label_fontsize()
+        tick_fontsize = viz.get_tick_fontsize()
+        legend_fontsize = viz.get_legend_fontsize()
+        annotation_fontsize = viz.get_annotation_fontsize()
+        
         fig, ax = plt.subplots(figsize=(self.chart_width, self.chart_height))
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
+        
         ax.plot(df[self.first_column_name], df[self.second_column_name], 
-                color=self.trend_line_color, marker='o', markersize=4, 
+                color=primary_color, marker='o', markersize=4, 
                 label=self.y_axis_label, linewidth=1.5)
         
-        # Labels
-        ax.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
-        ax.set_ylabel(self.y_axis_label, color="black", fontsize=self.axis_label_fontsize)
-        ax.tick_params(axis='y', labelcolor="black", labelsize=self.tick_fontsize)
-        ax.tick_params(axis='x', labelsize=self.tick_fontsize)
+        # Labels with visualization config
+        ax.set_xlabel(self.x_axis_label, fontsize=axis_fontsize, color=text_color)
+        ax.set_ylabel(self.y_axis_label, fontsize=axis_fontsize, color=text_color)
+        ax.tick_params(axis='y', labelcolor=text_color, labelsize=tick_fontsize)
+        ax.tick_params(axis='x', labelcolor=text_color, labelsize=tick_fontsize)
         
-        # Grid
-        ax.grid(True, color='lightgrey', linestyle='-', linewidth=0.35)
+        # Grid with visualization config
+        ax.grid(True, color=grid_color, linestyle='-', linewidth=0.35)
         
         # Legend
         def wrap_labels(labels, text_wrap_width=20):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=self.legend_fontsize, frameon=False)
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.9), fontsize=legend_fontsize, frameon=False)
         wrapped_labels = wrap_labels([text.get_text() for text in legend.get_texts()])
         for text, wrapped_label in zip(legend.get_texts(), wrapped_labels):
             text.set_text(wrapped_label)
+            text.set_color(text_color)
         
         # Remove spines
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_color(grid_color)
+        ax.spines['bottom'].set_color(grid_color)
         
         # X-axis ticks
         ax.set_xticks(df[self.first_column_name].tolist())
@@ -269,7 +289,7 @@ class PatentEvolutionAlgorithm(BaseAlgorithm):
         # Annotations
         plt.figtext(0, -0.075,
                     '* Se muestran las publicaciones hasta hace 2 años, porque los documentos de patente suelen demorar hasta 18 meses en su publicación.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()

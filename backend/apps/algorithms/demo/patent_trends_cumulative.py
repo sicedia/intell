@@ -11,10 +11,11 @@ import textwrap
 from pathlib import Path
 import json
 import io
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from django.conf import settings
 
 from apps.algorithms.base import BaseAlgorithm, ChartResult
+from apps.algorithms.visualization import VisualizationConfig
 from apps.datasets.models import Dataset
 
 
@@ -119,11 +120,19 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         
         return None
     
-    def run(self, dataset: Dataset, params: Dict[str, Any]) -> ChartResult:
+    def run(
+        self, 
+        dataset: Dataset, 
+        params: Dict[str, Any],
+        viz_config: Optional[VisualizationConfig] = None
+    ) -> ChartResult:
         """Execute algorithm on dataset."""
         import time
         start_time = time.time()
         
+        # Get visualization config
+        viz = self._get_viz_config(viz_config)
+
         # Load data
         df = self._load_dataset(dataset)
         
@@ -236,65 +245,82 @@ class PatentTrendsCumulativeAlgorithm(BaseAlgorithm):
         # Calculate cumulative
         df[self.y_axis_label_2] = df[self.second_column_name].cumsum()
         
+        # Get colors and font sizes from visualization config
+        primary_color = viz.get_primary_color()
+        secondary_color = viz.get_secondary_color()
+        text_color = viz.get_text_color()
+        grid_color = viz.get_grid_color()
+        bg_color = viz.get_background_color()
+        axis_fontsize = viz.get_axis_label_fontsize()
+        tick_fontsize = viz.get_tick_fontsize()
+        legend_fontsize = viz.get_legend_fontsize()
+        annotation_fontsize = viz.get_annotation_fontsize()
+        
         # Create chart with dual axes
         plt.rcParams['svg.fonttype'] = 'none'
         plt.rcParams['font.sans-serif'] = ['Arial']
         
         fig, ax1 = plt.subplots(figsize=(self.chart_width, self.chart_height))
+        fig.patch.set_facecolor(bg_color)
+        ax1.set_facecolor(bg_color)
         
-        # Plot annual evolution
+        # Plot annual evolution with viz config
         ax1.plot(df[self.first_column_name], df[self.second_column_name], 
-                color=self.trend_line_color, marker='o', markersize=4, 
+                color=primary_color, marker='o', markersize=4, 
                 label=self.y_axis_label, linewidth=1.5)
         
-        # First Y-axis labels
-        ax1.set_xlabel(self.x_axis_label, fontsize=self.axis_label_fontsize)
-        ax1.set_ylabel(self.y_axis_label, color=self.trend_line_color, fontsize=self.axis_label_fontsize)
-        ax1.tick_params(axis='y', labelcolor=self.trend_line_color, labelsize=self.tick_fontsize)
-        ax1.tick_params(axis='x', labelsize=self.tick_fontsize)
+        # First Y-axis labels with viz config
+        ax1.set_xlabel(self.x_axis_label, fontsize=axis_fontsize, color=text_color)
+        ax1.set_ylabel(self.y_axis_label, color=primary_color, fontsize=axis_fontsize)
+        ax1.tick_params(axis='y', labelcolor=primary_color, labelsize=tick_fontsize)
+        ax1.tick_params(axis='x', labelsize=tick_fontsize, labelcolor=text_color)
         
-        # Second Y-axis for cumulative
+        # Second Y-axis for cumulative with viz config
         ax2 = ax1.twinx()
+        ax2.set_facecolor(bg_color)
         ax2.plot(df[self.first_column_name], df[self.y_axis_label_2], 
-                color=self.cumulative_line_color, marker='o', markersize=4, 
+                color=secondary_color, marker='o', markersize=4, 
                 label=self.y_axis_label_2, linewidth=1.5)
         
-        # Second Y-axis labels
-        ax2.set_ylabel(self.y_axis_label_2, color=self.cumulative_line_color, fontsize=self.axis_label_fontsize)
-        ax2.tick_params(axis='y', labelcolor=self.cumulative_line_color, labelsize=self.tick_fontsize)
+        # Second Y-axis labels with viz config
+        ax2.set_ylabel(self.y_axis_label_2, color=secondary_color, fontsize=axis_fontsize)
+        ax2.tick_params(axis='y', labelcolor=secondary_color, labelsize=tick_fontsize)
         
-        # Grid
-        ax1.grid(True, axis='x', color='lightgrey', linestyle='-', linewidth=0.35)
+        # Grid with viz config
+        ax1.grid(True, axis='x', color=grid_color, linestyle='-', linewidth=0.35)
         
-        # Legends
+        # Legends with viz config
         def wrap_labels(labels, text_wrap_width=20):
             return ["\n".join(textwrap.wrap(label, width=text_wrap_width)) for label in labels]
         
-        legend1 = ax1.legend(loc='center left', bbox_to_anchor=(1.1, 0.9), fontsize=self.legend_fontsize, frameon=False)
-        legend2 = ax2.legend(loc='center left', bbox_to_anchor=(1.1, 0.8), fontsize=self.legend_fontsize, frameon=False)
+        legend1 = ax1.legend(loc='center left', bbox_to_anchor=(1.1, 0.9), fontsize=legend_fontsize, frameon=False)
+        legend2 = ax2.legend(loc='center left', bbox_to_anchor=(1.1, 0.8), fontsize=legend_fontsize, frameon=False)
         
         wrapped_labels1 = wrap_labels([text.get_text() for text in legend1.get_texts()])
         wrapped_labels2 = wrap_labels([text.get_text() for text in legend2.get_texts()])
         
         for text, wrapped_label in zip(legend1.get_texts(), wrapped_labels1):
             text.set_text(wrapped_label)
+            text.set_color(primary_color)
         for text, wrapped_label in zip(legend2.get_texts(), wrapped_labels2):
             text.set_text(wrapped_label)
+            text.set_color(secondary_color)
         
-        # Remove spines
+        # Remove spines and style
         for ax in [ax1, ax2]:
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
             ax.spines['top'].set_visible(False)
+            ax.spines['bottom'].set_color(grid_color)
         
         # X-axis ticks
         ax1.set_xticks(df[self.first_column_name].tolist())
         ax1.tick_params(axis='x', rotation=45)
         
-        # Annotations
+        # Annotations with viz config
         plt.figtext(0, -0.075,
                     '* Se muestran las publicaciones hasta hace 2 años, porque los documentos de patente suelen demorar hasta 18 meses en su publicación.',
-                    ha="left", fontsize=self.annotation_fontsize, color="black", wrap=True)
+                    ha="left", fontsize=annotation_fontsize, color=text_color, wrap=True)
         
         # Save to bytes
         png_buffer = io.BytesIO()
