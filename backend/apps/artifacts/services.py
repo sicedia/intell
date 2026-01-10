@@ -1,6 +1,7 @@
 """
 Services for artifact operations.
 """
+import logging
 import zipfile
 from io import BytesIO
 from pathlib import Path
@@ -10,6 +11,8 @@ from django.conf import settings
 
 if TYPE_CHECKING:
     from apps.jobs.models import Job
+
+logger = logging.getLogger(__name__)
 
 
 def create_images_zip(
@@ -33,13 +36,11 @@ def create_images_zip(
     """
     from apps.jobs.models import ImageTask
     
-    # Get successful image tasks
     successful_tasks = job.image_tasks.filter(status=ImageTask.Status.SUCCESS)
     
     if not successful_tasks.exists():
         raise ValueError("No successful images available to download")
     
-    # Create ZIP in memory
     zip_buffer = BytesIO()
     
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -48,34 +49,24 @@ def create_images_zip(
         for task in successful_tasks:
             algorithm_name = task.algorithm_key
             
-            # Add PNG if requested and available
             if include_png and task.artifact_png:
-                try:
-                    png_path = Path(settings.MEDIA_ROOT) / task.artifact_png.name
-                    if png_path.exists():
-                        arcname = f"png/{algorithm_name}.png"
-                        zip_file.write(png_path, arcname)
-                        files_added += 1
-                except Exception:
-                    # Skip files that can't be read
-                    pass
+                png_path = Path(settings.MEDIA_ROOT) / task.artifact_png.name
+                if png_path.exists():
+                    zip_file.write(png_path, f"png/{algorithm_name}.png")
+                    files_added += 1
+                else:
+                    logger.warning(f"PNG file not found for task {task.id}: {png_path}")
             
-            # Add SVG if requested and available
             if include_svg and task.artifact_svg:
-                try:
-                    svg_path = Path(settings.MEDIA_ROOT) / task.artifact_svg.name
-                    if svg_path.exists():
-                        arcname = f"svg/{algorithm_name}.svg"
-                        zip_file.write(svg_path, arcname)
-                        files_added += 1
-                except Exception:
-                    # Skip files that can't be read
-                    pass
+                svg_path = Path(settings.MEDIA_ROOT) / task.artifact_svg.name
+                if svg_path.exists():
+                    zip_file.write(svg_path, f"svg/{algorithm_name}.svg")
+                    files_added += 1
+                else:
+                    logger.warning(f"SVG file not found for task {task.id}: {svg_path}")
         
         if files_added == 0:
             raise ValueError("No image files could be read")
     
-    # Reset buffer position to beginning
     zip_buffer.seek(0)
-    
     return zip_buffer

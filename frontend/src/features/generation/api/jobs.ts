@@ -134,7 +134,8 @@ export const downloadJobZip = async (
     format: ZipFormat = "both"
 ): Promise<void> => {
     const apiUrl = env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "");
-    const url = `${apiUrl}${BASE_URL}/${jobId}/download-zip/?format=${format}`;
+    // Use 'image_format' param (not 'format' to avoid conflict with DRF's format negotiation)
+    const url = `${apiUrl}${BASE_URL}/${jobId}/download-zip/?image_format=${format}`;
 
     const response = await fetch(url);
 

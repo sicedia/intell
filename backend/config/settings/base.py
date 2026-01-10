@@ -174,6 +174,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
+        'apps': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 

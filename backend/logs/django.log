@@ -828,3 +828,1311 @@ WARNING 2026-01-09 17:10:00,487 runserver 14224 55040 [33mHTTP GET /api/jobs/16
 WARNING 2026-01-09 17:10:25,326 runserver 14224 55040 [33mHTTP GET /api/jobs/169/download-zip/?format=svg 404 [0.01, 127.0.0.1:59784][0m
 WARNING 2026-01-09 17:25:01,997 runserver 36896 28088 HTTP GET /api/jobs/171/download-zip/?format=both 404 [0.01, 127.0.0.1:60204]
 WARNING 2026-01-09 17:29:57,167 runserver 36896 28088 HTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:59480]
+WARNING 2026-01-09 17:52:42,927 runserver 36896 28088 HTTP GET /api/jobs/176/download-zip/?format=both 404 [0.01, 127.0.0.1:55192]
+WARNING 2026-01-09 17:55:34,733 runserver 9212 18728 [33mHTTP GET /api/jobs/177/download-zip/?format=both 404 [0.01, 127.0.0.1:55735][0m
+WARNING 2026-01-09 17:59:29,588 runserver 18348 26184 [33mHTTP GET /api/jobs/180/download-zip/?format=png 404 [0.01, 127.0.0.1:51672][0m
+WARNING 2026-01-09 17:59:41,618 runserver 18348 26184 [33mHTTP GET /api/jobs/180/download-zip/?format=svg 404 [0.01, 127.0.0.1:51672][0m
+WARNING 2026-01-09 17:59:46,195 runserver 18348 26184 [33mHTTP GET /api/jobs/180/download-zip/?format=both 404 [0.01, 127.0.0.1:51672][0m
+WARNING 2026-01-09 18:00:28,456 runserver 18348 26184 [33mHTTP GET /api/jobs/176/download-zip/?format=both 404 [0.01, 127.0.0.1:49316][0m
+WARNING 2026-01-09 18:22:44,220 runserver 30788 16848 [33mHTTP GET /api/jobs/181/download-zip/?format=both 404 [0.01, 127.0.0.1:54588][0m
+WARNING 2026-01-09 18:28:36,150 runserver 41888 45992 [33mHTTP GET /api/jobs/184/download-zip/?format=both 404 [0.01, 127.0.0.1:63838][0m
+WARNING 2026-01-09 18:30:42,428 runserver 27520 55456 [33mHTTP GET /api/jobs/186/download-zip/?format=both 404 [0.01, 127.0.0.1:58921][0m
+WARNING 2026-01-09 18:31:21,937 runserver 27520 55456 [33mHTTP GET /api/jobs/187/download-zip/?format=both 404 [0.01, 127.0.0.1:58912][0m
+WARNING 2026-01-09 18:35:45,738 runserver 37096 15500 [33mHTTP GET /api/jobs/187/download-zip/?format=both 404 [0.01, 127.0.0.1:56455][0m
+WARNING 2026-01-09 18:36:34,412 runserver 37096 15500 [33mHTTP GET /api/jobs/189/download-zip/?format=both 404 [0.01, 127.0.0.1:53114][0m
+WARNING 2026-01-09 18:40:34,702 runserver 25444 26024 [33mHTTP GET /api/jobs/191/download-zip/?format=both 404 [0.01, 127.0.0.1:61738][0m
+DEBUG 2026-01-09 18:41:47,193 urls 23892 15844 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:41:47,194 urls 23892 15844   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:41:47,194 urls 23892 15844   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:41:47,194 urls 23892 15844   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:41:47,194 urls 23892 15844   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:41:47,195 urls 23892 15844   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:41:47,195 urls 23892 15844   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:41:57,220 urls 16216 1756 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:41:57,221 urls 16216 1756   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:41:57,221 urls 16216 1756   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:41:57,221 urls 16216 1756   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:41:57,222 urls 16216 1756   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:41:57,222 urls 16216 1756   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:41:57,222 urls 16216 1756   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:11,750 views 53292 21764 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:42:11,762 urls 53292 21764 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:42:11,768 urls 53292 21764   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:42:11,768 urls 53292 21764   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:42:11,768 urls 53292 21764   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:11,769 urls 53292 21764   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:11,769 urls 53292 21764   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:11,769 urls 53292 21764   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:27,145 views 18296 28796 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:42:27,148 urls 18296 28796 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:42:27,149 urls 18296 28796   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:42:27,149 urls 18296 28796   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:42:27,149 urls 18296 28796   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:27,149 urls 18296 28796   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:27,149 urls 18296 28796   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:27,150 urls 18296 28796   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:55,530 views 51636 4660 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:42:55,534 urls 51636 4660 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:42:55,535 urls 51636 4660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:42:55,535 urls 51636 4660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:42:55,535 urls 51636 4660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:55,535 urls 51636 4660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:42:55,535 urls 51636 4660   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:55,536 urls 51636 4660   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:42:55,729 views 51636 38788 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:42:55,729 views 51636 38788   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:42:55,730 views 51636 38788   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:42:55,730 views 51636 38788 JobViewSet.dispatch called - method=GET, path=/api/jobs/191/, kwargs={'pk': '191'}
+DEBUG 2026-01-09 18:42:55,782 views 51636 38788 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:42:55,874 views 51636 21804 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:42:55,875 views 51636 21804   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:42:55,875 views 51636 21804   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:42:55,876 views 51636 21804 JobViewSet.dispatch called - method=GET, path=/api/jobs/187/, kwargs={'pk': '187'}
+DEBUG 2026-01-09 18:42:55,922 views 51636 21804 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:43:27,924 views 53920 51492 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:43:27,929 urls 53920 51492 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:43:27,930 urls 53920 51492   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:43:27,930 urls 53920 51492   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:43:27,931 urls 53920 51492   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:43:27,931 urls 53920 51492   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:43:27,931 urls 53920 51492   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:43:27,931 urls 53920 51492   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:43:28,071 base 53920 35688 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:43:59,704 views 47112 15220 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:43:59,707 urls 47112 15220 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:43:59,707 urls 47112 15220   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:43:59,707 urls 47112 15220   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:43:59,708 urls 47112 15220   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:43:59,708 urls 47112 15220   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:43:59,708 urls 47112 15220   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:43:59,708 urls 47112 15220   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:43:59,840 base 47112 25616 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:44:10,941 middleware 47112 2568 ================================================================================
+DEBUG 2026-01-09 18:44:10,941 middleware 47112 2568 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:10,942 middleware 47112 2568   Method: GET
+DEBUG 2026-01-09 18:44:10,942 middleware 47112 2568   Path: /api/jobs/187/
+DEBUG 2026-01-09 18:44:10,943 middleware 47112 2568   Path Info: /api/jobs/187/
+DEBUG 2026-01-09 18:44:10,943 middleware 47112 2568   Full Path: /api/jobs/187/
+DEBUG 2026-01-09 18:44:10,943 middleware 47112 2568   Query String: 
+DEBUG 2026-01-09 18:44:10,943 middleware 47112 2568 ================================================================================
+DEBUG 2026-01-09 18:44:10,945 views 47112 2568 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:44:10,946 views 47112 2568   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:44:10,946 views 47112 2568   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:44:10,947 views 47112 2568 JobViewSet.dispatch called - method=GET, path=/api/jobs/187/, kwargs={'pk': '187'}
+DEBUG 2026-01-09 18:44:11,006 views 47112 2568 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:44:11,013 middleware 47112 2568 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:11,014 middleware 47112 2568   Status Code: 200
+DEBUG 2026-01-09 18:44:11,014 middleware 47112 2568   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:44:11,014 middleware 47112 2568 ================================================================================
+DEBUG 2026-01-09 18:44:11,022 middleware 47112 47664 ================================================================================
+DEBUG 2026-01-09 18:44:11,022 middleware 47112 47664 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:11,023 middleware 47112 47664   Method: GET
+DEBUG 2026-01-09 18:44:11,023 middleware 47112 47664   Path: /api/jobs/187/
+DEBUG 2026-01-09 18:44:11,024 middleware 47112 47664   Path Info: /api/jobs/187/
+DEBUG 2026-01-09 18:44:11,024 middleware 47112 47664   Full Path: /api/jobs/187/
+DEBUG 2026-01-09 18:44:11,024 middleware 47112 47664   Query String: 
+DEBUG 2026-01-09 18:44:11,025 middleware 47112 47664 ================================================================================
+DEBUG 2026-01-09 18:44:11,027 views 47112 47664 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:44:11,027 views 47112 47664   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:44:11,027 views 47112 47664   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:44:11,028 views 47112 47664 JobViewSet.dispatch called - method=GET, path=/api/jobs/187/, kwargs={'pk': '187'}
+DEBUG 2026-01-09 18:44:11,077 views 47112 47664 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:44:11,080 middleware 47112 47664 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:11,080 middleware 47112 47664   Status Code: 200
+DEBUG 2026-01-09 18:44:11,080 middleware 47112 47664   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:44:11,080 middleware 47112 47664 ================================================================================
+DEBUG 2026-01-09 18:44:11,356 middleware 47112 30208 ================================================================================
+DEBUG 2026-01-09 18:44:11,357 middleware 47112 30208 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:11,357 middleware 47112 30208   Method: GET
+DEBUG 2026-01-09 18:44:11,357 middleware 47112 30208   Path: /media/artifacts/svg/job_187_task_931.svg
+DEBUG 2026-01-09 18:44:11,357 middleware 47112 30208   Path Info: /media/artifacts/svg/job_187_task_931.svg
+DEBUG 2026-01-09 18:44:11,357 middleware 47112 30208   Full Path: /media/artifacts/svg/job_187_task_931.svg
+DEBUG 2026-01-09 18:44:11,358 middleware 47112 30208   Query String: 
+DEBUG 2026-01-09 18:44:11,358 middleware 47112 30208 ================================================================================
+DEBUG 2026-01-09 18:44:11,360 middleware 47112 30208 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:11,360 middleware 47112 30208   Status Code: 304
+DEBUG 2026-01-09 18:44:11,360 middleware 47112 30208   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:11,361 middleware 47112 30208 ================================================================================
+DEBUG 2026-01-09 18:44:11,368 middleware 47112 46424 ================================================================================
+DEBUG 2026-01-09 18:44:11,368 middleware 47112 46424 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:11,368 middleware 47112 46424   Method: GET
+DEBUG 2026-01-09 18:44:11,369 middleware 47112 46424   Path: /media/artifacts/svg/job_187_task_929.svg
+DEBUG 2026-01-09 18:44:11,369 middleware 47112 46424   Path Info: /media/artifacts/svg/job_187_task_929.svg
+DEBUG 2026-01-09 18:44:11,369 middleware 47112 46424   Full Path: /media/artifacts/svg/job_187_task_929.svg
+DEBUG 2026-01-09 18:44:11,370 middleware 47112 46424   Query String: 
+DEBUG 2026-01-09 18:44:11,370 middleware 47112 46424 ================================================================================
+DEBUG 2026-01-09 18:44:11,372 middleware 47112 46424 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:11,372 middleware 47112 46424   Status Code: 304
+DEBUG 2026-01-09 18:44:11,373 middleware 47112 46424   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:11,373 middleware 47112 46424 ================================================================================
+DEBUG 2026-01-09 18:44:15,796 middleware 47112 46284 ================================================================================
+DEBUG 2026-01-09 18:44:15,797 middleware 47112 46284 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:15,797 middleware 47112 46284   Method: GET
+DEBUG 2026-01-09 18:44:15,797 middleware 47112 46284   Path: /api/jobs/186/
+DEBUG 2026-01-09 18:44:15,797 middleware 47112 46284   Path Info: /api/jobs/186/
+DEBUG 2026-01-09 18:44:15,798 middleware 47112 46284   Full Path: /api/jobs/186/
+DEBUG 2026-01-09 18:44:15,798 middleware 47112 46284   Query String: 
+DEBUG 2026-01-09 18:44:15,798 middleware 47112 46284 ================================================================================
+DEBUG 2026-01-09 18:44:15,800 views 47112 46284 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:44:15,800 views 47112 46284   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:44:15,800 views 47112 46284   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:44:15,800 views 47112 46284 JobViewSet.dispatch called - method=GET, path=/api/jobs/186/, kwargs={'pk': '186'}
+DEBUG 2026-01-09 18:44:15,845 views 47112 46284 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:44:15,847 middleware 47112 46284 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:15,847 middleware 47112 46284   Status Code: 200
+DEBUG 2026-01-09 18:44:15,848 middleware 47112 46284   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:44:15,848 middleware 47112 46284 ================================================================================
+DEBUG 2026-01-09 18:44:22,716 middleware 47112 31136 ================================================================================
+DEBUG 2026-01-09 18:44:22,716 middleware 47112 31136 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:22,716 middleware 47112 31136   Method: GET
+DEBUG 2026-01-09 18:44:22,716 middleware 47112 31136   Path: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,717 middleware 47112 31136   Path Info: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,717 middleware 47112 31136   Full Path: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,717 middleware 47112 31136   Query String: 
+DEBUG 2026-01-09 18:44:22,717 middleware 47112 31136 ================================================================================
+DEBUG 2026-01-09 18:44:22,719 views 47112 31136 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:44:22,719 views 47112 31136   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:44:22,719 views 47112 31136   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:44:22,719 views 47112 31136 JobViewSet.dispatch called - method=GET, path=/api/jobs/191/, kwargs={'pk': '191'}
+DEBUG 2026-01-09 18:44:22,972 views 47112 31136 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:44:22,975 middleware 47112 31136 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:22,975 middleware 47112 31136   Status Code: 200
+DEBUG 2026-01-09 18:44:22,976 middleware 47112 31136   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:44:22,976 middleware 47112 31136 ================================================================================
+DEBUG 2026-01-09 18:44:22,987 middleware 47112 10740 ================================================================================
+DEBUG 2026-01-09 18:44:22,988 middleware 47112 10740 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:22,989 middleware 47112 10740   Method: GET
+DEBUG 2026-01-09 18:44:22,989 middleware 47112 10740   Path: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,989 middleware 47112 10740   Path Info: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,990 middleware 47112 10740   Full Path: /api/jobs/191/
+DEBUG 2026-01-09 18:44:22,990 middleware 47112 10740   Query String: 
+DEBUG 2026-01-09 18:44:22,991 middleware 47112 10740 ================================================================================
+DEBUG 2026-01-09 18:44:22,993 views 47112 10740 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:44:22,994 views 47112 10740   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:44:22,995 views 47112 10740   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:44:22,995 views 47112 10740 JobViewSet.dispatch called - method=GET, path=/api/jobs/191/, kwargs={'pk': '191'}
+DEBUG 2026-01-09 18:44:23,066 views 47112 10740 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:44:23,070 middleware 47112 10740 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,070 middleware 47112 10740   Status Code: 200
+DEBUG 2026-01-09 18:44:23,071 middleware 47112 10740   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:44:23,071 middleware 47112 10740 ================================================================================
+DEBUG 2026-01-09 18:44:23,458 middleware 47112 57932 ================================================================================
+DEBUG 2026-01-09 18:44:23,459 middleware 47112 57932 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,460 middleware 47112 57932   Method: GET
+DEBUG 2026-01-09 18:44:23,460 middleware 47112 57932   Path: /media/artifacts/svg/job_191_task_956.svg
+DEBUG 2026-01-09 18:44:23,461 middleware 47112 57932   Path Info: /media/artifacts/svg/job_191_task_956.svg
+DEBUG 2026-01-09 18:44:23,461 middleware 47112 57932   Full Path: /media/artifacts/svg/job_191_task_956.svg
+DEBUG 2026-01-09 18:44:23,461 middleware 47112 57932   Query String: 
+DEBUG 2026-01-09 18:44:23,461 middleware 47112 57932 ================================================================================
+DEBUG 2026-01-09 18:44:23,464 middleware 47112 57932 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,464 middleware 47112 57932   Status Code: 304
+DEBUG 2026-01-09 18:44:23,464 middleware 47112 57932   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,465 middleware 47112 57932 ================================================================================
+DEBUG 2026-01-09 18:44:23,470 middleware 47112 55760 ================================================================================
+DEBUG 2026-01-09 18:44:23,470 middleware 47112 55760 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,471 middleware 47112 55760   Method: GET
+DEBUG 2026-01-09 18:44:23,471 middleware 47112 55760   Path: /media/artifacts/svg/job_191_task_955.svg
+DEBUG 2026-01-09 18:44:23,472 middleware 47112 55760   Path Info: /media/artifacts/svg/job_191_task_955.svg
+DEBUG 2026-01-09 18:44:23,472 middleware 47112 55760   Full Path: /media/artifacts/svg/job_191_task_955.svg
+DEBUG 2026-01-09 18:44:23,473 middleware 47112 58352 ================================================================================
+DEBUG 2026-01-09 18:44:23,473 middleware 47112 58352 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,473 middleware 47112 55760   Query String: 
+DEBUG 2026-01-09 18:44:23,473 middleware 47112 58352   Method: GET
+DEBUG 2026-01-09 18:44:23,474 middleware 47112 55760 ================================================================================
+DEBUG 2026-01-09 18:44:23,474 middleware 47112 58352   Path: /media/artifacts/svg/job_191_task_954.svg
+DEBUG 2026-01-09 18:44:23,474 middleware 47112 58352   Path Info: /media/artifacts/svg/job_191_task_954.svg
+DEBUG 2026-01-09 18:44:23,474 middleware 47112 58352   Full Path: /media/artifacts/svg/job_191_task_954.svg
+DEBUG 2026-01-09 18:44:23,475 middleware 47112 58352   Query String: 
+DEBUG 2026-01-09 18:44:23,475 middleware 47112 58352 ================================================================================
+DEBUG 2026-01-09 18:44:23,477 middleware 47112 55760 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,477 middleware 47112 58352 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,478 middleware 47112 55760   Status Code: 304
+DEBUG 2026-01-09 18:44:23,480 middleware 47112 58352   Status Code: 304
+DEBUG 2026-01-09 18:44:23,480 middleware 47112 55760   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,481 middleware 47112 58352   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,482 middleware 47112 55760 ================================================================================
+DEBUG 2026-01-09 18:44:23,484 middleware 47112 58352 ================================================================================
+DEBUG 2026-01-09 18:44:23,488 middleware 47112 42972 ================================================================================
+DEBUG 2026-01-09 18:44:23,488 middleware 47112 42972 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,489 middleware 47112 42972   Method: GET
+DEBUG 2026-01-09 18:44:23,489 middleware 47112 42972   Path: /media/artifacts/svg/job_191_task_953.svg
+DEBUG 2026-01-09 18:44:23,490 middleware 47112 42972   Path Info: /media/artifacts/svg/job_191_task_953.svg
+DEBUG 2026-01-09 18:44:23,490 middleware 47112 42972   Full Path: /media/artifacts/svg/job_191_task_953.svg
+DEBUG 2026-01-09 18:44:23,490 middleware 47112 42972   Query String: 
+DEBUG 2026-01-09 18:44:23,491 middleware 47112 42972 ================================================================================
+DEBUG 2026-01-09 18:44:23,499 middleware 47112 35904 ================================================================================
+DEBUG 2026-01-09 18:44:23,500 middleware 47112 47596 ================================================================================
+DEBUG 2026-01-09 18:44:23,500 middleware 47112 35904 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,500 middleware 47112 47596 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,501 middleware 47112 42972 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,501 middleware 47112 35904   Method: GET
+DEBUG 2026-01-09 18:44:23,501 middleware 47112 47596   Method: GET
+DEBUG 2026-01-09 18:44:23,501 middleware 47112 42972   Status Code: 304
+DEBUG 2026-01-09 18:44:23,501 middleware 47112 35904   Path: /media/artifacts/svg/job_191_task_951.svg
+DEBUG 2026-01-09 18:44:23,502 middleware 47112 47596   Path: /media/artifacts/svg/job_191_task_952.svg
+DEBUG 2026-01-09 18:44:23,502 middleware 47112 42972   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,502 middleware 47112 35904   Path Info: /media/artifacts/svg/job_191_task_951.svg
+DEBUG 2026-01-09 18:44:23,502 middleware 47112 47596   Path Info: /media/artifacts/svg/job_191_task_952.svg
+DEBUG 2026-01-09 18:44:23,508 middleware 47112 42972 ================================================================================
+DEBUG 2026-01-09 18:44:23,509 middleware 47112 35904   Full Path: /media/artifacts/svg/job_191_task_951.svg
+DEBUG 2026-01-09 18:44:23,510 middleware 47112 47596   Full Path: /media/artifacts/svg/job_191_task_952.svg
+DEBUG 2026-01-09 18:44:23,512 middleware 47112 35904   Query String: 
+DEBUG 2026-01-09 18:44:23,513 middleware 47112 47596   Query String: 
+DEBUG 2026-01-09 18:44:23,513 middleware 47112 35904 ================================================================================
+DEBUG 2026-01-09 18:44:23,513 middleware 47112 47596 ================================================================================
+DEBUG 2026-01-09 18:44:23,519 middleware 47112 39272 ================================================================================
+DEBUG 2026-01-09 18:44:23,520 middleware 47112 39272 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,521 middleware 47112 30492 ================================================================================
+DEBUG 2026-01-09 18:44:23,521 middleware 47112 39272   Method: GET
+DEBUG 2026-01-09 18:44:23,521 middleware 47112 30492 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:23,521 middleware 47112 39272   Path: /media/artifacts/svg/job_191_task_950.svg
+DEBUG 2026-01-09 18:44:23,522 middleware 47112 35904 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,522 middleware 47112 30492   Method: GET
+DEBUG 2026-01-09 18:44:23,523 middleware 47112 30492   Path: /media/artifacts/svg/job_191_task_949.svg
+DEBUG 2026-01-09 18:44:23,523 middleware 47112 39272   Path Info: /media/artifacts/svg/job_191_task_950.svg
+DEBUG 2026-01-09 18:44:23,524 middleware 47112 39272   Full Path: /media/artifacts/svg/job_191_task_950.svg
+DEBUG 2026-01-09 18:44:23,522 middleware 47112 47596 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,524 middleware 47112 30492   Path Info: /media/artifacts/svg/job_191_task_949.svg
+DEBUG 2026-01-09 18:44:23,523 middleware 47112 35904   Status Code: 304
+DEBUG 2026-01-09 18:44:23,525 middleware 47112 39272   Query String: 
+DEBUG 2026-01-09 18:44:23,525 middleware 47112 47596   Status Code: 304
+DEBUG 2026-01-09 18:44:23,525 middleware 47112 30492   Full Path: /media/artifacts/svg/job_191_task_949.svg
+DEBUG 2026-01-09 18:44:23,526 middleware 47112 35904   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,526 middleware 47112 39272 ================================================================================
+DEBUG 2026-01-09 18:44:23,526 middleware 47112 47596   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,526 middleware 47112 30492   Query String: 
+DEBUG 2026-01-09 18:44:23,526 middleware 47112 35904 ================================================================================
+DEBUG 2026-01-09 18:44:23,529 middleware 47112 47596 ================================================================================
+DEBUG 2026-01-09 18:44:23,529 middleware 47112 30492 ================================================================================
+DEBUG 2026-01-09 18:44:23,532 middleware 47112 39272 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,533 middleware 47112 39272   Status Code: 304
+DEBUG 2026-01-09 18:44:23,533 middleware 47112 39272   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,534 middleware 47112 39272 ================================================================================
+DEBUG 2026-01-09 18:44:23,537 middleware 47112 30492 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:23,538 middleware 47112 30492   Status Code: 304
+DEBUG 2026-01-09 18:44:23,538 middleware 47112 30492   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:44:23,539 middleware 47112 30492 ================================================================================
+DEBUG 2026-01-09 18:44:26,647 middleware 47112 35400 ================================================================================
+DEBUG 2026-01-09 18:44:26,647 middleware 47112 35400 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:44:26,648 middleware 47112 35400   Method: GET
+DEBUG 2026-01-09 18:44:26,648 middleware 47112 35400   Path: /api/test-excel/
+DEBUG 2026-01-09 18:44:26,648 middleware 47112 35400   Path Info: /api/test-excel/
+DEBUG 2026-01-09 18:44:26,648 middleware 47112 35400   Full Path: /api/test-excel/
+DEBUG 2026-01-09 18:44:26,649 middleware 47112 35400   Query String: 
+DEBUG 2026-01-09 18:44:26,649 middleware 47112 35400 ================================================================================
+DEBUG 2026-01-09 18:44:26,652 middleware 47112 35400 RESPONSE SENT:
+DEBUG 2026-01-09 18:44:26,653 middleware 47112 35400   Status Code: 200
+DEBUG 2026-01-09 18:44:26,653 middleware 47112 35400   Resolved: test-excel -> test-excel
+DEBUG 2026-01-09 18:44:26,653 middleware 47112 35400 ================================================================================
+DEBUG 2026-01-09 18:44:58,173 views 16440 18752 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:44:58,176 urls 16440 18752 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:44:58,176 urls 16440 18752   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:44:58,176 urls 16440 18752   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:44:58,177 urls 16440 18752   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:44:58,177 urls 16440 18752   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:44:58,177 urls 16440 18752   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:44:58,177 urls 16440 18752   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:44:58,352 base 16440 26000 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:45:02,568 middleware 16440 53176 ================================================================================
+DEBUG 2026-01-09 18:45:02,568 middleware 16440 53176 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:02,568 middleware 16440 53176   Method: GET
+DEBUG 2026-01-09 18:45:02,568 middleware 16440 53176   Path: /api/test-excel/
+DEBUG 2026-01-09 18:45:02,569 middleware 16440 53176   Path Info: /api/test-excel/
+DEBUG 2026-01-09 18:45:02,569 middleware 16440 53176   Full Path: /api/test-excel/
+DEBUG 2026-01-09 18:45:02,569 middleware 16440 53176   Query String: 
+DEBUG 2026-01-09 18:45:02,569 middleware 16440 53176 ================================================================================
+DEBUG 2026-01-09 18:45:02,573 middleware 16440 53176 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:02,573 middleware 16440 53176   Status Code: 200
+DEBUG 2026-01-09 18:45:02,573 middleware 16440 53176   Resolved: test-excel -> test-excel
+DEBUG 2026-01-09 18:45:02,574 middleware 16440 53176 ================================================================================
+DEBUG 2026-01-09 18:45:09,070 middleware 16440 54592 ================================================================================
+DEBUG 2026-01-09 18:45:09,070 middleware 16440 54592 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:09,071 middleware 16440 8860 ================================================================================
+DEBUG 2026-01-09 18:45:09,071 middleware 16440 54592   Method: POST
+DEBUG 2026-01-09 18:45:09,071 middleware 16440 8860 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:09,071 middleware 16440 54592   Path: /api/jobs/
+DEBUG 2026-01-09 18:45:09,071 middleware 16440 8860   Method: POST
+DEBUG 2026-01-09 18:45:09,072 middleware 16440 54592   Path Info: /api/jobs/
+DEBUG 2026-01-09 18:45:09,072 middleware 16440 8860   Path: /api/jobs/
+DEBUG 2026-01-09 18:45:09,072 middleware 16440 54592   Full Path: /api/jobs/
+DEBUG 2026-01-09 18:45:09,072 middleware 16440 8860   Path Info: /api/jobs/
+DEBUG 2026-01-09 18:45:09,072 middleware 16440 54592   Query String: 
+DEBUG 2026-01-09 18:45:09,073 middleware 16440 8860   Full Path: /api/jobs/
+DEBUG 2026-01-09 18:45:09,073 middleware 16440 54592 ================================================================================
+DEBUG 2026-01-09 18:45:09,073 middleware 16440 8860   Query String: 
+DEBUG 2026-01-09 18:45:09,074 middleware 16440 8860 ================================================================================
+DEBUG 2026-01-09 18:45:09,075 views 16440 54592 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:09,075 views 16440 54592   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:09,076 views 16440 8860 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:09,076 views 16440 54592   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:09,076 views 16440 8860   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:09,076 views 16440 54592 JobViewSet.dispatch called - method=POST, path=/api/jobs/, kwargs={}
+DEBUG 2026-01-09 18:45:09,076 views 16440 8860   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:09,078 views 16440 54592 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 18:45:09,079 views 16440 8860 JobViewSet.dispatch called - method=POST, path=/api/jobs/, kwargs={}
+DEBUG 2026-01-09 18:45:09,079 views 16440 54592 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 18:45:09,080 views 16440 8860 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 18:45:09,093 views 16440 8860 Successfully parsed JSON field 'images'
+INFO 2026-01-09 18:45:10,307 views 16440 54592 Job 193 created successfully with 3 image tasks
+DEBUG 2026-01-09 18:45:10,314 views 16440 54592 JobViewSet.dispatch completed - status=201
+DEBUG 2026-01-09 18:45:10,318 middleware 16440 54592 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:10,318 middleware 16440 54592   Status Code: 201
+DEBUG 2026-01-09 18:45:10,319 middleware 16440 54592   Resolved: job-list -> job-list
+DEBUG 2026-01-09 18:45:10,319 middleware 16440 54592 ================================================================================
+INFO 2026-01-09 18:45:10,323 views 16440 8860 Job 194 created successfully with 3 image tasks
+DEBUG 2026-01-09 18:45:10,328 views 16440 8860 JobViewSet.dispatch completed - status=201
+DEBUG 2026-01-09 18:45:10,330 middleware 16440 8860 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:10,331 middleware 16440 8860   Status Code: 201
+DEBUG 2026-01-09 18:45:10,331 middleware 16440 8860   Resolved: job-list -> job-list
+DEBUG 2026-01-09 18:45:10,331 middleware 16440 8860 ================================================================================
+DEBUG 2026-01-09 18:45:10,362 middleware 16440 57032 ================================================================================
+DEBUG 2026-01-09 18:45:10,363 middleware 16440 57032 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:10,363 middleware 16440 57032   Method: GET
+DEBUG 2026-01-09 18:45:10,364 middleware 16440 57032   Path: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,365 middleware 16440 57032   Path Info: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,366 middleware 16440 57032   Full Path: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,367 middleware 16440 57032   Query String: 
+DEBUG 2026-01-09 18:45:10,367 middleware 16440 57032 ================================================================================
+DEBUG 2026-01-09 18:45:10,369 views 16440 57032 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:10,370 views 16440 57032   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:10,370 views 16440 57032   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:10,371 views 16440 57032 JobViewSet.dispatch called - method=GET, path=/api/jobs/193/, kwargs={'pk': '193'}
+DEBUG 2026-01-09 18:45:10,405 middleware 16440 4068 ================================================================================
+DEBUG 2026-01-09 18:45:10,406 middleware 16440 4068 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:10,406 middleware 16440 4068   Method: GET
+DEBUG 2026-01-09 18:45:10,406 middleware 16440 4068   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:10,407 middleware 16440 4068   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:10,409 middleware 16440 4068   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:10,409 middleware 16440 4068   Query String: 
+DEBUG 2026-01-09 18:45:10,410 middleware 16440 4068 ================================================================================
+DEBUG 2026-01-09 18:45:10,416 views 16440 4068 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:10,416 views 16440 4068   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:10,418 views 16440 4068   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:10,419 views 16440 4068 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:10,435 views 16440 57032 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:10,437 middleware 16440 57032 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:10,437 middleware 16440 57032   Status Code: 200
+DEBUG 2026-01-09 18:45:10,438 middleware 16440 57032   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:10,438 middleware 16440 57032 ================================================================================
+DEBUG 2026-01-09 18:45:10,445 middleware 16440 22512 ================================================================================
+DEBUG 2026-01-09 18:45:10,447 middleware 16440 22512 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:10,448 middleware 16440 22512   Method: GET
+DEBUG 2026-01-09 18:45:10,449 middleware 16440 22512   Path: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,450 middleware 16440 22512   Path Info: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,452 middleware 16440 22512   Full Path: /api/jobs/193/
+DEBUG 2026-01-09 18:45:10,452 middleware 16440 22512   Query String: 
+DEBUG 2026-01-09 18:45:10,453 middleware 16440 22512 ================================================================================
+DEBUG 2026-01-09 18:45:10,457 views 16440 22512 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:10,457 views 16440 22512   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:10,462 views 16440 22512   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:10,463 views 16440 22512 JobViewSet.dispatch called - method=GET, path=/api/jobs/193/, kwargs={'pk': '193'}
+DEBUG 2026-01-09 18:45:10,468 views 16440 4068 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:10,470 middleware 16440 4068 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:10,471 middleware 16440 4068   Status Code: 200
+DEBUG 2026-01-09 18:45:10,471 middleware 16440 4068   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:10,471 middleware 16440 4068 ================================================================================
+DEBUG 2026-01-09 18:45:10,510 views 16440 22512 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:10,512 middleware 16440 22512 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:10,513 middleware 16440 22512   Status Code: 200
+DEBUG 2026-01-09 18:45:10,513 middleware 16440 22512   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:10,514 middleware 16440 22512 ================================================================================
+DEBUG 2026-01-09 18:45:14,534 middleware 16440 8436 ================================================================================
+DEBUG 2026-01-09 18:45:14,534 middleware 16440 8436 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:14,534 middleware 16440 8436   Method: GET
+DEBUG 2026-01-09 18:45:14,535 middleware 16440 8436   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:14,535 middleware 16440 8436   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:14,535 middleware 16440 8436   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:14,535 middleware 16440 8436   Query String: 
+DEBUG 2026-01-09 18:45:14,535 middleware 16440 8436 ================================================================================
+DEBUG 2026-01-09 18:45:14,537 views 16440 8436 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:14,537 views 16440 8436   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:14,537 views 16440 8436   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:14,538 views 16440 8436 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:14,588 views 16440 8436 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:14,589 middleware 16440 8436 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:14,590 middleware 16440 8436   Status Code: 200
+DEBUG 2026-01-09 18:45:14,590 middleware 16440 8436   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:14,590 middleware 16440 8436 ================================================================================
+DEBUG 2026-01-09 18:45:15,000 middleware 16440 21940 ================================================================================
+DEBUG 2026-01-09 18:45:15,000 middleware 16440 21940 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:15,000 middleware 16440 21940   Method: GET
+DEBUG 2026-01-09 18:45:15,000 middleware 16440 21940   Path: /media/artifacts/svg/job_194_task_969.svg
+DEBUG 2026-01-09 18:45:15,001 middleware 16440 21940   Path Info: /media/artifacts/svg/job_194_task_969.svg
+DEBUG 2026-01-09 18:45:15,001 middleware 16440 21940   Full Path: /media/artifacts/svg/job_194_task_969.svg
+DEBUG 2026-01-09 18:45:15,001 middleware 16440 21940   Query String: 
+DEBUG 2026-01-09 18:45:15,001 middleware 16440 21940 ================================================================================
+DEBUG 2026-01-09 18:45:15,004 middleware 16440 21940 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:15,004 middleware 16440 21940   Status Code: 200
+DEBUG 2026-01-09 18:45:15,004 middleware 16440 21940   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:45:15,004 middleware 16440 21940 ================================================================================
+DEBUG 2026-01-09 18:45:15,744 middleware 16440 1356 ================================================================================
+DEBUG 2026-01-09 18:45:15,745 middleware 16440 1356 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:15,745 middleware 16440 1356   Method: GET
+DEBUG 2026-01-09 18:45:15,745 middleware 16440 1356   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,745 middleware 16440 1356   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,745 middleware 16440 1356   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,746 middleware 16440 1356   Query String: 
+DEBUG 2026-01-09 18:45:15,746 middleware 16440 1356 ================================================================================
+DEBUG 2026-01-09 18:45:15,747 views 16440 1356 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:15,748 views 16440 1356   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:15,748 views 16440 1356   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:15,748 views 16440 1356 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:15,804 views 16440 1356 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:15,805 middleware 16440 1356 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:15,805 middleware 16440 1356   Status Code: 200
+DEBUG 2026-01-09 18:45:15,806 middleware 16440 1356   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:15,806 middleware 16440 1356 ================================================================================
+DEBUG 2026-01-09 18:45:15,888 middleware 16440 51488 ================================================================================
+DEBUG 2026-01-09 18:45:15,888 middleware 16440 51488 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:15,888 middleware 16440 51488   Method: GET
+DEBUG 2026-01-09 18:45:15,889 middleware 16440 51488   Path: /media/artifacts/svg/job_194_task_968.svg
+DEBUG 2026-01-09 18:45:15,889 middleware 16440 51488   Path Info: /media/artifacts/svg/job_194_task_968.svg
+DEBUG 2026-01-09 18:45:15,889 middleware 16440 51488   Full Path: /media/artifacts/svg/job_194_task_968.svg
+DEBUG 2026-01-09 18:45:15,889 middleware 16440 51488   Query String: 
+DEBUG 2026-01-09 18:45:15,890 middleware 16440 51488 ================================================================================
+DEBUG 2026-01-09 18:45:15,903 middleware 16440 51488 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:15,904 middleware 16440 51488   Status Code: 200
+DEBUG 2026-01-09 18:45:15,904 middleware 16440 51488   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:45:15,905 middleware 16440 51488 ================================================================================
+DEBUG 2026-01-09 18:45:15,909 middleware 16440 19000 ================================================================================
+DEBUG 2026-01-09 18:45:15,909 middleware 16440 19000 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:15,910 middleware 16440 19000   Method: GET
+DEBUG 2026-01-09 18:45:15,910 middleware 16440 19000   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,910 middleware 16440 19000   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,911 middleware 16440 19000   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,911 middleware 16440 19000   Query String: 
+DEBUG 2026-01-09 18:45:15,911 middleware 16440 19000 ================================================================================
+DEBUG 2026-01-09 18:45:15,913 views 16440 19000 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:15,914 views 16440 19000   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:15,914 views 16440 19000   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:15,914 views 16440 19000 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:15,973 views 16440 19000 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:15,975 middleware 16440 19000 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:15,975 middleware 16440 19000   Status Code: 200
+DEBUG 2026-01-09 18:45:15,975 middleware 16440 19000   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:15,975 middleware 16440 19000 ================================================================================
+DEBUG 2026-01-09 18:45:15,988 middleware 16440 20356 ================================================================================
+DEBUG 2026-01-09 18:45:15,989 middleware 16440 20356 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:15,989 middleware 16440 20356   Method: GET
+DEBUG 2026-01-09 18:45:15,989 middleware 16440 20356   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,990 middleware 16440 20356   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,990 middleware 16440 20356   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:15,990 middleware 16440 20356   Query String: 
+DEBUG 2026-01-09 18:45:15,990 middleware 16440 20356 ================================================================================
+DEBUG 2026-01-09 18:45:15,993 views 16440 20356 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:15,993 views 16440 20356   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:15,994 views 16440 20356   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:15,994 views 16440 20356 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:16,056 views 16440 20356 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:16,058 middleware 16440 20356 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:16,058 middleware 16440 20356   Status Code: 200
+DEBUG 2026-01-09 18:45:16,058 middleware 16440 20356   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:16,058 middleware 16440 20356 ================================================================================
+DEBUG 2026-01-09 18:45:35,275 middleware 16440 19748 ================================================================================
+DEBUG 2026-01-09 18:45:35,275 middleware 16440 19748 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:35,275 middleware 16440 19748   Method: POST
+DEBUG 2026-01-09 18:45:35,276 middleware 16440 19748   Path: /api/image-tasks/970/retry/
+DEBUG 2026-01-09 18:45:35,276 middleware 16440 19748   Path Info: /api/image-tasks/970/retry/
+DEBUG 2026-01-09 18:45:35,276 middleware 16440 19748   Full Path: /api/image-tasks/970/retry/
+DEBUG 2026-01-09 18:45:35,276 middleware 16440 19748   Query String: 
+DEBUG 2026-01-09 18:45:35,277 middleware 16440 19748 ================================================================================
+INFO 2026-01-09 18:45:35,434 views 16440 19748 ImageTask 970 retry requested - task re-enqueued
+DEBUG 2026-01-09 18:45:35,437 middleware 16440 19748 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:35,437 middleware 16440 19748   Status Code: 200
+DEBUG 2026-01-09 18:45:35,437 middleware 16440 19748   Resolved: imagetask-retry -> imagetask-retry
+DEBUG 2026-01-09 18:45:35,438 middleware 16440 19748 ================================================================================
+DEBUG 2026-01-09 18:45:35,501 middleware 16440 16800 ================================================================================
+DEBUG 2026-01-09 18:45:35,502 middleware 16440 16800 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:35,503 middleware 16440 16800   Method: GET
+DEBUG 2026-01-09 18:45:35,503 middleware 16440 16800   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:35,503 middleware 16440 16800   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:35,504 middleware 16440 16800   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:35,504 middleware 16440 16800   Query String: 
+DEBUG 2026-01-09 18:45:35,504 middleware 16440 16800 ================================================================================
+DEBUG 2026-01-09 18:45:35,505 views 16440 16800 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:35,506 views 16440 16800   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:35,507 views 16440 16800   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:35,507 views 16440 16800 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:35,558 views 16440 16800 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:35,559 middleware 16440 16800 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:35,559 middleware 16440 16800   Status Code: 200
+DEBUG 2026-01-09 18:45:35,560 middleware 16440 16800   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:35,560 middleware 16440 16800 ================================================================================
+DEBUG 2026-01-09 18:45:37,874 middleware 16440 9320 ================================================================================
+DEBUG 2026-01-09 18:45:37,874 middleware 16440 9320 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:37,874 middleware 16440 9320   Method: GET
+DEBUG 2026-01-09 18:45:37,874 middleware 16440 9320   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,875 middleware 16440 9320   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,875 middleware 16440 9320   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,875 middleware 16440 9320   Query String: 
+DEBUG 2026-01-09 18:45:37,875 middleware 16440 9320 ================================================================================
+DEBUG 2026-01-09 18:45:37,877 views 16440 9320 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:37,877 views 16440 9320   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:37,878 views 16440 9320   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:37,878 views 16440 9320 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:37,943 views 16440 9320 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:37,945 middleware 16440 9320 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:37,945 middleware 16440 9320   Status Code: 200
+DEBUG 2026-01-09 18:45:37,945 middleware 16440 9320   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:37,945 middleware 16440 9320 ================================================================================
+DEBUG 2026-01-09 18:45:37,951 middleware 16440 38076 ================================================================================
+DEBUG 2026-01-09 18:45:37,952 middleware 16440 38076 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:37,952 middleware 16440 38076   Method: GET
+DEBUG 2026-01-09 18:45:37,952 middleware 16440 38076   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,952 middleware 16440 38076   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,953 middleware 16440 38076   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:37,953 middleware 16440 38076   Query String: 
+DEBUG 2026-01-09 18:45:37,953 middleware 16440 38076 ================================================================================
+DEBUG 2026-01-09 18:45:37,955 views 16440 38076 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:37,955 views 16440 38076   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:37,956 views 16440 38076   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:37,956 views 16440 38076 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:38,014 views 16440 38076 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:38,016 middleware 16440 38076 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:38,016 middleware 16440 38076   Status Code: 200
+DEBUG 2026-01-09 18:45:38,016 middleware 16440 38076   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:38,016 middleware 16440 38076 ================================================================================
+DEBUG 2026-01-09 18:45:38,023 middleware 16440 45616 ================================================================================
+DEBUG 2026-01-09 18:45:38,026 middleware 16440 45616 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:38,027 middleware 16440 45616   Method: GET
+DEBUG 2026-01-09 18:45:38,029 middleware 16440 45616   Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:38,029 middleware 16440 45616   Path Info: /api/jobs/194/
+DEBUG 2026-01-09 18:45:38,029 middleware 16440 45616   Full Path: /api/jobs/194/
+DEBUG 2026-01-09 18:45:38,030 middleware 16440 45616   Query String: 
+DEBUG 2026-01-09 18:45:38,030 middleware 16440 45616 ================================================================================
+DEBUG 2026-01-09 18:45:38,037 views 16440 45616 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:45:38,037 views 16440 45616   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:45:38,037 views 16440 45616   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:45:38,038 views 16440 45616 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:45:38,093 views 16440 45616 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:45:38,095 middleware 16440 45616 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:38,095 middleware 16440 45616   Status Code: 200
+DEBUG 2026-01-09 18:45:38,095 middleware 16440 45616   Resolved: job-detail -> job-detail
+DEBUG 2026-01-09 18:45:38,095 middleware 16440 45616 ================================================================================
+DEBUG 2026-01-09 18:45:38,174 middleware 16440 50088 ================================================================================
+DEBUG 2026-01-09 18:45:38,174 middleware 16440 50088 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:45:38,174 middleware 16440 50088   Method: GET
+DEBUG 2026-01-09 18:45:38,175 middleware 16440 50088   Path: /media/artifacts/svg/job_194_task_970.svg
+DEBUG 2026-01-09 18:45:38,175 middleware 16440 50088   Path Info: /media/artifacts/svg/job_194_task_970.svg
+DEBUG 2026-01-09 18:45:38,175 middleware 16440 50088   Full Path: /media/artifacts/svg/job_194_task_970.svg
+DEBUG 2026-01-09 18:45:38,175 middleware 16440 50088   Query String: 
+DEBUG 2026-01-09 18:45:38,175 middleware 16440 50088 ================================================================================
+DEBUG 2026-01-09 18:45:38,178 middleware 16440 50088 RESPONSE SENT:
+DEBUG 2026-01-09 18:45:38,178 middleware 16440 50088   Status Code: 200
+DEBUG 2026-01-09 18:45:38,178 middleware 16440 50088   Resolved: None -> django.views.static.serve
+DEBUG 2026-01-09 18:45:38,179 middleware 16440 50088 ================================================================================
+DEBUG 2026-01-09 18:46:15,304 middleware 16440 36244 ================================================================================
+DEBUG 2026-01-09 18:46:15,304 middleware 16440 36244 REQUEST RECEIVED:
+DEBUG 2026-01-09 18:46:15,304 middleware 16440 36244   Method: GET
+DEBUG 2026-01-09 18:46:15,304 middleware 16440 36244   Path: /api/jobs/194/download-zip/
+DEBUG 2026-01-09 18:46:15,305 middleware 16440 36244   Path Info: /api/jobs/194/download-zip/
+DEBUG 2026-01-09 18:46:15,305 middleware 16440 36244   Full Path: /api/jobs/194/download-zip/?format=both
+DEBUG 2026-01-09 18:46:15,305 middleware 16440 36244   Query String: format=both
+DEBUG 2026-01-09 18:46:15,305 middleware 16440 36244 ================================================================================
+DEBUG 2026-01-09 18:46:15,306 views 16440 36244 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:46:15,307 views 16440 36244   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:46:15,307 views 16440 36244   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:46:15,307 views 16440 36244 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/download-zip/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:46:15,308 views 16440 36244 JobViewSet.dispatch completed - status=404
+DEBUG 2026-01-09 18:46:15,309 middleware 16440 36244 RESPONSE SENT:
+DEBUG 2026-01-09 18:46:15,309 middleware 16440 36244   Status Code: 404
+DEBUG 2026-01-09 18:46:15,309 middleware 16440 36244   Resolved: job-download-zip -> job-download-zip
+DEBUG 2026-01-09 18:46:15,309 middleware 16440 36244 ================================================================================
+WARNING 2026-01-09 18:46:15,312 log 16440 18692 Not Found: /api/jobs/194/download-zip/
+WARNING 2026-01-09 18:46:15,313 runserver 16440 26000 [33mHTTP GET /api/jobs/194/download-zip/?format=both 404 [0.01, 127.0.0.1:54483][0m
+DEBUG 2026-01-09 18:48:31,412 views 2784 42256 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:48:31,415 urls 2784 42256 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:48:31,416 urls 2784 42256   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:48:31,416 urls 2784 42256   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:48:31,416 urls 2784 42256   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:48:31,417 urls 2784 42256   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:48:31,417 urls 2784 42256   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:48:31,417 urls 2784 42256   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:48:31,615 base 2784 44728 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:48:31,715 middleware 2784 13472 ================================================================================
+INFO 2026-01-09 18:48:31,716 middleware 2784 13472 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:48:31,718 middleware 2784 13472   Method: GET
+INFO 2026-01-09 18:48:31,718 middleware 2784 13472   Path: /api/jobs/194/
+INFO 2026-01-09 18:48:31,719 middleware 2784 13472   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:48:31,720 middleware 2784 13472   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:48:31,721 middleware 2784 13472   Query String: 
+INFO 2026-01-09 18:48:31,721 middleware 2784 13472 ================================================================================
+DEBUG 2026-01-09 18:48:31,724 views 2784 13472 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:48:31,725 views 2784 13472   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:48:31,726 views 2784 13472   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:48:31,726 views 2784 13472 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:48:31,826 views 2784 13472 JobViewSet.dispatch completed - status=200
+INFO 2026-01-09 18:48:31,845 middleware 2784 22784 ================================================================================
+INFO 2026-01-09 18:48:31,845 middleware 2784 22784 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:48:31,847 middleware 2784 22784   Method: GET
+INFO 2026-01-09 18:48:31,849 middleware 2784 22784   Path: /api/jobs/194/
+INFO 2026-01-09 18:48:31,849 middleware 2784 22784   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:48:31,850 middleware 2784 22784   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:48:31,850 middleware 2784 22784   Query String: 
+INFO 2026-01-09 18:48:31,851 middleware 2784 22784 ================================================================================
+DEBUG 2026-01-09 18:48:31,854 views 2784 22784 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:48:31,855 views 2784 22784   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:48:31,856 views 2784 22784   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:48:31,857 views 2784 22784 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:48:31,936 views 2784 22784 JobViewSet.dispatch completed - status=200
+INFO 2026-01-09 18:48:33,672 middleware 2784 40288 ================================================================================
+INFO 2026-01-09 18:48:33,673 middleware 2784 40288 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:48:33,674 middleware 2784 40288   Method: GET
+INFO 2026-01-09 18:48:33,674 middleware 2784 40288   Path: /api/jobs/194/
+INFO 2026-01-09 18:48:33,675 middleware 2784 40288   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:48:33,678 middleware 2784 40288   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:48:33,678 middleware 2784 40288   Query String: 
+INFO 2026-01-09 18:48:33,679 middleware 2784 40288 ================================================================================
+DEBUG 2026-01-09 18:48:33,683 views 2784 40288 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:48:33,684 views 2784 40288   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:48:33,685 views 2784 40288   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:48:33,688 views 2784 40288 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:48:33,816 views 2784 40288 JobViewSet.dispatch completed - status=200
+INFO 2026-01-09 18:48:33,842 middleware 2784 37616 ================================================================================
+INFO 2026-01-09 18:48:33,849 middleware 2784 37616 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:48:33,854 middleware 2784 37616   Method: GET
+INFO 2026-01-09 18:48:33,855 middleware 2784 37616   Path: /api/jobs/194/
+INFO 2026-01-09 18:48:33,855 middleware 2784 37616   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:48:33,860 middleware 2784 37616   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:48:33,863 middleware 2784 37616   Query String: 
+INFO 2026-01-09 18:48:33,864 middleware 2784 37616 ================================================================================
+DEBUG 2026-01-09 18:48:33,877 views 2784 37616 JobViewSet instantiated with 2 actions:
+DEBUG 2026-01-09 18:48:33,884 views 2784 37616   Action: cancel, methods={'post': 'cancel'}, url_path=default
+DEBUG 2026-01-09 18:48:33,884 views 2784 37616   Action: download_zip, methods={'get': 'download_zip'}, url_path=default
+DEBUG 2026-01-09 18:48:33,885 views 2784 37616 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:48:33,986 views 2784 37616 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:49:09,339 views 49972 48024 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:49:09,360 urls 49972 48024 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:49:09,417 urls 49972 48024   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:49:09,452 urls 49972 48024   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:49:09,457 urls 49972 48024   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:49:09,458 urls 49972 48024   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:49:09,459 urls 49972 48024   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:49:09,460 urls 49972 48024   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:49:09,840 base 49972 42740 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:49:11,627 middleware 49972 19200 ================================================================================
+INFO 2026-01-09 18:49:11,628 middleware 49972 19200 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:49:11,630 middleware 49972 19200   Method: GET
+INFO 2026-01-09 18:49:11,632 middleware 49972 19200   Path: /api/jobs/194/
+INFO 2026-01-09 18:49:11,634 middleware 49972 19200   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:49:11,636 middleware 49972 19200   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:49:11,637 middleware 49972 19200   Query String: 
+INFO 2026-01-09 18:49:11,637 middleware 49972 19200 ================================================================================
+INFO 2026-01-09 18:49:11,645 views 49972 19200 JobViewSet actions registered: 2
+INFO 2026-01-09 18:49:11,646 views 49972 19200   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:49:11,647 views 49972 19200   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 18:49:11,647 views 49972 19200 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:49:11,733 views 49972 19200 JobViewSet.dispatch completed - status=200
+INFO 2026-01-09 18:49:11,908 middleware 49972 49232 ================================================================================
+INFO 2026-01-09 18:49:11,912 middleware 49972 49232 REQUEST RECEIVED (download-zip related):
+INFO 2026-01-09 18:49:11,938 middleware 49972 49232   Method: GET
+INFO 2026-01-09 18:49:11,942 middleware 49972 49232   Path: /api/jobs/194/
+INFO 2026-01-09 18:49:11,953 middleware 49972 49232   Path Info: /api/jobs/194/
+INFO 2026-01-09 18:49:11,954 middleware 49972 49232   Full Path: /api/jobs/194/
+INFO 2026-01-09 18:49:11,954 middleware 49972 49232   Query String: 
+INFO 2026-01-09 18:49:11,960 middleware 49972 49232 ================================================================================
+DEBUG 2026-01-09 18:49:11,970 views 49972 49232 JobViewSet.dispatch called - method=GET, path=/api/jobs/194/, kwargs={'pk': '194'}
+DEBUG 2026-01-09 18:49:12,104 views 49972 49232 JobViewSet.dispatch completed - status=200
+DEBUG 2026-01-09 18:49:32,592 views 33396 36772 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:49:32,596 urls 33396 36772 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:49:32,597 urls 33396 36772   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:49:32,597 urls 33396 36772   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:49:32,597 urls 33396 36772   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:49:32,597 urls 33396 36772   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:49:32,598 urls 33396 36772   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:49:32,598 urls 33396 36772   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:49:32,738 base 33396 23456 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:50:51,175 views 4224 35588 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:50:51,179 urls 4224 35588 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:50:51,179 urls 4224 35588   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:50:51,180 urls 4224 35588   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:50:51,180 urls 4224 35588   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:50:51,180 urls 4224 35588   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:50:51,180 urls 4224 35588   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:50:51,180 urls 4224 35588   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:51:23,597 views 33164 31040 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:51:23,600 urls 33164 31040 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:51:23,600 urls 33164 31040   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:51:23,601 urls 33164 31040   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:51:23,601 urls 33164 31040   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:51:23,601 urls 33164 31040   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:51:23,601 urls 33164 31040   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:51:23,601 urls 33164 31040   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:51:23,747 base 33164 42180 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:52:16,846 views 38764 50760 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:52:16,850 urls 38764 50760 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:52:16,850 urls 38764 50760   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:52:16,851 urls 38764 50760   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:52:16,851 urls 38764 50760   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:52:16,851 urls 38764 50760   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:52:16,851 urls 38764 50760   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:52:16,852 urls 38764 50760   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:52:17,002 base 38764 46212 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:53:44,752 views 37836 44380 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:53:44,755 urls 37836 44380 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:53:44,755 urls 37836 44380   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:53:44,755 urls 37836 44380   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:53:44,755 urls 37836 44380   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:53:44,755 urls 37836 44380   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:53:44,756 urls 37836 44380   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:53:44,756 urls 37836 44380   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:53:44,919 base 37836 5456 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:53:54,383 views 37836 39768 JobViewSet actions registered: 2
+INFO 2026-01-09 18:53:54,383 views 37836 19468 JobViewSet actions registered: 2
+INFO 2026-01-09 18:53:54,384 views 37836 39768   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:53:54,384 views 37836 19468   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:53:54,384 views 37836 39768   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+INFO 2026-01-09 18:53:54,385 views 37836 19468   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 18:53:54,386 views 37836 39768 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 18:53:54,387 views 37836 19468 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 18:53:54,387 views 37836 39768 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 18:53:54,387 views 37836 19468 Successfully parsed JSON field 'images'
+INFO 2026-01-09 18:53:55,694 views 37836 39768 Job 196 created successfully with 2 image tasks
+INFO 2026-01-09 18:53:55,696 views 37836 19468 Job 195 created successfully with 2 image tasks
+INFO 2026-01-09 18:54:04,603 views 37836 37200 ImageTask 972 retry requested - task re-enqueued
+INFO 2026-01-09 18:54:13,079 middleware 37836 10912 ================================================================================
+INFO 2026-01-09 18:54:13,080 middleware 37836 10912 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 18:54:13,080 middleware 37836 10912   Method: GET
+INFO 2026-01-09 18:54:13,080 middleware 37836 10912   Path: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:54:13,081 middleware 37836 10912   Path Info: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:54:13,081 middleware 37836 10912   Full Path: /api/jobs/195/download-zip/?format=both
+INFO 2026-01-09 18:54:13,081 middleware 37836 10912   Query String: format=both
+INFO 2026-01-09 18:54:13,082 middleware 37836 10912   META PATH_INFO: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:54:13,082 middleware 37836 10912 ================================================================================
+INFO 2026-01-09 18:54:13,083 views 37836 10912 JobViewSet.dispatch called - method=GET, path=/api/jobs/195/download-zip/, kwargs={'pk': '195'}
+INFO 2026-01-09 18:54:13,083 views 37836 10912   Available actions: ['cancel', 'download_zip']
+INFO 2026-01-09 18:54:13,084 views 37836 10912 JobViewSet.dispatch completed - status=404
+INFO 2026-01-09 18:54:13,085 middleware 37836 10912 RESPONSE SENT:
+INFO 2026-01-09 18:54:13,085 middleware 37836 10912   Status Code: 404
+INFO 2026-01-09 18:54:13,127 middleware 37836 10912   Resolver kwargs: {'pk': '195'}
+INFO 2026-01-09 18:54:13,127 middleware 37836 10912 ================================================================================
+WARNING 2026-01-09 18:54:13,130 log 37836 55052 Not Found: /api/jobs/195/download-zip/
+WARNING 2026-01-09 18:54:13,132 runserver 37836 5456 [33mHTTP GET /api/jobs/195/download-zip/?format=both 404 [0.05, 127.0.0.1:51607][0m
+DEBUG 2026-01-09 18:56:10,971 views 38540 27716 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:56:10,974 urls 38540 27716 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:56:10,975 urls 38540 27716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:56:10,975 urls 38540 27716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:56:10,975 urls 38540 27716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:56:10,975 urls 38540 27716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:56:10,976 urls 38540 27716   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:56:10,976 urls 38540 27716   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:56:11,135 base 38540 33548 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:56:11,179 views 38540 27572 JobViewSet actions registered: 2
+INFO 2026-01-09 18:56:11,180 views 38540 27572   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:56:11,180 views 38540 27572   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 18:57:05,894 views 46928 17136 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:57:05,897 urls 46928 17136 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:57:05,897 urls 46928 17136   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:57:05,898 urls 46928 17136   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:57:05,898 urls 46928 17136   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:57:05,898 urls 46928 17136   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:57:05,898 urls 46928 17136   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:57:05,898 urls 46928 17136   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:57:06,041 base 46928 14940 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 18:57:47,251 views 22932 15092 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:57:47,255 urls 22932 15092 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:57:47,255 urls 22932 15092   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:57:47,255 urls 22932 15092   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:57:47,255 urls 22932 15092   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:57:47,256 urls 22932 15092   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:57:47,256 urls 22932 15092   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:57:47,256 urls 22932 15092   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:57:47,388 base 22932 53008 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:57:48,818 views 22932 10892 JobViewSet actions registered: 2
+INFO 2026-01-09 18:57:48,819 views 22932 10892   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:57:48,819 views 22932 10892   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 18:58:23,100 views 23720 19660 apps.jobs.views module loaded
+DEBUG 2026-01-09 18:58:23,123 urls 23720 19660 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 18:58:23,124 urls 23720 19660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 18:58:23,126 urls 23720 19660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 18:58:23,127 urls 23720 19660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 18:58:23,131 urls 23720 19660   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 18:58:23,134 urls 23720 19660   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:58:23,141 urls 23720 19660   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 18:58:23,430 base 23720 39820 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 18:58:24,566 views 23720 12384 JobViewSet actions registered: 2
+INFO 2026-01-09 18:58:24,567 views 23720 12384   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 18:58:24,567 views 23720 12384   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+INFO 2026-01-09 18:58:31,777 middleware 23720 27524 ================================================================================
+INFO 2026-01-09 18:58:31,778 middleware 23720 27524 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 18:58:31,778 middleware 23720 27524   Method: GET
+INFO 2026-01-09 18:58:31,778 middleware 23720 27524   Path: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:31,779 middleware 23720 27524   Path Info: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:31,779 middleware 23720 27524   Full Path: /api/jobs/195/download-zip/?format=both
+INFO 2026-01-09 18:58:31,780 middleware 23720 27524   Query String: format=both
+INFO 2026-01-09 18:58:31,781 middleware 23720 27524   META PATH_INFO: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:31,781 middleware 23720 27524 ================================================================================
+INFO 2026-01-09 18:58:31,783 views 23720 27524 JobViewSet.dispatch called - method=GET, path=/api/jobs/195/download-zip/, kwargs={'pk': '195'}
+INFO 2026-01-09 18:58:31,785 views 23720 27524   Available actions: ['cancel', 'download_zip']
+INFO 2026-01-09 18:58:31,786 views 23720 27524   download_zip action details: mapping={'get': 'download_zip'}, detail=None, url_path=None
+INFO 2026-01-09 18:58:31,786 views 23720 27524   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 18:58:31,787 views 23720 27524   resolver_match.view_name: job-download-zip
+INFO 2026-01-09 18:58:31,787 views 23720 27524   resolver_match.func: <function JobViewSet at 0x000001F5502C1760>
+INFO 2026-01-09 18:58:31,788 views 23720 27524 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 18:58:31,788 views 23720 27524   404 returned! Checking if action was called...
+INFO 2026-01-09 18:58:31,790 middleware 23720 27524 RESPONSE SENT:
+INFO 2026-01-09 18:58:31,791 middleware 23720 27524   Status Code: 404
+INFO 2026-01-09 18:58:31,791 middleware 23720 27524   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 18:58:31,792 middleware 23720 27524   Resolver kwargs: {'pk': '195'}
+INFO 2026-01-09 18:58:31,792 middleware 23720 27524 ================================================================================
+WARNING 2026-01-09 18:58:31,797 log 23720 20136 Not Found: /api/jobs/195/download-zip/
+WARNING 2026-01-09 18:58:31,799 runserver 23720 39820 [33mHTTP GET /api/jobs/195/download-zip/?format=both 404 [0.03, 127.0.0.1:55121][0m
+INFO 2026-01-09 18:58:53,574 middleware 23720 44996 ================================================================================
+INFO 2026-01-09 18:58:53,574 middleware 23720 44996 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 18:58:53,575 middleware 23720 44996   Method: GET
+INFO 2026-01-09 18:58:53,575 middleware 23720 44996   Path: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:53,575 middleware 23720 44996   Path Info: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:53,576 middleware 23720 44996   Full Path: /api/jobs/195/download-zip/?format=png
+INFO 2026-01-09 18:58:53,576 middleware 23720 44996   Query String: format=png
+INFO 2026-01-09 18:58:53,576 middleware 23720 44996   META PATH_INFO: /api/jobs/195/download-zip/
+INFO 2026-01-09 18:58:53,576 middleware 23720 44996 ================================================================================
+INFO 2026-01-09 18:58:53,578 views 23720 44996 JobViewSet.dispatch called - method=GET, path=/api/jobs/195/download-zip/, kwargs={'pk': '195'}
+INFO 2026-01-09 18:58:53,579 views 23720 44996   Available actions: ['cancel', 'download_zip']
+INFO 2026-01-09 18:58:53,579 views 23720 44996   download_zip action details: mapping={'get': 'download_zip'}, detail=None, url_path=None
+INFO 2026-01-09 18:58:53,579 views 23720 44996   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 18:58:53,580 views 23720 44996   resolver_match.view_name: job-download-zip
+INFO 2026-01-09 18:58:53,580 views 23720 44996   resolver_match.func: <function JobViewSet at 0x000001F5502C1760>
+INFO 2026-01-09 18:58:53,581 views 23720 44996 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 18:58:53,581 views 23720 44996   404 returned! Checking if action was called...
+INFO 2026-01-09 18:58:53,582 middleware 23720 44996 RESPONSE SENT:
+INFO 2026-01-09 18:58:53,583 middleware 23720 44996   Status Code: 404
+INFO 2026-01-09 18:58:53,583 middleware 23720 44996   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 18:58:53,583 middleware 23720 44996   Resolver kwargs: {'pk': '195'}
+INFO 2026-01-09 18:58:53,583 middleware 23720 44996 ================================================================================
+WARNING 2026-01-09 18:58:53,585 log 23720 20136 Not Found: /api/jobs/195/download-zip/
+WARNING 2026-01-09 18:58:53,586 runserver 23720 39820 [33mHTTP GET /api/jobs/195/download-zip/?format=png 404 [0.01, 127.0.0.1:54412][0m
+DEBUG 2026-01-09 19:00:25,365 views 18540 24696 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:00:25,368 urls 18540 24696 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:00:25,368 urls 18540 24696   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:00:25,369 urls 18540 24696   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:00:25,369 urls 18540 24696   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:00:25,369 urls 18540 24696   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:00:25,369 urls 18540 24696   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:00:25,369 urls 18540 24696   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:00:25,503 base 18540 51876 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:00:42,556 views 18540 11516 JobViewSet actions registered: 2
+INFO 2026-01-09 19:00:42,557 views 18540 11516   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:00:42,558 views 18540 11516   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:00:55,674 views 34180 24084 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:00:55,677 urls 34180 24084 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:00:55,677 urls 34180 24084   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:00:55,677 urls 34180 24084   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:00:55,677 urls 34180 24084   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:00:55,677 urls 34180 24084   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:00:55,678 urls 34180 24084   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:00:55,678 urls 34180 24084   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:00:55,832 base 34180 35500 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:01:11,579 views 57168 42180 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:01:11,582 urls 57168 42180 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:01:11,582 urls 57168 42180   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:01:11,582 urls 57168 42180   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:01:11,582 urls 57168 42180   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:01:11,583 urls 57168 42180   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:01:11,583 urls 57168 42180   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:01:11,583 urls 57168 42180   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:01:11,714 base 57168 32528 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:01:24,325 views 57168 31900 JobViewSet actions registered: 2
+INFO 2026-01-09 19:01:24,325 views 57168 18100 JobViewSet actions registered: 2
+INFO 2026-01-09 19:01:24,325 views 57168 31900   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:01:24,325 views 57168 18100   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:01:24,326 views 57168 31900   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+INFO 2026-01-09 19:01:24,326 views 57168 18100   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:01:24,327 views 57168 31900 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:01:24,329 views 57168 18100 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:01:24,329 views 57168 31900 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 19:01:24,329 views 57168 18100 Successfully parsed JSON field 'images'
+INFO 2026-01-09 19:01:26,195 views 57168 31900 Job 198 created successfully with 8 image tasks
+INFO 2026-01-09 19:01:26,196 views 57168 18100 Job 197 created successfully with 8 image tasks
+INFO 2026-01-09 19:01:49,289 middleware 57168 52192 ================================================================================
+INFO 2026-01-09 19:01:49,289 middleware 57168 52192 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:01:49,289 middleware 57168 52192   Method: GET
+INFO 2026-01-09 19:01:49,289 middleware 57168 52192   Path: /api/jobs/197/download-zip/
+INFO 2026-01-09 19:01:49,289 middleware 57168 52192   Path Info: /api/jobs/197/download-zip/
+INFO 2026-01-09 19:01:49,290 middleware 57168 52192   Full Path: /api/jobs/197/download-zip/?format=both
+INFO 2026-01-09 19:01:49,290 middleware 57168 52192   Query String: format=both
+INFO 2026-01-09 19:01:49,290 middleware 57168 52192   META PATH_INFO: /api/jobs/197/download-zip/
+INFO 2026-01-09 19:01:49,290 middleware 57168 52192 ================================================================================
+INFO 2026-01-09 19:01:49,291 views 57168 52192 JobViewSet.dispatch called - method=GET, path=/api/jobs/197/download-zip/, kwargs={'pk': '197'}
+INFO 2026-01-09 19:01:49,292 views 57168 52192   Available actions: ['cancel', 'download_zip']
+INFO 2026-01-09 19:01:49,292 views 57168 52192   download_zip action details: mapping={'get': 'download_zip'}, detail=None, url_path=None
+INFO 2026-01-09 19:01:49,292 views 57168 52192   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 19:01:49,292 views 57168 52192   resolver_match.view_name: job-download-zip
+INFO 2026-01-09 19:01:49,292 views 57168 52192   resolver_match.func: <function JobViewSet at 0x0000024704CD9E40>
+INFO 2026-01-09 19:01:49,293 views 57168 52192 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 19:01:49,294 views 57168 52192   404 returned! Checking if action was called...
+INFO 2026-01-09 19:01:49,295 middleware 57168 52192 RESPONSE SENT:
+INFO 2026-01-09 19:01:49,295 middleware 57168 52192   Status Code: 404
+INFO 2026-01-09 19:01:49,295 middleware 57168 52192   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:01:49,296 middleware 57168 52192   Resolver kwargs: {'pk': '197'}
+INFO 2026-01-09 19:01:49,296 middleware 57168 52192 ================================================================================
+WARNING 2026-01-09 19:01:49,299 log 57168 44736 Not Found: /api/jobs/197/download-zip/
+WARNING 2026-01-09 19:01:49,300 runserver 57168 32528 [33mHTTP GET /api/jobs/197/download-zip/?format=both 404 [0.01, 127.0.0.1:52808][0m
+DEBUG 2026-01-09 19:03:30,276 views 22896 55704 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:03:30,281 urls 22896 55704 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:03:30,281 urls 22896 55704   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:03:30,281 urls 22896 55704   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:03:30,282 urls 22896 55704   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:03:30,282 urls 22896 55704   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:03:30,282 urls 22896 55704   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:03:30,282 urls 22896 55704   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:03:30,408 base 22896 53408 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:03:30,659 views 22896 42228 JobViewSet actions registered: 2
+INFO 2026-01-09 19:03:30,659 views 22896 42228   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:03:30,660 views 22896 42228   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:04:06,986 views 20576 23776 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:04:06,989 urls 20576 23776 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:04:06,990 urls 20576 23776   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:04:06,990 urls 20576 23776   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:04:06,990 urls 20576 23776   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:04:06,990 urls 20576 23776   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:04:06,990 urls 20576 23776   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:04:06,991 urls 20576 23776   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:04:07,133 base 20576 42676 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:04:19,308 views 20576 40112 JobViewSet actions registered: 2
+INFO 2026-01-09 19:04:19,309 views 20576 52068 JobViewSet actions registered: 2
+INFO 2026-01-09 19:04:19,309 views 20576 40112   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:04:19,309 views 20576 52068   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:04:19,310 views 20576 40112   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+INFO 2026-01-09 19:04:19,310 views 20576 52068   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:04:19,311 views 20576 40112 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:04:19,312 views 20576 52068 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:04:19,313 views 20576 40112 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 19:04:19,313 views 20576 52068 Successfully parsed JSON field 'images'
+INFO 2026-01-09 19:04:20,813 views 20576 52068 Job 200 created successfully with 3 image tasks
+INFO 2026-01-09 19:04:20,828 views 20576 40112 Job 199 created successfully with 3 image tasks
+INFO 2026-01-09 19:04:37,318 views 20576 35192 ImageTask 994 retry requested - task re-enqueued
+INFO 2026-01-09 19:04:43,541 middleware 20576 1372 ================================================================================
+INFO 2026-01-09 19:04:43,542 middleware 20576 1372 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:04:43,543 middleware 20576 1372   Method: GET
+INFO 2026-01-09 19:04:43,543 middleware 20576 1372   Path: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:43,543 middleware 20576 1372   Path Info: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:43,544 middleware 20576 1372   Full Path: /api/jobs/199/download-zip/?format=both
+INFO 2026-01-09 19:04:43,544 middleware 20576 1372   Query String: format=both
+INFO 2026-01-09 19:04:43,544 middleware 20576 1372   META PATH_INFO: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:43,545 middleware 20576 1372 ================================================================================
+INFO 2026-01-09 19:04:43,547 views 20576 1372 JobViewSet.dispatch called - method=GET, path=/api/jobs/199/download-zip/, kwargs={'pk': '199'}
+INFO 2026-01-09 19:04:43,547 views 20576 1372   self.action BEFORE super().dispatch: NOT SET
+INFO 2026-01-09 19:04:43,547 views 20576 1372   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:04:43,548 views 20576 1372   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 19:04:43,548 views 20576 1372   resolver_match.kwargs: {'pk': '199'}
+INFO 2026-01-09 19:04:43,549 views 20576 1372   self.action AFTER super().dispatch: download_zip
+INFO 2026-01-09 19:04:43,549 views 20576 1372 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 19:04:43,549 views 20576 1372   404 returned! self.action was: download_zip
+INFO 2026-01-09 19:04:43,552 middleware 20576 1372 RESPONSE SENT:
+INFO 2026-01-09 19:04:43,553 middleware 20576 1372   Status Code: 404
+INFO 2026-01-09 19:04:43,553 middleware 20576 1372   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:04:43,553 middleware 20576 1372   Resolver kwargs: {'pk': '199'}
+INFO 2026-01-09 19:04:43,553 middleware 20576 1372 ================================================================================
+WARNING 2026-01-09 19:04:43,557 log 20576 40928 Not Found: /api/jobs/199/download-zip/
+WARNING 2026-01-09 19:04:43,563 runserver 20576 42676 [33mHTTP GET /api/jobs/199/download-zip/?format=both 404 [0.02, 127.0.0.1:60464][0m
+INFO 2026-01-09 19:04:59,693 middleware 20576 3356 ================================================================================
+INFO 2026-01-09 19:04:59,693 middleware 20576 3356 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:04:59,694 middleware 20576 3356   Method: GET
+INFO 2026-01-09 19:04:59,694 middleware 20576 3356   Path: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:59,694 middleware 20576 3356   Path Info: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:59,695 middleware 20576 3356   Full Path: /api/jobs/199/download-zip/?format=svg
+INFO 2026-01-09 19:04:59,695 middleware 20576 3356   Query String: format=svg
+INFO 2026-01-09 19:04:59,695 middleware 20576 3356   META PATH_INFO: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:04:59,695 middleware 20576 3356 ================================================================================
+INFO 2026-01-09 19:04:59,697 views 20576 3356 JobViewSet.dispatch called - method=GET, path=/api/jobs/199/download-zip/, kwargs={'pk': '199'}
+INFO 2026-01-09 19:04:59,697 views 20576 3356   self.action BEFORE super().dispatch: NOT SET
+INFO 2026-01-09 19:04:59,698 views 20576 3356   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:04:59,698 views 20576 3356   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 19:04:59,698 views 20576 3356   resolver_match.kwargs: {'pk': '199'}
+INFO 2026-01-09 19:04:59,699 views 20576 3356   self.action AFTER super().dispatch: download_zip
+INFO 2026-01-09 19:04:59,699 views 20576 3356 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 19:04:59,699 views 20576 3356   404 returned! self.action was: download_zip
+INFO 2026-01-09 19:04:59,701 middleware 20576 3356 RESPONSE SENT:
+INFO 2026-01-09 19:04:59,701 middleware 20576 3356   Status Code: 404
+INFO 2026-01-09 19:04:59,701 middleware 20576 3356   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:04:59,702 middleware 20576 3356   Resolver kwargs: {'pk': '199'}
+INFO 2026-01-09 19:04:59,702 middleware 20576 3356 ================================================================================
+WARNING 2026-01-09 19:04:59,703 log 20576 54356 Not Found: /api/jobs/199/download-zip/
+WARNING 2026-01-09 19:04:59,704 runserver 20576 42676 [33mHTTP GET /api/jobs/199/download-zip/?format=svg 404 [0.01, 127.0.0.1:60464][0m
+INFO 2026-01-09 19:05:01,922 middleware 20576 22252 ================================================================================
+INFO 2026-01-09 19:05:01,923 middleware 20576 22252 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:05:01,923 middleware 20576 22252   Method: GET
+INFO 2026-01-09 19:05:01,923 middleware 20576 22252   Path: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:05:01,924 middleware 20576 22252   Path Info: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:05:01,924 middleware 20576 22252   Full Path: /api/jobs/199/download-zip/?format=png
+INFO 2026-01-09 19:05:01,924 middleware 20576 22252   Query String: format=png
+INFO 2026-01-09 19:05:01,924 middleware 20576 22252   META PATH_INFO: /api/jobs/199/download-zip/
+INFO 2026-01-09 19:05:01,925 middleware 20576 22252 ================================================================================
+INFO 2026-01-09 19:05:01,926 views 20576 22252 JobViewSet.dispatch called - method=GET, path=/api/jobs/199/download-zip/, kwargs={'pk': '199'}
+INFO 2026-01-09 19:05:01,926 views 20576 22252   self.action BEFORE super().dispatch: NOT SET
+INFO 2026-01-09 19:05:01,927 views 20576 22252   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:05:01,927 views 20576 22252   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 19:05:01,928 views 20576 22252   resolver_match.kwargs: {'pk': '199'}
+INFO 2026-01-09 19:05:01,928 views 20576 22252   self.action AFTER super().dispatch: download_zip
+INFO 2026-01-09 19:05:01,929 views 20576 22252 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 19:05:01,929 views 20576 22252   404 returned! self.action was: download_zip
+INFO 2026-01-09 19:05:01,930 middleware 20576 22252 RESPONSE SENT:
+INFO 2026-01-09 19:05:01,930 middleware 20576 22252   Status Code: 404
+INFO 2026-01-09 19:05:01,930 middleware 20576 22252   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:05:01,931 middleware 20576 22252   Resolver kwargs: {'pk': '199'}
+INFO 2026-01-09 19:05:01,931 middleware 20576 22252 ================================================================================
+WARNING 2026-01-09 19:05:01,932 log 20576 40928 Not Found: /api/jobs/199/download-zip/
+WARNING 2026-01-09 19:05:01,933 runserver 20576 42676 [33mHTTP GET /api/jobs/199/download-zip/?format=png 404 [0.01, 127.0.0.1:60464][0m
+DEBUG 2026-01-09 19:05:49,660 views 42696 54968 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:05:49,664 urls 42696 54968 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:05:49,664 urls 42696 54968   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:05:49,664 urls 42696 54968   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:05:49,665 urls 42696 54968   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:05:49,665 urls 42696 54968   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:05:49,665 urls 42696 54968   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:05:49,665 urls 42696 54968   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:05:49,798 base 42696 47200 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:05:49,890 views 42696 2520 JobViewSet actions registered: 2
+INFO 2026-01-09 19:05:49,890 views 42696 2520   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:05:49,890 views 42696 2520   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:06:01,165 views 55868 51472 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:06:01,168 urls 55868 51472 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:06:01,168 urls 55868 51472   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:06:01,168 urls 55868 51472   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:06:01,168 urls 55868 51472   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:01,168 urls 55868 51472   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:01,169 urls 55868 51472   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:06:01,169 urls 55868 51472   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:06:01,284 base 55868 46752 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:06:18,670 views 11964 9128 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:06:18,673 urls 11964 9128 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:06:18,673 urls 11964 9128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:06:18,673 urls 11964 9128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:06:18,673 urls 11964 9128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:18,674 urls 11964 9128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:18,674 urls 11964 9128   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:06:18,674 urls 11964 9128   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:06:18,801 base 11964 30336 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:06:33,193 views 24480 54444 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:06:33,197 urls 24480 54444 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:06:33,197 urls 24480 54444   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:06:33,198 urls 24480 54444   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:06:33,198 urls 24480 54444   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:33,198 urls 24480 54444   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:06:33,198 urls 24480 54444   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:06:33,199 urls 24480 54444   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+INFO 2026-01-09 19:06:42,557 views 11964 27436 JobViewSet actions registered: 2
+INFO 2026-01-09 19:06:42,558 views 11964 27436   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:06:42,559 views 11964 27436   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:06:42,560 views 11964 27436 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:06:42,561 views 11964 23924 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:06:42,562 views 11964 27436 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 19:06:42,562 views 11964 23924 Successfully parsed JSON field 'images'
+INFO 2026-01-09 19:06:44,393 views 11964 27436 Job 201 created successfully with 3 image tasks
+WARNING 2026-01-09 19:06:44,394 tasks 24480 54444 ImageTask 999 does not exist - task may have been cancelled or deleted
+INFO 2026-01-09 19:06:44,394 views 11964 23924 Job 202 created successfully with 3 image tasks
+INFO 2026-01-09 19:06:56,171 middleware 11964 37740 ================================================================================
+INFO 2026-01-09 19:06:56,172 middleware 11964 37740 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:06:56,172 middleware 11964 37740   Method: GET
+INFO 2026-01-09 19:06:56,172 middleware 11964 37740   Path: /api/jobs/202/download-zip/
+INFO 2026-01-09 19:06:56,172 middleware 11964 37740   Path Info: /api/jobs/202/download-zip/
+INFO 2026-01-09 19:06:56,173 middleware 11964 37740   Full Path: /api/jobs/202/download-zip/?format=both
+INFO 2026-01-09 19:06:56,173 middleware 11964 37740   Query String: format=both
+INFO 2026-01-09 19:06:56,173 middleware 11964 37740   META PATH_INFO: /api/jobs/202/download-zip/
+INFO 2026-01-09 19:06:56,173 middleware 11964 37740 ================================================================================
+INFO 2026-01-09 19:06:56,174 views 11964 37740 JobViewSet.dispatch called - method=GET, path=/api/jobs/202/download-zip/, kwargs={'pk': '202'}
+INFO 2026-01-09 19:06:56,174 views 11964 37740   self.action BEFORE super().dispatch: NOT SET
+INFO 2026-01-09 19:06:56,175 views 11964 37740   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:06:56,175 views 11964 37740   resolver_match.url_name: job-download-zip
+INFO 2026-01-09 19:06:56,175 views 11964 37740   resolver_match.kwargs: {'pk': '202'}
+INFO 2026-01-09 19:06:56,176 views 11964 37740   self.action AFTER super().dispatch: download_zip
+INFO 2026-01-09 19:06:56,176 views 11964 37740 JobViewSet.dispatch completed - status=404
+ERROR 2026-01-09 19:06:56,176 views 11964 37740   404 returned! self.action was: download_zip
+INFO 2026-01-09 19:06:56,178 middleware 11964 37740 RESPONSE SENT:
+INFO 2026-01-09 19:06:56,178 middleware 11964 37740   Status Code: 404
+INFO 2026-01-09 19:06:56,178 middleware 11964 37740   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:06:56,179 middleware 11964 37740   Resolver kwargs: {'pk': '202'}
+INFO 2026-01-09 19:06:56,179 middleware 11964 37740 ================================================================================
+WARNING 2026-01-09 19:06:56,183 log 11964 39560 Not Found: /api/jobs/202/download-zip/
+WARNING 2026-01-09 19:06:56,184 runserver 11964 30336 [33mHTTP GET /api/jobs/202/download-zip/?format=both 404 [0.01, 127.0.0.1:55201][0m
+DEBUG 2026-01-09 19:07:54,648 views 36524 20676 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:07:54,652 urls 36524 20676 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:07:54,652 urls 36524 20676   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:07:54,653 urls 36524 20676   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:07:54,653 urls 36524 20676   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:07:54,653 urls 36524 20676   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:07:54,653 urls 36524 20676   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:07:54,653 urls 36524 20676   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:07:54,785 base 36524 13516 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:07:55,040 views 36524 38044 JobViewSet actions registered: 2
+INFO 2026-01-09 19:07:55,041 views 36524 38044   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:07:55,041 views 36524 38044   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:08:27,176 views 36524 39820 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:08:27,178 views 36524 27112 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:08:27,178 views 36524 39820 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 19:08:27,179 views 36524 27112 Successfully parsed JSON field 'images'
+INFO 2026-01-09 19:08:28,590 views 36524 39820 Job 204 created successfully with 1 image tasks
+INFO 2026-01-09 19:08:28,590 views 36524 27112 Job 203 created successfully with 1 image tasks
+INFO 2026-01-09 19:08:34,918 middleware 36524 49324 ================================================================================
+INFO 2026-01-09 19:08:34,918 middleware 36524 49324 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:08:34,918 middleware 36524 49324   Method: GET
+INFO 2026-01-09 19:08:34,918 middleware 36524 49324   Path: /api/jobs/204/download-zip/
+INFO 2026-01-09 19:08:34,919 middleware 36524 49324   Path Info: /api/jobs/204/download-zip/
+INFO 2026-01-09 19:08:34,919 middleware 36524 49324   Full Path: /api/jobs/204/download-zip/?format=both
+INFO 2026-01-09 19:08:34,919 middleware 36524 49324   Query String: format=both
+INFO 2026-01-09 19:08:34,919 middleware 36524 49324   META PATH_INFO: /api/jobs/204/download-zip/
+INFO 2026-01-09 19:08:34,920 middleware 36524 49324 ================================================================================
+INFO 2026-01-09 19:08:34,921 views 36524 49324 JobViewSet.dispatch called - method=GET, path=/api/jobs/204/download-zip/, kwargs={'pk': '204'}
+INFO 2026-01-09 19:08:34,921 views 36524 49324   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:08:34,921 views 36524 49324   getattr(self, 'download_zip'): <bound method JobViewSet.download_zip of <apps.jobs.views.JobViewSet object at 0x00000222CE5290F0>>
+INFO 2026-01-09 19:08:34,921 views 36524 49324   callable(download_zip_method): True
+INFO 2026-01-09 19:08:34,922 views 36524 49324   Manually calling download_zip...
+ERROR 2026-01-09 19:08:34,922 views 36524 49324   Manual call exception: 
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 149, in dispatch
+    self.initial(self.request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 412, in initial
+    neg = self.perform_content_negotiation(request)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 316, in perform_content_negotiation
+    return conneg.select_renderer(request, renderers, self.format_kwarg)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\negotiation.py", line 45, in select_renderer
+    renderers = self.filter_renderers(renderers, format)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\negotiation.py", line 88, in filter_renderers
+    raise Http404
+django.http.response.Http404
+INFO 2026-01-09 19:08:34,946 middleware 36524 49324 RESPONSE SENT:
+INFO 2026-01-09 19:08:34,946 middleware 36524 49324   Status Code: 404
+INFO 2026-01-09 19:08:34,947 middleware 36524 49324   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:08:34,947 middleware 36524 49324   Resolver kwargs: {'pk': '204'}
+INFO 2026-01-09 19:08:34,948 middleware 36524 49324 ================================================================================
+WARNING 2026-01-09 19:08:34,951 log 36524 47344 Not Found: /api/jobs/204/download-zip/
+WARNING 2026-01-09 19:08:34,952 runserver 36524 13516 [33mHTTP GET /api/jobs/204/download-zip/?format=both 404 [0.04, 127.0.0.1:63206][0m
+DEBUG 2026-01-09 19:08:56,883 views 3932 39016 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:08:56,887 urls 3932 39016   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:08:56,888 urls 3932 39016   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:08:57,029 base 3932 18008 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:09:06,974 views 3932 30168 JobViewSet actions registered: 2
+INFO 2026-01-09 19:09:06,974 views 3932 16908 JobViewSet actions registered: 2
+INFO 2026-01-09 19:09:06,974 views 3932 30168   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:09:06,974 views 3932 16908   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:09:06,975 views 3932 30168   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+INFO 2026-01-09 19:09:06,975 views 3932 16908   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:09:06,976 views 3932 30168 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:09:06,977 views 3932 16908 Job creation request received: keys=['source_type', 'images', 'idempotency_key', 'source_data']
+DEBUG 2026-01-09 19:09:06,978 views 3932 30168 Successfully parsed JSON field 'images'
+DEBUG 2026-01-09 19:09:06,978 views 3932 16908 Successfully parsed JSON field 'images'
+INFO 2026-01-09 19:09:08,375 views 3932 16908 Job 205 created successfully with 1 image tasks
+INFO 2026-01-09 19:09:08,377 views 3932 30168 Job 206 created successfully with 1 image tasks
+INFO 2026-01-09 19:09:14,382 middleware 3932 24488 ================================================================================
+INFO 2026-01-09 19:09:14,383 middleware 3932 24488 REQUEST RECEIVED (download-zip):
+INFO 2026-01-09 19:09:14,383 middleware 3932 24488   Method: GET
+INFO 2026-01-09 19:09:14,383 middleware 3932 24488   Path: /api/jobs/206/download-zip/
+INFO 2026-01-09 19:09:14,383 middleware 3932 24488   Path Info: /api/jobs/206/download-zip/
+INFO 2026-01-09 19:09:14,384 middleware 3932 24488   Full Path: /api/jobs/206/download-zip/?format=svg
+INFO 2026-01-09 19:09:14,384 middleware 3932 24488   Query String: format=svg
+INFO 2026-01-09 19:09:14,384 middleware 3932 24488   META PATH_INFO: /api/jobs/206/download-zip/
+INFO 2026-01-09 19:09:14,384 middleware 3932 24488 ================================================================================
+INFO 2026-01-09 19:09:14,386 views 3932 24488 JobViewSet.dispatch called - method=GET, path=/api/jobs/206/download-zip/, kwargs={'pk': '206'}
+INFO 2026-01-09 19:09:14,386 views 3932 24488   self.action_map: {'get': 'download_zip', 'head': 'download_zip'}
+INFO 2026-01-09 19:09:14,386 views 3932 24488   getattr(self, 'download_zip'): <bound method JobViewSet.download_zip of <apps.jobs.views.JobViewSet object at 0x000001CA1E64ED50>>
+INFO 2026-01-09 19:09:14,386 views 3932 24488   callable(download_zip_method): True
+INFO 2026-01-09 19:09:14,387 views 3932 24488   Manually calling download_zip...
+ERROR 2026-01-09 19:09:14,387 views 3932 24488   Manual call exception: 
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 149, in dispatch
+    self.initial(self.request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 412, in initial
+    neg = self.perform_content_negotiation(request)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 316, in perform_content_negotiation
+    return conneg.select_renderer(request, renderers, self.format_kwarg)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\negotiation.py", line 45, in select_renderer
+    renderers = self.filter_renderers(renderers, format)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\negotiation.py", line 88, in filter_renderers
+    raise Http404
+django.http.response.Http404
+INFO 2026-01-09 19:09:14,404 middleware 3932 24488 RESPONSE SENT:
+INFO 2026-01-09 19:09:14,404 middleware 3932 24488   Status Code: 404
+INFO 2026-01-09 19:09:14,405 middleware 3932 24488   [OK] Resolved: job-download-zip -> job-download-zip
+INFO 2026-01-09 19:09:14,405 middleware 3932 24488   Resolver kwargs: {'pk': '206'}
+INFO 2026-01-09 19:09:14,406 middleware 3932 24488 ================================================================================
+WARNING 2026-01-09 19:09:14,409 log 3932 15664 Not Found: /api/jobs/206/download-zip/
+WARNING 2026-01-09 19:09:14,410 runserver 3932 18008 [33mHTTP GET /api/jobs/206/download-zip/?format=svg 404 [0.03, 127.0.0.1:65040][0m
+DEBUG 2026-01-09 19:09:49,827 views 38504 55716 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:09:49,830 urls 38504 55716 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:09:49,831 urls 38504 55716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:09:49,831 urls 38504 55716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:09:49,831 urls 38504 55716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:09:49,831 urls 38504 55716   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:09:49,832 urls 38504 55716   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:09:49,832 urls 38504 55716   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:09:49,951 base 38504 55540 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+INFO 2026-01-09 19:09:50,161 views 38504 19816 JobViewSet actions registered: 2
+INFO 2026-01-09 19:09:50,161 views 38504 19816   Action: cancel, methods=['post'], url_path=cancel, detail=True
+INFO 2026-01-09 19:09:50,161 views 38504 19816   Action: download_zip, methods=['get'], url_path=download-zip, detail=True
+DEBUG 2026-01-09 19:10:11,825 views 15156 17528 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:10:11,828 urls 15156 17528 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:10:11,828 urls 15156 17528   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:10:11,829 urls 15156 17528   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:10:11,829 urls 15156 17528   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:11,829 urls 15156 17528   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:11,829 urls 15156 17528   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:11,829 urls 15156 17528   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:11,959 base 15156 26944 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:10:20,539 views 48392 38412 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:10:20,542 urls 48392 38412 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:10:20,542 urls 48392 38412   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:10:20,543 urls 48392 38412   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:10:20,543 urls 48392 38412   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:20,543 urls 48392 38412   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:20,543 urls 48392 38412   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:20,543 urls 48392 38412   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:20,666 base 48392 39396 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:10:29,629 views 54024 50128 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:10:29,634 urls 54024 50128 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:10:29,635 urls 54024 50128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:10:29,635 urls 54024 50128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:10:29,635 urls 54024 50128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:29,635 urls 54024 50128   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:29,636 urls 54024 50128   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:29,636 urls 54024 50128   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:29,773 base 54024 43556 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:10:39,183 views 54760 4680 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:10:39,187 urls 54760 4680 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:10:39,187 urls 54760 4680   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:10:39,187 urls 54760 4680   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:10:39,188 urls 54760 4680   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:39,188 urls 54760 4680   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:39,188 urls 54760 4680   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:39,188 urls 54760 4680   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:39,330 base 54760 37536 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:10:58,334 views 39552 2500 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:10:58,338 urls 39552 2500 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:10:58,338 urls 39552 2500   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:10:58,339 urls 39552 2500   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:10:58,339 urls 39552 2500   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:58,339 urls 39552 2500   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:10:58,339 urls 39552 2500   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:58,340 urls 39552 2500   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:10:58,471 base 39552 40080 Asynchronous handler adapted for middleware apps.jobs.middleware.URLDebugMiddleware.
+DEBUG 2026-01-09 19:11:10,177 views 28756 45848 apps.jobs.views module loaded
+DEBUG 2026-01-09 19:11:10,181 urls 28756 45848 Registered 24 URLs in jobs router
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel/$, Name: job-cancel
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^jobs/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: job-cancel
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip/$, Name: job-download-zip
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^jobs/(?P<pk>[^/.]+)/download-zip\.(?P<format>[a-z0-9]+)/?$, Name: job-download-zip
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel/$, Name: imagetask-cancel
+DEBUG 2026-01-09 19:11:10,182 urls 28756 45848   URL Pattern: ^image-tasks/(?P<pk>[^/.]+)/cancel\.(?P<format>[a-z0-9]+)/?$, Name: imagetask-cancel
+INFO 2026-01-09 19:12:11,086 views 17376 43316 download_zip called for job 206
+INFO 2026-01-09 19:12:15,383 views 17376 47052 download_zip called for job 206
+INFO 2026-01-09 19:12:17,365 views 17376 27884 download_zip called for job 206
+WARNING 2026-01-09 19:15:17,080 tasks 24480 54444 ImageTask 1014 does not exist - task may have been cancelled or deleted
+INFO 2026-01-09 19:15:17,089 views 13572 44328 Job 207 created successfully with 8 image tasks
+INFO 2026-01-09 19:15:17,089 views 13572 52864 Job 208 created successfully with 8 image tasks
+INFO 2026-01-09 19:15:20,220 tasks 24480 54444 ImageTask 1012 is cancelled - skipping execution
+INFO 2026-01-09 19:15:21,102 tasks 24480 54444 ImageTask 1011 is cancelled - skipping execution
+INFO 2026-01-09 19:15:22,069 tasks 24480 54444 ImageTask 1010 is cancelled - skipping execution
+INFO 2026-01-09 19:15:22,821 tasks 24480 54444 ImageTask 1009 is cancelled - skipping execution
+INFO 2026-01-09 19:15:24,445 tasks 24480 54444 ImageTask 1008 is cancelled - skipping execution
+INFO 2026-01-09 19:15:25,225 tasks 24480 54444 ImageTask 1007 is cancelled - skipping execution
+INFO 2026-01-09 19:15:33,316 views 13572 32720 ImageTask 1013 retry requested - task re-enqueued
+INFO 2026-01-09 19:15:38,546 views 13572 31076 ImageTask 1014 retry requested - task re-enqueued
+INFO 2026-01-09 19:15:41,309 views 13572 28000 ImageTask 1012 retry requested - task re-enqueued

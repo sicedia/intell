@@ -15,7 +15,7 @@ from django.http import FileResponse
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from pathlib import Path
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample, OpenApiParameter
 
 from .models import Job, ImageTask, DescriptionTask
 from .serializers import (
@@ -103,6 +103,7 @@ logger = logging.getLogger(__name__)
             404: ErrorResponseSerializer,
         },
     ),
+    # TODO: Re-add download_zip schema after fixing the 404 issue
 )
 class JobViewSet(viewsets.ViewSet):
     """ViewSet for Job operations."""
@@ -307,20 +308,25 @@ class JobViewSet(viewsets.ViewSet):
         })
     
     @extend_schema(
-        summary='Descargar imágenes como ZIP',
-        description='Descarga todas las imágenes generadas exitosamente de un trabajo en un archivo ZIP.',
+        summary='Descargar imagenes como ZIP',
+        description='Descarga todas las imagenes exitosas de un trabajo en un archivo ZIP.',
         tags=['Jobs'],
         parameters=[
-            {
-                'name': 'format',
-                'in': 'query',
-                'description': 'Formato de imágenes a incluir: both (PNG y SVG), png (solo PNG), svg (solo SVG)',
-                'required': False,
-                'schema': {'type': 'string', 'enum': ['both', 'png', 'svg'], 'default': 'both'}
-            }
+            OpenApiParameter(
+                name='image_format',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                default='both',
+                enum=['both', 'png', 'svg'],
+                description='Formato de imagenes a incluir: both (PNG + SVG), png, o svg',
+            )
         ],
         responses={
-            200: {'description': 'Archivo ZIP con las imágenes', 'content': {'application/zip': {}}},
+            200: {
+                'description': 'Archivo ZIP con las imagenes',
+                'content': {'application/zip': {'schema': {'type': 'string', 'format': 'binary'}}}
+            },
             400: ErrorResponseSerializer,
             404: ErrorResponseSerializer,
         },
@@ -330,11 +336,11 @@ class JobViewSet(viewsets.ViewSet):
         """Download all successful job images as a ZIP file."""
         job = get_object_or_404(Job, pk=pk)
         
-        # Parse format parameter
-        format_param = request.query_params.get('format', 'both').lower()
+        # Parse image_format parameter (not 'format' to avoid conflict with DRF's format negotiation)
+        format_param = request.query_params.get('image_format', 'both').lower()
         if format_param not in ('both', 'png', 'svg'):
             return Response(
-                {'error': f"Invalid format '{format_param}'. Must be 'both', 'png', or 'svg'."},
+                {'error': f"Invalid image_format '{format_param}'. Must be 'both', 'png', or 'svg'."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
