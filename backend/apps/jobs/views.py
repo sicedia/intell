@@ -1205,3 +1205,109 @@ class ImageGroupViewSet(viewsets.ModelViewSet):
             raise PermissionDenied('You can only delete your own groups')
         instance.delete()
 
+
+@extend_schema(
+    summary='Dashboard statistics',
+    description='Get dashboard statistics including total images, published images, jobs count, and success rate.',
+    tags=['Dashboard'],
+    responses={
+        200: inline_serializer(
+            name='DashboardStatsResponse',
+            fields={
+                'total_images': serializers.IntegerField(help_text='Total number of successfully generated images'),
+                'total_published_images': serializers.IntegerField(help_text='Total number of published images'),
+                'total_jobs': serializers.IntegerField(help_text='Total number of jobs'),
+                'successful_jobs': serializers.IntegerField(help_text='Number of successful jobs'),
+                'success_rate': serializers.FloatField(help_text='Success rate percentage (0-100)'),
+                'images_this_month': serializers.IntegerField(help_text='Images generated this month'),
+                'published_this_month': serializers.IntegerField(help_text='Published images this month'),
+            },
+        ),
+    },
+)
+@api_view(['GET'])
+def dashboard_stats(request):
+    """Get dashboard statistics."""
+    from django.db.models import Count, Q
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current month start
+    now = timezone.now()
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    # Total images (successful only)
+    total_images = ImageTask.objects.filter(status=ImageTask.Status.SUCCESS).count()
+    
+    # Total published images
+    total_published_images = ImageTask.objects.filter(
+        is_published=True,
+        status=ImageTask.Status.SUCCESS
+    ).count()
+    
+    # Total jobs
+    total_jobs = Job.objects.count()
+    
+    # Successful jobs
+    successful_jobs = Job.objects.filter(
+        status__in=[Job.Status.SUCCESS, Job.Status.PARTIAL_SUCCESS]
+    ).count()
+    
+    # Success rate
+    success_rate = (successful_jobs / total_jobs * 100) if total_jobs > 0 else 0.0
+    
+    # Images this month
+    images_this_month = ImageTask.objects.filter(
+        status=ImageTask.Status.SUCCESS,
+        created_at__gte=month_start
+    ).count()
+    
+    # Published this month
+    published_this_month = ImageTask.objects.filter(
+        is_published=True,
+        status=ImageTask.Status.SUCCESS,
+        created_at__gte=month_start
+    ).count()
+    
+    return Response({
+        'total_images': total_images,
+        'total_published_images': total_published_images,
+        'total_jobs': total_jobs,
+        'successful_jobs': successful_jobs,
+        'success_rate': round(success_rate, 1),
+        'images_this_month': images_this_month,
+        'published_this_month': published_this_month,
+    })
+
+
+@extend_schema(
+    summary='Latest published images',
+    description='Get the latest published images for the dashboard.',
+    tags=['Dashboard'],
+    parameters=[
+        OpenApiParameter(
+            name='limit',
+            type=int,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            default=8,
+            description='Number of images to return (default: 8)',
+        ),
+    ],
+    responses={
+        200: ImageLibrarySerializer(many=True),
+    },
+)
+@api_view(['GET'])
+def latest_published_images(request):
+    """Get latest published images."""
+    limit = int(request.query_params.get('limit', 8))
+    
+    images = ImageTask.objects.filter(
+        is_published=True,
+        status=ImageTask.Status.SUCCESS
+    ).select_related('job', 'group').prefetch_related('tags').order_by('-published_at', '-created_at')[:limit]
+    
+    serializer = ImageLibrarySerializer(images, many=True, context={'request': request})
+    return Response(serializer.data)
+

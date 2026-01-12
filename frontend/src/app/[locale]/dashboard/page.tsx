@@ -1,28 +1,34 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { GalleryGrid } from "@/shared/ui/GalleryGrid";
 import { ImageCard } from "@/shared/ui/ImageCard";
 import { StatsCard } from "@/shared/ui/StatsCard";
 import { EmptyState } from "@/shared/ui/EmptyState";
-import { features } from "@/shared/lib/flags";
-import { MOCK_IMAGE_TASKS } from "@/shared/mock/mockJob";
 import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { PlusCircle, Search, Image as ImageIcon, CheckCircle, Clock, Sparkles } from "lucide-react";
+import { 
+  PlusCircle, 
+  Image as ImageIcon, 
+  Sparkles, 
+  TrendingUp,
+  FileImage
+} from "lucide-react";
 import Link from "next/link";
+import { useDashboardStats, useLatestPublishedImages } from "@/features/dashboard/hooks/useDashboard";
+import { useTranslations } from "next-intl";
+import { ImageLibraryItem } from "@/features/images/types";
+import { useRouter } from "next/navigation";
 
-export default async function DashboardPage() {
-  const t = await getTranslations("dashboard");
-  const useMocks = features.useMocks;
+export default function DashboardPage() {
+  const t = useTranslations("dashboard");
+  const router = useRouter();
+  
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: latestImages, isLoading: imagesLoading } = useLatestPublishedImages(8);
 
-  // In a real app, fetch data here
-  const jobs = useMocks ? MOCK_IMAGE_TASKS : [];
-
-  // Calculate stats
-  const totalJobs = jobs.length;
-  const completedJobs = jobs.filter(job => job.status === 'SUCCESS' || job.status === 'COMPLETED').length;
-  const runningJobs = jobs.filter(job => job.status === 'RUNNING').length;
-  const successRate = totalJobs > 0 ? Math.round((completedJobs / totalJobs) * 100) : 0;
+  const handleImageClick = (image: ImageLibraryItem) => {
+    router.push(`/images?imageId=${image.id}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -42,85 +48,88 @@ export default async function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Total Generations"
-          value={totalJobs}
-          description="All time generations"
-          icon={Sparkles}
+          title="Total Images Generated"
+          value={statsLoading ? "..." : stats?.total_images ?? 0}
+          description="Successfully generated images"
+          icon={ImageIcon}
           variant="primary"
         />
         <StatsCard
-          title="Completed"
-          value={completedJobs}
-          description={`${successRate}% success rate`}
-          icon={CheckCircle}
+          title="Published Images"
+          value={statsLoading ? "..." : stats?.total_published_images ?? 0}
+          description={`${stats?.published_this_month ?? 0} published this month`}
+          icon={FileImage}
           variant="success"
+        />
+        <StatsCard
+          title="Total Jobs"
+          value={statsLoading ? "..." : stats?.total_jobs ?? 0}
+          description={`${stats?.successful_jobs ?? 0} successful`}
+          icon={Sparkles}
+          variant="default"
+        />
+        <StatsCard
+          title="Success Rate"
+          value={statsLoading ? "..." : `${stats?.success_rate ?? 0}%`}
+          description={`${stats?.images_this_month ?? 0} images this month`}
+          icon={TrendingUp}
+          variant={stats && stats.success_rate >= 80 ? "success" : "warning"}
           trend={
-            totalJobs > 0
+            stats && stats.success_rate > 0
               ? {
-                  value: successRate,
-                  isPositive: successRate >= 80,
-                  label: "vs target",
+                  value: stats.success_rate,
+                  isPositive: stats.success_rate >= 80,
+                  label: "success rate",
                 }
               : undefined
           }
         />
-        <StatsCard
-          title="In Progress"
-          value={runningJobs}
-          description="Currently running"
-          icon={Clock}
-          variant="warning"
-        />
-        <StatsCard
-          title="Images Generated"
-          value={completedJobs}
-          description="Total images created"
-          icon={ImageIcon}
-          variant="default"
-        />
       </div>
 
-      {/* Search and Filter Bar */}
-      {jobs.length > 0 && (
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full sm:w-auto sm:min-w-[300px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search generations..."
-              className="pl-10"
-            />
+      {/* Latest Published Images Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Latest Published Images</h2>
+            <p className="text-muted-foreground">
+              Recently published images from your library
+            </p>
           </div>
-          <div className="flex gap-2">
-            {/* Quick filters could go here */}
-          </div>
+          <Link href="/images">
+            <Button variant="outline">
+              View All
+            </Button>
+          </Link>
         </div>
-      )}
 
-      {/* Gallery or Empty State */}
-      {jobs.length > 0 ? (
-        <GalleryGrid>
-          {jobs.map((task) => (
-            <ImageCard
-              key={task.id}
-              title={task.algorithm_key}
-              status={task.status}
-              imageUrl={task.artifact_png_url}
-              subtitle={`Task ID: ${task.id}`}
-            />
-          ))}
-        </GalleryGrid>
-      ) : (
-        <EmptyState
-          title="No images generated yet"
-          description="Start by creating a new generation job to visualize your data."
-          icon={<Sparkles className="h-12 w-12 text-muted-foreground" />}
-          action={{
-            label: "Create New Generation",
-            href: "/generate",
-            variant: "default",
-          }}
-        />
-      )}
+        {imagesLoading ? (
+          <GalleryGrid isLoading={true} itemCount={8} />
+        ) : latestImages && latestImages.length > 0 ? (
+          <GalleryGrid>
+            {latestImages.map((image) => (
+              <ImageCard
+                key={image.id}
+                title={image.title || image.algorithm_key || "Untitled"}
+                status={image.status}
+                imageUrl={image.artifact_png_url}
+                subtitle={image.algorithm_key}
+                onView={() => handleImageClick(image)}
+              />
+            ))}
+          </GalleryGrid>
+        ) : (
+          <EmptyState
+            title="No published images yet"
+            description="Publish images from your gallery to see them here."
+            icon={<FileImage className="h-12 w-12 text-muted-foreground" />}
+            action={{
+              label: "View Gallery",
+              href: "/images",
+              variant: "default",
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
