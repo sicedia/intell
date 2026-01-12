@@ -9,8 +9,10 @@ from drf_spectacular.utils import extend_schema
 from .serializers import (
     HealthCheckResponseSerializer,
     RedisHealthCheckResponseSerializer,
-    CeleryHealthCheckResponseSerializer
+    CeleryHealthCheckResponseSerializer,
+    DatabaseHealthCheckResponseSerializer,
 )
+from .db import get_database_status, DatabaseHealthStatus
 
 
 @extend_schema(
@@ -97,4 +99,45 @@ def celery_health_check(request):
             'service': 'celery',
             'message': str(e)
         }, status=500)
+
+
+@extend_schema(
+    summary='Health check de Base de Datos',
+    description=(
+        'Verifica el estado de la conexión con la base de datos. '
+        'Incluye tiempo de respuesta y detalles de diagnóstico opcionales.'
+    ),
+    tags=['Health'],
+    responses={
+        200: DatabaseHealthCheckResponseSerializer,
+        500: DatabaseHealthCheckResponseSerializer,
+    },
+)
+@api_view(['GET'])
+def database_health_check(request):
+    """
+    Database health check with detailed status.
+    
+    Returns the health status of the database connection including:
+    - Connection status (healthy, unhealthy, degraded)
+    - Response time in milliseconds
+    - Diagnostic details (optional, via ?details=true query param)
+    """
+    include_details = request.query_params.get('details', 'false').lower() == 'true'
+    database = request.query_params.get('database', 'default')
+    
+    status = get_database_status(
+        database=database,
+        include_details=include_details,
+    )
+    
+    response_data = status.to_dict()
+    
+    # Determine HTTP status code based on health status
+    if status.status == DatabaseHealthStatus.HEALTHY:
+        return Response(response_data, status=200)
+    elif status.status == DatabaseHealthStatus.DEGRADED:
+        return Response(response_data, status=200)  # Still operational
+    else:
+        return Response(response_data, status=500)
 

@@ -24,7 +24,12 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from apps.core.views import health_check, redis_health_check, celery_health_check
+from apps.core.views import (
+    health_check,
+    redis_health_check,
+    celery_health_check,
+    database_health_check,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +43,7 @@ urlpatterns = [
     path('api/health/', health_check, name='health'),
     path('api/health/redis/', redis_health_check, name='health-redis'),
     path('api/health/celery/', celery_health_check, name='health-celery'),
+    path('api/health/database/', database_health_check, name='health-database'),
     # Redirect favicon.ico to prevent 404 errors
     path('favicon.ico', RedirectView.as_view(url='/static/admin/img/favicon.ico', permanent=True)),
 ]

@@ -230,3 +230,31 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
+# Database Connection Retry Configuration
+# =======================================
+# Configuration for automatic retry with exponential backoff on database
+# connection failures. This follows the industry-standard retry pattern
+# with jitter to prevent thundering herd issues.
+#
+# The retry formula is:
+#   delay = min(MAX_DELAY, INITIAL_DELAY * (EXPONENTIAL_BASE ** attempt))
+#   delay = delay ± (delay * JITTER_FACTOR)  # if JITTER is True
+#
+# Default configuration will retry 5 times with delays of:
+#   Attempt 1: ~0.1s, Attempt 2: ~0.2s, Attempt 3: ~0.4s,
+#   Attempt 4: ~0.8s, Attempt 5: ~1.6s (total max: ~3.1s)
+#
+# Environment Variables:
+#   DB_RETRY_MAX_ATTEMPTS: Maximum retry attempts (default: 5)
+#   DB_RETRY_INITIAL_DELAY: Initial delay in seconds (default: 0.1)
+#   DB_RETRY_MAX_DELAY: Maximum delay cap in seconds (default: 30)
+#
+DATABASE_RETRY_CONFIG = {
+    'MAX_ATTEMPTS': config('DB_RETRY_MAX_ATTEMPTS', default=5, cast=int),
+    'INITIAL_DELAY': config('DB_RETRY_INITIAL_DELAY', default=0.1, cast=float),
+    'MAX_DELAY': config('DB_RETRY_MAX_DELAY', default=30.0, cast=float),
+    'EXPONENTIAL_BASE': config('DB_RETRY_EXPONENTIAL_BASE', default=2.0, cast=float),
+    'JITTER': config('DB_RETRY_JITTER', default=True, cast=bool),
+    'JITTER_FACTOR': config('DB_RETRY_JITTER_FACTOR', default=0.1, cast=float),
+}
+

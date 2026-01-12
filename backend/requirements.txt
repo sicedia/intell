@@ -39,6 +39,9 @@ openpyxl>=3.1.0
 # HTTP client
 httpx>=0.25.0
 
+# Retry utilities (optional - used for advanced retry patterns)
+tenacity>=8.2.0
+
 # Chart generation
 matplotlib>=3.7.0
 numpy>=1.24.0

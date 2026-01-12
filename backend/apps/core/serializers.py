@@ -94,3 +94,57 @@ class CeleryHealthCheckResponseSerializer(serializers.Serializer):
         allow_null=True,
         help_text='Mensaje de advertencia o error'
     )
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Database healthy',
+            value={
+                'status': 'healthy',
+                'message': 'Database connection successful',
+                'database': 'default',
+                'response_time_ms': 2.45
+            }
+        ),
+        OpenApiExample(
+            'Database degraded',
+            value={
+                'status': 'degraded',
+                'message': 'Database responding slowly (4500ms)',
+                'database': 'default',
+                'response_time_ms': 4500.0
+            }
+        ),
+        OpenApiExample(
+            'Database unhealthy',
+            value={
+                'status': 'unhealthy',
+                'message': 'Database connection failed: connection refused',
+                'database': 'default',
+                'response_time_ms': 5000.0,
+                'details': {
+                    'error_type': 'OperationalError',
+                    'error': 'connection refused'
+                }
+            }
+        ),
+    ]
+)
+class DatabaseHealthCheckResponseSerializer(serializers.Serializer):
+    """Response serializer for database health check."""
+    status = serializers.CharField(
+        help_text='Estado: healthy, unhealthy, degraded, unknown'
+    )
+    message = serializers.CharField(help_text='Mensaje descriptivo del estado')
+    database = serializers.CharField(help_text='Alias de la base de datos')
+    response_time_ms = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        help_text='Tiempo de respuesta en milisegundos'
+    )
+    details = serializers.DictField(
+        required=False,
+        allow_null=True,
+        help_text='Información adicional de diagnóstico'
+    )
