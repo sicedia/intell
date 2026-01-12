@@ -126,6 +126,49 @@ def _check_and_update_job_status(job: Job) -> None:
                 'total_count': final_total_count
             }
         )
+        
+        # Create notification for user when job completes
+        user = job.created_by
+        if user:
+            from apps.notifications.helpers import create_notification
+            
+            if new_status == Job.Status.SUCCESS:
+                notification_type = 'JOB_COMPLETED'
+                title = 'Lote procesado exitosamente'
+                if final_total_count == 1:
+                    message = f'Se generó exitosamente 1 imagen en el lote #{job.id}.'
+                else:
+                    message = f'Se generaron exitosamente {final_success_count} imágenes en el lote #{job.id}.'
+            elif new_status == Job.Status.PARTIAL_SUCCESS:
+                notification_type = 'JOB_COMPLETED'
+                title = 'Lote procesado parcialmente'
+                message = f'El lote #{job.id} se procesó parcialmente: {final_success_count} exitosa(s), {final_failed_count} fallida(s) de {final_total_count} total.'
+            elif new_status == Job.Status.FAILED:
+                notification_type = 'JOB_FAILED'
+                title = 'Lote fallido'
+                message = f'El lote #{job.id} falló: {final_failed_count} de {final_total_count} imagen(es) no se pudieron generar.'
+            else:
+                # CANCELLED or other statuses
+                notification_type = 'JOB_FAILED'
+                title = f'Lote {new_status.lower()}'
+                message = f'El lote #{job.id} fue {new_status.lower()}.'
+            
+            create_notification(
+                user=user,
+                notification_type=notification_type,
+                title=title,
+                message=message,
+                related_object_type='Job',
+                related_object_id=job.id,
+                metadata={
+                    'job_id': job.id,
+                    'status': new_status,
+                    'success_count': final_success_count,
+                    'failed_count': final_failed_count,
+                    'cancelled_count': final_cancelled_count,
+                    'total_count': final_total_count,
+                }
+            )
 
 
 @shared_task(bind=True, name='apps.jobs.tasks.generate_image_task')
@@ -506,6 +549,12 @@ def finalize_job(self, task_results, job_id: int):
             final_success_count = success_count
             final_failed_count = failed_count
             final_total_count = total_count
+            final_new_status = new_status
+            final_new_progress = new_progress
+        
+        # Refresh job to get user reference outside transaction
+        if status_changed:
+            job.refresh_from_db()
         
         # Emit events outside transaction to avoid long-running transactions
         if status_changed:
@@ -541,6 +590,48 @@ def finalize_job(self, task_results, job_id: int):
                     'total_count': final_total_count
                 }
             )
+            
+            # Create notification for user when job completes
+            user = job.created_by
+            if user:
+                from apps.notifications.helpers import create_notification
+                
+                if final_new_status == Job.Status.SUCCESS:
+                    notification_type = 'JOB_COMPLETED'
+                    title = 'Lote procesado exitosamente'
+                    if final_total_count == 1:
+                        message = f'Se generó exitosamente 1 imagen en el lote #{job_id}.'
+                    else:
+                        message = f'Se generaron exitosamente {final_success_count} imágenes en el lote #{job_id}.'
+                elif final_new_status == Job.Status.PARTIAL_SUCCESS:
+                    notification_type = 'JOB_COMPLETED'
+                    title = 'Lote procesado parcialmente'
+                    message = f'El lote #{job_id} se procesó parcialmente: {final_success_count} exitosa(s), {final_failed_count} fallida(s) de {final_total_count} total.'
+                elif final_new_status == Job.Status.FAILED:
+                    notification_type = 'JOB_FAILED'
+                    title = 'Lote fallido'
+                    message = f'El lote #{job_id} falló: {final_failed_count} de {final_total_count} imagen(es) no se pudieron generar.'
+                else:
+                    # CANCELLED or other statuses
+                    notification_type = 'JOB_FAILED'
+                    title = f'Lote {final_new_status.lower()}'
+                    message = f'El lote #{job_id} fue {final_new_status.lower()}.'
+                
+                create_notification(
+                    user=user,
+                    notification_type=notification_type,
+                    title=title,
+                    message=message,
+                    related_object_type='Job',
+                    related_object_id=job_id,
+                    metadata={
+                        'job_id': job_id,
+                        'status': final_new_status,
+                        'success_count': final_success_count,
+                        'failed_count': final_failed_count,
+                        'total_count': final_total_count,
+                    }
+                )
         
     except Exception as e:
         error_trace = traceback.format_exc()

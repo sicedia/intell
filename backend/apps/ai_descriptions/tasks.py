@@ -163,31 +163,8 @@ def generate_description_task(self, description_task_id: int):
             image_task.ai_context = description_task.user_context
             image_task.save(update_fields=['ai_context'])
         
-        # Create notification for user when description is completed
-        user = image_task.created_by or job.created_by
-        if user:
-            from apps.notifications.helpers import create_notification
-            
-            provider_display = {
-                'openai': 'OpenAI GPT-4',
-                'anthropic': 'Anthropic Claude',
-                'mock': 'Mock Provider'
-            }.get(provider_used, provider_used)
-            
-            create_notification(
-                user=user,
-                notification_type='DESCRIPTION_COMPLETED',
-                title='Descripción generada exitosamente',
-                message=f'La descripción de la imagen "{image_task.title or f"#{image_task.id}"}" ha sido generada con éxito usando {provider_display}.',
-                related_object_type='DescriptionTask',
-                related_object_id=description_task.id,
-                metadata={
-                    'provider': provider_used,
-                    'model': model_used,
-                    'image_task_id': image_task.id,
-                    'job_id': job.id,
-                }
-            )
+        # Note: Notifications are created when the entire Job completes, not for individual descriptions
+        # This reduces notification spam when processing multiple images in a batch
         
         # Emit DONE event
         emit_event(
@@ -221,25 +198,8 @@ def generate_description_task(self, description_task_id: int):
             description_task.error_message = str(e)
             description_task.save()
             
-            # Create notification for user when description fails
-            if 'image_task' in locals() and 'job' in locals():
-                user = image_task.created_by if 'image_task' in locals() else (job.created_by if 'job' in locals() else None)
-                if user:
-                    from apps.notifications.helpers import create_notification
-                    
-                    create_notification(
-                        user=user,
-                        notification_type='DESCRIPTION_FAILED',
-                        title='Error al generar descripción',
-                        message=f'No se pudo generar la descripción de la imagen "{image_task.title or f"#{image_task.id}"}". {str(e)[:100]}...',
-                        related_object_type='DescriptionTask',
-                        related_object_id=description_task.id,
-                        metadata={
-                            'image_task_id': image_task.id,
-                            'job_id': job.id,
-                            'error': str(e),
-                        }
-                    )
+            # Note: Error notifications are created when the entire Job completes with errors,
+            # not for individual description failures, to reduce notification spam
         
         raise
 

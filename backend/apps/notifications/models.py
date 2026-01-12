@@ -106,6 +106,6 @@ class Notification(models.Model):
         mapping = {
             'DescriptionTask': f'/images/{image_task_id or self.related_object_id}',
             'ImageTask': f'/images/{self.related_object_id}',
-            'Job': f'/generate/{self.related_object_id}',
+            'Job': f'/images',  # Redirect to images page to see all generated images
         }
         return mapping.get(self.related_object_type)
