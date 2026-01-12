@@ -208,6 +208,11 @@ class ImageTask(models.Model):
         blank=True,
         help_text="User-editable description (can be AI-generated then edited)"
     )
+    ai_context = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Context used for AI description generation (stored for reference)"
+    )
     group = models.ForeignKey(
         'ImageGroup',
         on_delete=models.SET_NULL,

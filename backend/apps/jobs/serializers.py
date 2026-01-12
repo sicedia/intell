@@ -64,7 +64,7 @@ class ImageTaskSerializer(serializers.ModelSerializer):
             'id', 'job', 'algorithm_key', 'algorithm_version', 'params',
             'output_format', 'status', 'progress', 'artifact_png_url',
             'artifact_svg_url', 'chart_data', 'error_code', 'error_message',
-            'trace_id', 'title', 'user_description', 'group', 'tags',
+            'trace_id', 'title', 'user_description', 'ai_context', 'group', 'tags',
             'is_published', 'published_at', 'created_at', 'updated_at'
         ]
         read_only_fields = [
@@ -435,8 +435,8 @@ class AIDescribeRequestSerializer(serializers.Serializer):
     )
     user_context = serializers.CharField(
         required=True,
-        min_length=200,
-        help_text='Contexto adicional proporcionado por el usuario para mejorar la descripci?n (mínimo 200 caracteres)'
+        allow_blank=True,
+        help_text='Contexto adicional proporcionado por el usuario para mejorar la descripción'
     )
     provider_preference = serializers.ChoiceField(
         choices=['openai', 'anthropic', 'mock'],
@@ -621,7 +621,7 @@ class ImageLibrarySerializer(serializers.ModelSerializer):
         model = ImageTask
         fields = [
             'id', 'job_id', 'title', 'algorithm_key', 'status',
-            'artifact_png_url', 'artifact_svg_url', 'user_description',
+            'artifact_png_url', 'artifact_svg_url', 'user_description', 'ai_context',
             'tags', 'group', 'group_name', 'is_published', 'published_at',
             'created_at', 'updated_at'
         ]

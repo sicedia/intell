@@ -13,6 +13,13 @@ export function useAIDescription() {
   const [pollingTaskId, setPollingTaskId] = useState<number | null>(null);
   const [lastStatus, setLastStatus] = useState<DescriptionTaskStatus | null>(null);
 
+  // Reset function to clear current task and allow new generation
+  const reset = useCallback(() => {
+    setPollingTaskId(null);
+    setLastStatus(null);
+    queryClient.removeQueries({ queryKey: ["description-task"] });
+  }, [queryClient]);
+
   // Poll description task status
   const { data: descriptionTask } = useQuery({
     queryKey: ["description-task", pollingTaskId],
@@ -78,7 +85,7 @@ export function useAIDescription() {
       
       if (error instanceof HttpError) {
         if (error.status === 400) {
-          errorMessage = "El contexto debe tener al menos 200 caracteres";
+          errorMessage = "Error en la solicitud. Verifica los datos proporcionados.";
         } else if (error.status === 404) {
           errorMessage = "Imagen no encontrada";
         } else if (error.status >= 500) {
@@ -109,5 +116,6 @@ export function useAIDescription() {
     isGenerating: generateMutation.isPending || (pollingTaskId !== null && descriptionTask?.status !== "SUCCESS" && descriptionTask?.status !== "FAILED"),
     progress: descriptionTask?.progress ?? 0,
     error: generateMutation.error,
+    reset,
   };
 }

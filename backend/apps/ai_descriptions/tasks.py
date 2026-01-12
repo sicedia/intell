@@ -65,6 +65,10 @@ def generate_description_task(self, description_task_id: int):
             progress=30
         )
         
+        # Update task progress
+        description_task.progress = 30
+        description_task.save(update_fields=['progress'])
+        
         # Check cancellation again
         job.refresh_from_db()
         if job.status == Job.Status.CANCELLED:
@@ -88,6 +92,21 @@ def generate_description_task(self, description_task_id: int):
         source_type = job.dataset.source_type if job.dataset else None
         visualization_type = chart_data.get('type')
         
+        # Emit PROGRESS event (processing)
+        emit_event(
+            job_id=job.id,
+            description_task_id=description_task_id,
+            event_type='PROGRESS',
+            level='INFO',
+            message='Processing with AI provider',
+            trace_id=trace_id,
+            progress=60
+        )
+        
+        # Update task progress
+        description_task.progress = 60
+        description_task.save(update_fields=['progress'])
+        
         # Use router to generate description
         router = AIProviderRouter()
         result_text, provider_used = router.generate_description(
@@ -100,6 +119,21 @@ def generate_description_task(self, description_task_id: int):
             source_type=source_type,
             visualization_type=visualization_type
         )
+        
+        # Emit PROGRESS event (finalizing)
+        emit_event(
+            job_id=job.id,
+            description_task_id=description_task_id,
+            event_type='PROGRESS',
+            level='INFO',
+            message='Finalizing description',
+            trace_id=trace_id,
+            progress=90
+        )
+        
+        # Update task progress
+        description_task.progress = 90
+        description_task.save(update_fields=['progress'])
         
         # Determine model_used (simplified for MVP)
         model_used = "gpt-4" if provider_used == "openai" else \
@@ -123,6 +157,11 @@ def generate_description_task(self, description_task_id: int):
         description_task.status = DescriptionTask.Status.SUCCESS
         description_task.progress = 100
         description_task.save()
+        
+        # Save the context used for AI description in ImageTask metadata
+        if description_task.user_context:
+            image_task.ai_context = description_task.user_context
+            image_task.save(update_fields=['ai_context'])
         
         # Emit DONE event
         emit_event(

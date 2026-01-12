@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import { Job, ImageTask, JobStatus } from "../constants/job";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
@@ -10,7 +11,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Loader2, RotateCcw, X, Download, ChevronDown, BookmarkPlus, BookmarkCheck } from "lucide-react";
+import { Loader2, RotateCcw, X, Download, ChevronDown, BookmarkPlus, BookmarkCheck, Sparkles, Eye, Edit } from "lucide-react";
+import { Switch } from "@/shared/components/ui/switch";
+import { Label } from "@/shared/components/ui/label";
 import { env } from "@/shared/lib/env";
 import { cn } from "@/shared/lib/utils";
 import { retryImageTask, cancelImageTask, downloadJobZip, ZipFormat } from "../api/jobs";
@@ -18,6 +21,10 @@ import { usePublishImage } from "@/features/images/hooks/useImages";
 import { useQueryClient } from "@tanstack/react-query";
 import { isConnectionError, isCancelledError, getConnectionErrorMessage } from "@/shared/lib/api-client";
 import { createLogger } from "@/shared/lib/logger";
+import { useAutoDescribeAndPublish } from "../hooks/useAutoDescribeAndPublish";
+import { AIDescriptionDialog } from "@/features/images/ui/AIDescriptionDialog";
+import { ImageDetailDialog } from "@/features/images/ui/ImageDetailDialog";
+import { Progress } from "@/shared/components/ui/progress";
 
 // Helper to construct full URL if backend returns relative path
 const getFullUrl = (path?: string) => {
@@ -45,6 +52,31 @@ const taskLog = createLogger("ImageTask");
 
 export const JobResults = ({ job }: { job: Job }) => {
     const [isDownloading, setIsDownloading] = useState(false);
+    const [autoDescribeAndPublish, setAutoDescribeAndPublish] = useState(false);
+    const queryClient = useQueryClient();
+    
+    // Check if all images are complete but job is still RUNNING
+    // This can happen if finalize_job didn't run or was delayed
+    const allImagesComplete = job.images && job.images.length > 0 && 
+        job.images.every(img => 
+            img.status === JobStatus.SUCCESS || 
+            img.status === JobStatus.FAILED || 
+            img.status === JobStatus.CANCELLED
+        );
+    
+    const shouldBeFinished = allImagesComplete && job.status === JobStatus.RUNNING;
+    
+    // Force refetch if job should be finished but isn't
+    React.useEffect(() => {
+        if (shouldBeFinished) {
+            // Invalidate and refetch to get updated job status
+            // The backend should have updated it, but we force a refresh
+            queryClient.invalidateQueries({ 
+                queryKey: ["job", job.id],
+                refetchType: "all"
+            });
+        }
+    }, [shouldBeFinished, job.id, queryClient]);
 
     const handleDownloadAll = async (format: ZipFormat) => {
         if (isDownloading) return;
@@ -89,7 +121,18 @@ export const JobResults = ({ job }: { job: Job }) => {
                         <h3 className="text-lg font-medium">
                             Generated Images ({successfulImages.length})
                         </h3>
-                        <DropdownMenu>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <Switch
+                                    id="auto-describe"
+                                    checked={autoDescribeAndPublish}
+                                    onCheckedChange={setAutoDescribeAndPublish}
+                                />
+                                <Label htmlFor="auto-describe" className="text-sm cursor-pointer">
+                                    Auto-describir y publicar
+                                </Label>
+                            </div>
+                            <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button size="sm" variant="outline" disabled={isDownloading}>
                                     {isDownloading ? (
@@ -113,10 +156,17 @@ export const JobResults = ({ job }: { job: Job }) => {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                        </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {successfulImages.map((task) => (
-                            <TaskResultCard key={task.id} task={task} jobId={job.id} />
+                            <TaskResultCard 
+                                key={task.id} 
+                                task={task} 
+                                jobId={job.id}
+                                autoDescribeAndPublish={autoDescribeAndPublish}
+                                jobSourceType={job.source_type}
+                            />
                         ))}
                     </div>
                 </div>
@@ -164,9 +214,22 @@ export const JobResults = ({ job }: { job: Job }) => {
     );
 };
 
-const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => {
+const TaskResultCard = ({ 
+    task, 
+    jobId,
+    autoDescribeAndPublish = false,
+    jobSourceType
+}: { 
+    task: ImageTask; 
+    jobId: number;
+    autoDescribeAndPublish?: boolean;
+    jobSourceType?: string;
+}) => {
     const [isRetrying, setIsRetrying] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
+    const [showDescriptionDialog, setShowDescriptionDialog] = useState(false);
+    const [showImageDetailDialog, setShowImageDetailDialog] = useState(false);
+    const [imageDetailDialogTab, setImageDetailDialogTab] = useState<"view" | "edit" | "ai">("view");
     const queryClient = useQueryClient();
     const publishImage = usePublishImage();
     const pngUrl = getFullUrl(task.result_urls.png);
@@ -187,6 +250,67 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
     // Check if task can be published (must be SUCCESS)
     const canPublish = task.status === JobStatus.SUCCESS;
     const isPublished = task.is_published || false;
+    
+    // Auto-describe and publish hook
+    const { isProcessing: isAutoProcessing, descriptionTask, descriptionProgress } = useAutoDescribeAndPublish(
+        task,
+        autoDescribeAndPublish && canPublish && !isPublished,
+        jobSourceType,
+        jobId
+    );
+    
+    // Check if image already has AI description (has user_description)
+    const hasAIDescription = !!(task.user_description && task.user_description.trim());
+    
+    // Convert ImageTask to ImageTask format for AIDescriptionDialog
+    const imageTaskForDialog = canPublish ? {
+        id: task.id,
+        job: jobId,
+        algorithm_key: task.algorithm_key,
+        algorithm_version: "1.0",
+        params: {},
+        output_format: "both" as const,
+        status: "SUCCESS" as const,
+        progress: 100,
+        artifact_png_url: pngUrl || null,
+        artifact_svg_url: svgUrl || null,
+        chart_data: task.chart_data || null,
+        error_code: null,
+        error_message: null,
+        trace_id: null,
+        title: task.title || null,
+        user_description: task.user_description || null,
+        group: null,
+        tags: [],
+        is_published: isPublished,
+        published_at: task.published_at || null,
+        created_at: task.created_at,
+        updated_at: task.updated_at,
+    } : null;
+    
+    // Handle describe button click - check if already has AI description
+    const handleDescribeClick = () => {
+        if (hasAIDescription) {
+            // If already has description, open ImageDetailDialog in edit tab
+            setImageDetailDialogTab("edit");
+            setShowImageDetailDialog(true);
+        } else {
+            // If no description, open AIDescriptionDialog
+            setShowDescriptionDialog(true);
+        }
+    };
+    
+    // Handle view button click
+    const handleViewClick = () => {
+        setImageDetailDialogTab("view");
+        setShowImageDetailDialog(true);
+    };
+    
+    // Handle edit button click
+    const handleEditClick = () => {
+        setImageDetailDialogTab("edit");
+        setShowImageDetailDialog(true);
+    };
     
     const handleRetry = async () => {
         if (isRetrying || !canRetry) return;
@@ -298,8 +422,24 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
             </CardHeader>
             <CardContent className="p-0">
                 {task.status === JobStatus.SUCCESS && hasImages ? (
-                    <Tabs defaultValue={svgUrl ? "svg" : "png"} className="w-full">
-                        <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b relative">
+                    <div className="relative">
+                        {isAutoProcessing && (
+                            <div className="absolute top-2 left-2 z-10 bg-primary/90 text-primary-foreground px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 shadow-lg">
+                                <Sparkles className="h-3 w-3 animate-pulse" />
+                                Generando descripción...
+                            </div>
+                        )}
+                        {descriptionTask && descriptionTask.status === "RUNNING" && (
+                            <div className="absolute top-2 right-2 z-10 bg-background/95 border px-3 py-1.5 rounded-md text-xs">
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    <span>{descriptionProgress}%</span>
+                                </div>
+                                <Progress value={descriptionProgress} className="h-1 mt-1 w-24" />
+                            </div>
+                        )}
+                        <Tabs defaultValue={svgUrl ? "svg" : "png"} className="w-full">
+                            <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b relative">
                             <TabsContent value="png" className="mt-0 w-full flex justify-center">
                                 {pngUrl ? (
                                     <div className="relative w-full max-w-full h-[300px] flex items-center justify-center">
@@ -336,7 +476,8 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
                                 <TabsTrigger value="png" className="flex-1">PNG</TabsTrigger>
                             </TabsList>
                         )}
-                    </Tabs>
+                        </Tabs>
+                    </div>
                 ) : task.status === JobStatus.RUNNING || task.status === JobStatus.PENDING ? (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -372,33 +513,66 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
                 <div className="text-xs text-muted-foreground">
                     Task ID: {task.id}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     {canPublish && (
-                        <Button
-                            size="sm"
-                            variant={isPublished ? "default" : "outline"}
-                            onClick={handlePublish}
-                            disabled={publishImage.isPending}
-                            className="gap-2"
-                            title={isPublished ? "Imagen guardada en librería" : "Guardar en librería"}
-                        >
-                            {publishImage.isPending ? (
-                                <>
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                    {isPublished ? "Despublicando..." : "Publicando..."}
-                                </>
-                            ) : isPublished ? (
-                                <>
-                                    <BookmarkCheck className="h-3 w-3" />
-                                    En librería
-                                </>
-                            ) : (
-                                <>
-                                    <BookmarkPlus className="h-3 w-3" />
-                                    Guardar
-                                </>
-                            )}
-                        </Button>
+                        <>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleViewClick}
+                                className="gap-2"
+                                title="Ver imagen"
+                            >
+                                <Eye className="h-3 w-3" />
+                                Ver
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleEditClick}
+                                className="gap-2"
+                                title="Editar metadata"
+                            >
+                                <Edit className="h-3 w-3" />
+                                Editar
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleDescribeClick}
+                                disabled={isAutoProcessing}
+                                className="gap-2"
+                                title={hasAIDescription ? "Ver/Editar descripción IA" : "Describir con IA"}
+                            >
+                                <Sparkles className="h-3 w-3" />
+                                {hasAIDescription ? "Editar descripción" : "Describir"}
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant={isPublished ? "default" : "outline"}
+                                onClick={handlePublish}
+                                disabled={publishImage.isPending || isAutoProcessing}
+                                className="gap-2"
+                                title={isPublished ? "Imagen guardada en librería" : "Guardar en librería"}
+                            >
+                                {publishImage.isPending ? (
+                                    <>
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        {isPublished ? "Despublicando..." : "Publicando..."}
+                                    </>
+                                ) : isPublished ? (
+                                    <>
+                                        <BookmarkCheck className="h-3 w-3" />
+                                        En librería
+                                    </>
+                                ) : (
+                                    <>
+                                        <BookmarkPlus className="h-3 w-3" />
+                                        Guardar
+                                    </>
+                                )}
+                            </Button>
+                        </>
                     )}
                     {canCancel && (
                         <Button
@@ -466,6 +640,29 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
                     )}
                 </div>
             </CardFooter>
+            {imageTaskForDialog && (
+                <>
+                    <AIDescriptionDialog
+                        image={imageTaskForDialog}
+                        open={showDescriptionDialog}
+                        onOpenChange={setShowDescriptionDialog}
+                        onDescriptionSaved={() => {
+                            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                        }}
+                    />
+                    <ImageDetailDialog
+                        imageId={task.id}
+                        open={showImageDetailDialog}
+                        onOpenChange={setShowImageDetailDialog}
+                        initialTab={imageDetailDialogTab}
+                        autoPublishOnSave={true}
+                        onSave={() => {
+                            // Invalidate job queries to refresh the task status
+                            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                        }}
+                    />
+                </>
+            )}
         </Card>
     );
 };

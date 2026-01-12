@@ -279,7 +279,7 @@ class AnthropicProvider(AIProvider):
 
 
 class MockProvider(AIProvider):
-    """Mock provider for MVP - returns hardcoded text."""
+    """Mock provider for MVP - returns realistic mock descriptions."""
     
     def generate_description(
         self, 
@@ -290,28 +290,59 @@ class MockProvider(AIProvider):
         source_type: Optional[str] = None,
         visualization_type: Optional[str] = None
     ) -> str:
-        """Generate mock description."""
+        """Generate realistic mock description."""
+        import time
+        # Simulate processing time
+        time.sleep(1)
+        
         chart_type = chart_data.get('type', visualization_type or 'chart')
         title = chart_data.get('title', algorithm_key or 'Chart')
         
-        description = f"This is a {chart_type} chart titled '{title}'. "
+        # Build a more realistic description
+        description_parts = []
         
+        # Introduction
         if algorithm_key:
-            description += f"Generated using algorithm: {algorithm_key}. "
-        if source_type:
-            description += f"Data source: {source_type}. "
+            algo_name = algorithm_key.replace('_', ' ').title()
+            description_parts.append(f"Este gráfico de tipo {chart_type} muestra un análisis de {algo_name}.")
+        else:
+            description_parts.append(f"Este gráfico de tipo {chart_type} presenta una visualización de datos.")
         
+        # Data source context
+        if source_type == 'lens':
+            description_parts.append("Los datos provienen de la base de datos de patentes Lens API, proporcionando una perspectiva global sobre las tendencias de patentes.")
+        elif source_type == 'espacenet_excel':
+            description_parts.append("Los datos han sido extraídos de un archivo Excel de Espacenet, representando información estructurada de patentes.")
+        else:
+            description_parts.append("Los datos representan información procesada y estructurada para su visualización.")
+        
+        # Chart-specific details
         if 'totals' in chart_data:
             totals = chart_data['totals']
             if 'total_publications' in totals:
-                description += f"It shows {totals['total_publications']} total publications. "
+                count = totals['total_publications']
+                description_parts.append(f"El gráfico muestra un total de {count} publicaciones de patentes, lo que indica un volumen significativo de actividad de innovación.")
         
-        if user_context:
-            description += f"User context: {user_context}. "
+        # Time range
+        if 'years_range' in chart_data:
+            years = chart_data['years_range']
+            if isinstance(years, dict):
+                start = years.get('start')
+                end = years.get('end')
+                if start and end:
+                    description_parts.append(f"El período de análisis abarca desde {start} hasta {end}, permitiendo observar la evolución temporal de las tendencias.")
         
-        description += "This is a mock description for MVP testing."
+        # User context integration
+        if user_context and user_context.strip():
+            description_parts.append(f"Según el contexto proporcionado: {user_context}")
         
-        return description
+        # Key insights
+        description_parts.append("El análisis revela patrones importantes en la distribución y evolución de los datos, destacando tendencias significativas que pueden ser útiles para la toma de decisiones estratégicas.")
+        
+        # Conclusion
+        description_parts.append("Esta visualización facilita la comprensión de los datos complejos mediante una representación gráfica clara y accesible.")
+        
+        return " ".join(description_parts)
 
 
 class AIProviderRouter:

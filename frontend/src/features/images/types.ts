@@ -41,6 +41,7 @@ export interface ImageTask {
   trace_id: string | null;
   title: string | null;
   user_description: string | null;
+  ai_context: string | null;
   group: number | null;
   tags: number[];
   is_published: boolean;
@@ -65,6 +66,7 @@ export interface ImageLibraryItem {
   artifact_png_url: string | null;
   artifact_svg_url: string | null;
   user_description: string | null;
+  ai_context: string | null;
   tags: Tag[];
   group: number | null;
   group_name: string | null;

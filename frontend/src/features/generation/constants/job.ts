@@ -72,6 +72,8 @@ export interface ImageTask {
     created_at: string;
     updated_at: string;
     chart_data?: unknown;
+    title?: string | null;
+    user_description?: string | null;
 }
 
 export interface Job {

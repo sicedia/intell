@@ -13,6 +13,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useImageDetail, useImageUpdate, usePublishImage } from "../hooks/useImages";
+import { useQueryClient } from "@tanstack/react-query";
 import { TagSelector } from "./TagSelector";
 import { GroupSelector } from "./GroupSelector";
 import { AIDescriptionDialog } from "./AIDescriptionDialog";
@@ -25,14 +26,25 @@ interface ImageDetailDialogProps {
   imageId: number | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialTab?: "view" | "edit" | "ai";
+  autoPublishOnSave?: boolean;
+  onSave?: () => void;
 }
 
-export function ImageDetailDialog({ imageId, open, onOpenChange }: ImageDetailDialogProps) {
+export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "view", autoPublishOnSave = false, onSave }: ImageDetailDialogProps) {
   const { data: image, isLoading, refetch } = useImageDetail(imageId);
   const updateImage = useImageUpdate();
   const publishImage = usePublishImage();
-  const [activeTab, setActiveTab] = useState("view");
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
+
+  // Update active tab when initialTab changes or dialog opens
+  useEffect(() => {
+    if (open) {
+      setActiveTab(initialTab);
+    }
+  }, [open, initialTab]);
 
   // Form state
   const [title, setTitle] = useState("");
@@ -63,6 +75,28 @@ export function ImageDetailDialog({ imageId, open, onOpenChange }: ImageDetailDi
           group: selectedGroup,
         },
       });
+      
+      // Auto-publish if enabled and image is not already published
+      if (autoPublishOnSave && !image.is_published) {
+        try {
+          await publishImage.mutateAsync({
+            imageId: image.id,
+            publish: true,
+          });
+        } catch (error) {
+          // Error handled by hook, but don't prevent dialog from closing
+        }
+      }
+      
+      // Invalidate job queries if we have a job context (from generate page)
+      // This ensures the job status updates in JobResults
+      if (image.job) {
+        queryClient.invalidateQueries({ queryKey: ["job", image.job] });
+      }
+      
+      // Call onSave callback if provided
+      onSave?.();
+      
       onOpenChange(false);
     } catch (error) {
       // Error handled by hook
@@ -203,6 +237,21 @@ export function ImageDetailDialog({ imageId, open, onOpenChange }: ImageDetailDi
             {/* Edit Tab */}
             <TabsContent value="edit" className="space-y-4 mt-4">
               <div className="space-y-4">
+                {/* Show info if description was AI-generated */}
+                {image.user_description && (
+                  <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-3 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <Label className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        Descripción generada con IA
+                      </Label>
+                    </div>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                      Esta imagen ya tiene una descripción generada por inteligencia artificial. Puedes editarla o generar una nueva desde la pestaña "Descripción IA".
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="title">Título</Label>
                   <Input
@@ -222,6 +271,11 @@ export function ImageDetailDialog({ imageId, open, onOpenChange }: ImageDetailDi
                     placeholder="Descripción de la imagen"
                     rows={4}
                   />
+                  {image.user_description && (
+                    <p className="text-xs text-muted-foreground">
+                      Puedes editar la descripción generada por IA o generar una nueva desde la pestaña "Descripción IA".
+                    </p>
+                  )}
                 </div>
 
                 <TagSelector
@@ -269,6 +323,21 @@ export function ImageDetailDialog({ imageId, open, onOpenChange }: ImageDetailDi
                     Solicitar descripción con IA
                   </Button>
                 </div>
+
+                {/* Show AI Context if available */}
+                {image.ai_context && (
+                  <div className="space-y-2">
+                    <Label>Contexto utilizado para la descripción IA</Label>
+                    <div className="rounded-md border p-3 bg-blue-50 dark:bg-blue-950/20">
+                      <p className="text-sm whitespace-pre-wrap text-blue-900 dark:text-blue-100">
+                        {image.ai_context}
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Este es el contexto que se utilizó para generar la descripción con IA. Se guarda como parte de los metadatos de la imagen.
+                    </p>
+                  </div>
+                )}
 
                 {image.user_description && (
                   <div className="space-y-2">

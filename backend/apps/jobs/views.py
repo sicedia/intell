@@ -924,6 +924,19 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
             # Refresh from DB to get latest state (including published_at)
             image_task.refresh_from_db()
             
+            # Check and update job status if all images are complete
+            # This ensures the job status is updated even if finalize_job didn't run
+            if publish:
+                from apps.jobs.tasks import _check_and_update_job_status
+                try:
+                    _check_and_update_job_status(image_task.job)
+                except Exception as check_error:
+                    # Log but don't fail the publish operation
+                    logger.warning(
+                        f'Failed to check job status after publish for ImageTask {image_task.id}: {str(check_error)}',
+                        extra={'image_task_id': image_task.id, 'job_id': image_task.job.id}
+                    )
+            
             # Serialize published_at safely
             published_at_str = None
             if image_task.published_at:
