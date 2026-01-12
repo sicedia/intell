@@ -8,9 +8,17 @@ import { Separator } from "@/shared/components/ui/separator";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { Settings, User, Mail } from "lucide-react";
 import { useAuth } from "@/features/auth";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
   const { user, isLoading } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -94,7 +102,12 @@ export default function SettingsPage() {
                   Switch between light and dark themes
                 </p>
               </div>
-              <Switch id="dark-mode" />
+              <Switch
+                id="dark-mode"
+                checked={mounted && theme === "dark"}
+                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                disabled={!mounted}
+              />
             </div>
             <Separator />
             <div className="flex items-center justify-between">

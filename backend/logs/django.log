@@ -3241,3 +3241,9 @@ DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768230969372_pg0eytxbj) a
 
 ERROR 2026-01-12 10:16:10,087 log 57840 20568 Internal Server Error: /api/jobs/
 ERROR 2026-01-12 10:16:10,088 runserver 57840 44564 [35;1mHTTP POST /api/jobs/ 500 [0.40, 127.0.0.1:65261][0m
+INFO 2026-01-12 10:23:22,498 views 57840 34468 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:23:22,521 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:58467][0m
+WARNING 2026-01-12 10:23:27,247 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:58467][0m
+INFO 2026-01-12 10:23:35,797 views_microsoft 57840 48580 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:23:39,168 microsoft 57840 12080 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:23:39,181 views_microsoft 57840 12080 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
