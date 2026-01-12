@@ -68,12 +68,6 @@ export function ImageCard({
         lg: "aspect-square",
     };
     
-    const imageHeight = {
-        sm: "h-32",
-        md: "h-48",
-        lg: "h-64",
-    }[size];
-    
     // For detailed variant, use fixed height
     const isDetailed = variant === "detailed";
 
@@ -258,16 +252,15 @@ export function ImageCard({
                     sizeClasses[size]
                 )}>
                     {currentImageUrl ? (
-                        // Use native img for external URLs to avoid Next.js Image optimization issues
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={currentImageUrl}
-                            alt={title}
-                            className={cn(
-                                "absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105",
-                                imageHeight
-                            )}
-                        />
+                        <div className="absolute inset-0 flex items-center justify-center p-2">
+                            {/* Use native img for external URLs to avoid Next.js Image optimization issues */}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={currentImageUrl}
+                                alt={title}
+                                className="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            />
+                        </div>
                     ) : (
                         <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
                             Pending...

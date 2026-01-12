@@ -26461,3 +26461,10 @@ Traceback (most recent call last):
 AssertionError: The field 'created_by_username' was declared on serializer ImageLibrarySerializer, but has not been included in the 'fields' option.
 ERROR 2026-01-12 15:13:23,267 runserver 43748 31104 [35;1mHTTP GET /api/dashboard/latest-images/?limit=8 500 [0.15, 127.0.0.1:58055][0m
 INFO 2026-01-12 15:18:54,634 views 16652 41100 Job 252 created successfully with 1 image tasks
+WARNING 2026-01-12 15:33:09,428 runserver 52172 55772 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.02, 127.0.0.1:62380][0m
+WARNING 2026-01-12 15:36:23,894 runserver 52172 55772 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:53559][0m
+INFO 2026-01-12 15:47:09,230 views 27484 33360 Job 253 created successfully with 1 image tasks
+INFO 2026-01-12 15:50:03,239 views 54016 32144 Job 254 created successfully with 1 image tasks
+WARNING 2026-01-12 15:54:59,961 tasks 27980 12936 ImageTask 1154 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 15:54:59,965 views 27084 31548 Job 255 created successfully with 8 image tasks
+INFO 2026-01-12 15:55:17,132 views 27084 43080 ImageTask 1154 retry requested - task re-enqueued

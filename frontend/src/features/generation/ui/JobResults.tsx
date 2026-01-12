@@ -57,8 +57,9 @@ export const JobResults = ({ job }: { job: Job }) => {
     const [autoDescribeAndPublish, setAutoDescribeAndPublish] = useState(false);
     const queryClient = useQueryClient();
     
-    // Check if all images are complete but job is still RUNNING
+    // Check if all images are complete but job is still RUNNING or PENDING
     // This can happen if finalize_job didn't run or was delayed
+    // This is a safety check to detect inconsistencies
     const allImagesComplete = job.images && job.images.length > 0 && 
         job.images.every(img => 
             img.status === JobStatus.SUCCESS || 
@@ -66,19 +67,26 @@ export const JobResults = ({ job }: { job: Job }) => {
             img.status === JobStatus.CANCELLED
         );
     
-    const shouldBeFinished = allImagesComplete && job.status === JobStatus.RUNNING;
+    const shouldBeFinished = allImagesComplete && 
+        (job.status === JobStatus.RUNNING || job.status === JobStatus.PENDING);
     
     // Force refetch if job should be finished but isn't
+    // Use a debounced approach to avoid excessive refetches
     React.useEffect(() => {
         if (shouldBeFinished) {
-            // Invalidate and refetch to get updated job status
-            // The backend should have updated it, but we force a refresh
-            queryClient.invalidateQueries({ 
-                queryKey: ["job", job.id],
-                refetchType: "all"
-            });
+            // Add a small delay to allow backend to update
+            const timeoutId = setTimeout(() => {
+                // Invalidate and refetch to get updated job status
+                // The backend should have updated it via _check_and_update_job_status
+                queryClient.invalidateQueries({ 
+                    queryKey: ["job", job.id],
+                    refetchType: "all"
+                });
+            }, 1000); // Wait 1 second before refetching
+            
+            return () => clearTimeout(timeoutId);
         }
-    }, [shouldBeFinished, job.id, queryClient]);
+    }, [shouldBeFinished, job.id, job.status, queryClient]);
 
     const handleDownloadAll = async (format: ZipFormat) => {
         if (isDownloading) return;

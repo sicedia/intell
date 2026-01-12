@@ -23,76 +23,107 @@ def _check_and_update_job_status(job: Job) -> None:
     - Individual task retries (which don't trigger finalize_job)
     - Edge cases where chord callback might not fire
     
+    Uses database-level locking to prevent race conditions.
+    
     Args:
         job: Job instance to check
     """
-    # Refresh job from DB to get latest status
-    job.refresh_from_db()
+    from django.db import transaction
     
-    # Skip if job is already in a final state
-    if job.status in [Job.Status.SUCCESS, Job.Status.CANCELLED]:
-        return
+    # Use select_for_update to prevent race conditions
+    with transaction.atomic():
+        # Refresh job from DB with lock to prevent concurrent updates
+        job = Job.objects.select_for_update().get(id=job.id)
+        
+        # Get all ImageTasks for this job (also with lock for consistency)
+        image_tasks = ImageTask.objects.filter(job=job).select_for_update()
+        
+        if not image_tasks.exists():
+            return
+        
+        # Count statuses
+        total_count = image_tasks.count()
+        success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
+        failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
+        cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
+        completed_count = success_count + failed_count + cancelled_count
+        
+        # Check if job is already in a final state
+        final_statuses = [Job.Status.SUCCESS, Job.Status.FAILED, Job.Status.CANCELLED, Job.Status.PARTIAL_SUCCESS]
+        if job.status in final_statuses:
+            # Verify consistency: if job is SUCCESS but not all tasks are complete, fix it
+            if completed_count < total_count:
+                # Inconsistency detected - reset to RUNNING to allow re-evaluation
+                job.status = Job.Status.RUNNING
+                job.save(update_fields=['status', 'updated_at'])
+            else:
+                # All tasks complete and job is in final state - nothing to do
+                return
+        
+        # Only update if all tasks are complete
+        if completed_count < total_count:
+            # Still have pending/running tasks - update progress only
+            avg_progress = sum(task.progress for task in image_tasks) / total_count
+            if job.progress_total != int(avg_progress):
+                job.progress_total = int(avg_progress)
+                job.save(update_fields=['progress_total', 'updated_at'])
+            return
+        
+        # All tasks complete - determine final status
+        old_status = job.status
+        
+        if cancelled_count == total_count:
+            new_status = Job.Status.CANCELLED
+        elif success_count == total_count:
+            new_status = Job.Status.SUCCESS
+        elif success_count > 0:
+            new_status = Job.Status.PARTIAL_SUCCESS
+        else:
+            new_status = Job.Status.FAILED
+        
+        job.status = new_status
+        job.progress_total = 100
+        job.save(update_fields=['status', 'progress_total', 'updated_at'])
+        
+        # Store values for event emission outside transaction
+        status_changed = old_status != new_status
+        final_success_count = success_count
+        final_failed_count = failed_count
+        final_cancelled_count = cancelled_count
+        final_total_count = total_count
     
-    # Get all ImageTasks for this job
-    image_tasks = ImageTask.objects.filter(job=job)
-    
-    if not image_tasks.exists():
-        return
-    
-    # Count statuses
-    total_count = image_tasks.count()
-    success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
-    failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
-    cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
-    completed_count = success_count + failed_count + cancelled_count
-    
-    # Only update if all tasks are complete
-    if completed_count < total_count:
-        # Still have pending/running tasks - update progress only
-        avg_progress = sum(task.progress for task in image_tasks) / total_count
-        if job.progress_total != int(avg_progress):
-            job.progress_total = int(avg_progress)
-            job.save(update_fields=['progress_total', 'updated_at'])
-        return
-    
-    # All tasks complete - determine final status
-    old_status = job.status
-    
-    if cancelled_count == total_count:
-        job.status = Job.Status.CANCELLED
-    elif success_count == total_count:
-        job.status = Job.Status.SUCCESS
-    elif success_count > 0:
-        job.status = Job.Status.PARTIAL_SUCCESS
-    else:
-        job.status = Job.Status.FAILED
-    
-    job.progress_total = 100
-    job.save(update_fields=['status', 'progress_total', 'updated_at'])
-    
-    # Emit job_status_changed event if status changed
-    if old_status != job.status:
+    # Emit events outside transaction to avoid long-running transactions
+    if status_changed:
         emit_event(
             job_id=job.id,
             event_type='job_status_changed',
             level='INFO',
-            message=f'Job status changed from {old_status} to {job.status}',
+            message=f'Job status updated: {new_status}',
             progress=100,
-            payload={'status': job.status, 'previous_status': old_status}
+            payload={'status': new_status, 'previous_status': old_status}
         )
         
         # Also emit DONE for the job
+        if new_status == Job.Status.SUCCESS:
+            message = f'Job completed: {final_success_count} of {final_total_count} chart(s) generated successfully'
+        elif new_status == Job.Status.PARTIAL_SUCCESS:
+            message = f'Job completed partially: {final_success_count} successful, {final_failed_count} failed out of {final_total_count} total'
+        elif new_status == Job.Status.FAILED:
+            message = f'Job failed: {final_failed_count} of {final_total_count} chart(s) failed'
+        else:
+            message = f'Job {new_status.lower()}: {final_success_count}/{final_total_count} successful'
+        
         emit_event(
             job_id=job.id,
             event_type='DONE',
             level='INFO',
-            message=f'Job completed: {job.status} ({success_count}/{total_count} successful)',
+            message=message,
             progress=100,
             payload={
-                'success_count': success_count,
-                'failed_count': failed_count,
-                'cancelled_count': cancelled_count,
-                'total_count': total_count
+                'success_count': final_success_count,
+                'failed_count': final_failed_count,
+                'cancelled_count': final_cancelled_count,
+                'total_count': final_total_count
             }
         )
 
@@ -155,12 +186,16 @@ def generate_image_task(self, image_task_id: int):
         
         # Emit START event
         trace_id = image_task.trace_id or None
+        
+        # Format algorithm key for display (convert snake_case to Title Case)
+        algorithm_display_name = image_task.algorithm_key.replace('_', ' ').title()
+        
         emit_event(
             job_id=job.id,
             image_task_id=image_task_id,
             event_type='START',
             level='INFO',
-            message=f'Starting image generation for {image_task.algorithm_key}',
+            message=f'Starting chart generation: {algorithm_display_name}',
             trace_id=trace_id,
             progress=0
         )
@@ -174,13 +209,13 @@ def generate_image_task(self, image_task_id: int):
                 f"Algorithm not found: {image_task.algorithm_key} v{image_task.algorithm_version}"
             )
         
-        # Emit PROGRESS event
+        # Emit PROGRESS event - Processing data
         emit_event(
             job_id=job.id,
             image_task_id=image_task_id,
             event_type='PROGRESS',
             level='INFO',
-            message='Executing algorithm',
+            message=f'Processing data and executing algorithm: {algorithm_display_name}',
             trace_id=trace_id,
             progress=30
         )
@@ -195,23 +230,34 @@ def generate_image_task(self, image_task_id: int):
         # Check cancellation again
         job.refresh_from_db()
         if job.status == Job.Status.CANCELLED:
+            # Format algorithm key for display
+            algorithm_display_name = image_task.algorithm_key.replace('_', ' ').title()
             emit_event(
                 job_id=job.id,
                 image_task_id=image_task_id,
                 event_type='ERROR',
                 level='WARNING',
-                message='Task cancelled during execution',
+                message=f'⚠ Tarea cancelada durante la ejecución: {algorithm_display_name}',
                 trace_id=trace_id
             )
             return
         
-        # Emit PROGRESS event
+        # Determine which formats are being saved
+        formats_to_save = []
+        if result.png_bytes and image_task.output_format in ['png', 'both']:
+            formats_to_save.append('PNG')
+        if result.svg_text and image_task.output_format in ['svg', 'both']:
+            formats_to_save.append('SVG')
+        
+        format_text = ' and '.join(formats_to_save) if formats_to_save else 'files'
+        
+        # Emit PROGRESS event - Saving artifacts
         emit_event(
             job_id=job.id,
             image_task_id=image_task_id,
             event_type='PROGRESS',
             level='INFO',
-            message='Saving artifacts',
+            message=f'Saving generated files ({format_text}) for {algorithm_display_name}',
             trace_id=trace_id,
             progress=70
         )
@@ -231,22 +277,28 @@ def generate_image_task(self, image_task_id: int):
                 save=False
             )
         
-        # Save chart_data and update status
+        # Save chart_data and update status to SUCCESS
         image_task.chart_data = result.chart_data
         image_task.trace_id = trace_id
-        image_task.save()
+        image_task.status = ImageTask.Status.SUCCESS
+        image_task.progress = 100
+        image_task.save(update_fields=['chart_data', 'trace_id', 'status', 'progress', 'updated_at'])
         
         # Emit DONE event
+        format_text = ' y '.join(formats_to_save) if formats_to_save else 'archivos'
         emit_event(
             job_id=job.id,
             image_task_id=image_task_id,
             event_type='DONE',
             level='INFO',
-            message='Image generation completed successfully',
+            message=f'✓ Gráfico generado exitosamente: {algorithm_display_name} ({format_text})',
             trace_id=trace_id,
             progress=100,
             payload={'chart_data_keys': list(result.chart_data.keys()) if result.chart_data else []}
         )
+        
+        # Refresh job from DB to get latest state before checking status
+        job.refresh_from_db()
         
         # Check if all tasks are now complete and update job status
         # This handles the case of individual task retries
@@ -267,12 +319,17 @@ def generate_image_task(self, image_task_id: int):
         
         # Emit ERROR event only if we have a job reference
         if 'job' in locals() and job:
+            # Get algorithm display name if available
+            algorithm_display_name = 'algoritmo'
+            if 'image_task' in locals() and image_task:
+                algorithm_display_name = image_task.algorithm_key.replace('_', ' ').title()
+            
             emit_event(
                 job_id=job.id,
                 image_task_id=image_task_id,
                 event_type='ALGORITHM_ERROR',
                 level='ERROR',
-                message=f'Image generation failed: {str(e)}',
+                message=f'Error generating chart {algorithm_display_name}: {str(e)}',
                 trace_id=trace_id if 'trace_id' in locals() else None,
                 payload={'error': str(e), 'trace': error_trace}
             )
@@ -340,11 +397,12 @@ def run_job(job_id: int):
         
         # Emit PROGRESS event with initial progress based on task count
         # Start at 0% since tasks haven't started yet
+        tasks_count = image_tasks.count()
         emit_event(
             job_id=job_id,
             event_type='PROGRESS',
             level='INFO',
-            message=f'Enqueued {image_tasks.count()} image tasks',
+            message=f'Enqueuing {tasks_count} chart generation task(s)',
             progress=0
         )
         
@@ -377,82 +435,112 @@ def finalize_job(self, task_results, job_id: int):
     Finalize job after all ImageTasks complete.
     Calculates final status (SUCCESS, PARTIAL_SUCCESS, FAILED) and progress_total.
     
+    Uses database-level locking to prevent race conditions.
+    
     Args:
         task_results: Results from chord (list of task results) - passed first by Celery
         job_id: Job ID - passed via immutable signature
     """
+    from django.db import transaction
+    
     try:
-        job = Job.objects.get(id=job_id)
+        # Use select_for_update to prevent race conditions
+        with transaction.atomic():
+            job = Job.objects.select_for_update().get(id=job_id)
+            
+            # Get all ImageTasks for this job
+            image_tasks = ImageTask.objects.filter(job=job)
+            
+            if not image_tasks.exists():
+                job.status = Job.Status.FAILED
+                job.progress_total = 0
+                job.save(update_fields=['status', 'progress_total', 'updated_at'])
+                # Emit event outside transaction
+                emit_event(
+                    job_id=job_id,
+                    event_type='ERROR',
+                    level='ERROR',
+                    message='No image tasks found',
+                    progress=0
+                )
+                return
+            
+            # Count statuses
+            success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
+            failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
+            cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
+            total_count = image_tasks.count()
+            completed_count = success_count + failed_count + cancelled_count
+            
+            # Calculate final status
+            if success_count == total_count:
+                new_status = Job.Status.SUCCESS
+            elif success_count > 0 and failed_count > 0:
+                new_status = Job.Status.PARTIAL_SUCCESS
+            else:
+                new_status = Job.Status.FAILED
+            
+            # Set progress_total: 100 if all tasks completed, otherwise average
+            # When finalize_job runs, all tasks should be complete, so set to 100
+            if total_count > 0:
+                if completed_count == total_count:
+                    # All tasks have completed (success/failed/cancelled), so job is 100% complete
+                    new_progress = 100
+                else:
+                    # Some tasks still pending/running (shouldn't happen, but handle gracefully)
+                    avg_progress = sum(task.progress for task in image_tasks) / total_count
+                    new_progress = int(avg_progress)
+            else:
+                new_progress = 0
+            
+            # Store old status for event emission
+            old_status = job.status
+            
+            # Update job status and progress
+            job.status = new_status
+            job.progress_total = new_progress
+            job.save(update_fields=['status', 'progress_total', 'updated_at'])
+            
+            # Store values for event emission outside transaction
+            status_changed = old_status != new_status
+            final_success_count = success_count
+            final_failed_count = failed_count
+            final_total_count = total_count
         
-        # Get all ImageTasks for this job
-        image_tasks = ImageTask.objects.filter(job=job)
-        
-        if not image_tasks.exists():
-            job.status = Job.Status.FAILED
-            job.progress_total = 0
-            job.save()
+        # Emit events outside transaction to avoid long-running transactions
+        if status_changed:
+            # Emit job_status_changed event for frontend detection
             emit_event(
                 job_id=job_id,
-                event_type='ERROR',
-                level='ERROR',
-                message='No image tasks found',
-                progress=0
+                event_type='job_status_changed',
+                level='INFO',
+                message=f'Job status updated: {final_new_status}',
+                progress=final_new_progress,
+                payload={'status': final_new_status}
             )
-            return
-        
-        # Count statuses
-        success_count = image_tasks.filter(status=ImageTask.Status.SUCCESS).count()
-        failed_count = image_tasks.filter(status=ImageTask.Status.FAILED).count()
-        cancelled_count = image_tasks.filter(status=ImageTask.Status.CANCELLED).count()
-        total_count = image_tasks.count()
-        completed_count = success_count + failed_count + cancelled_count
-        
-        # Calculate final status
-        if success_count == total_count:
-            job.status = Job.Status.SUCCESS
-        elif success_count > 0 and failed_count > 0:
-            job.status = Job.Status.PARTIAL_SUCCESS
-        else:
-            job.status = Job.Status.FAILED
-        
-        # Set progress_total: 100 if all tasks completed, otherwise average
-        # When finalize_job runs, all tasks should be complete, so set to 100
-        if total_count > 0:
-            if completed_count == total_count:
-                # All tasks have completed (success/failed/cancelled), so job is 100% complete
-                job.progress_total = 100
+            
+            # Emit DONE event with descriptive message
+            if final_new_status == Job.Status.SUCCESS:
+                message = f'Job completed: {final_success_count} of {final_total_count} chart(s) generated successfully'
+            elif final_new_status == Job.Status.PARTIAL_SUCCESS:
+                message = f'Job completed partially: {final_success_count} successful, {final_failed_count} failed out of {final_total_count} total'
+            elif final_new_status == Job.Status.FAILED:
+                message = f'Job failed: {final_failed_count} of {final_total_count} chart(s) failed'
             else:
-                # Some tasks still pending/running (shouldn't happen, but handle gracefully)
-                avg_progress = sum(task.progress for task in image_tasks) / total_count
-                job.progress_total = int(avg_progress)
-        else:
-            job.progress_total = 0
-        
-        job.save()
-        
-        # Emit job_status_changed event for frontend detection
-        emit_event(
-            job_id=job_id,
-            event_type='job_status_changed',
-            level='INFO',
-            message=f'Job status changed to {job.status}',
-            progress=job.progress_total,
-            payload={'status': job.status}
-        )
-        
-        # Emit DONE event
-        emit_event(
-            job_id=job_id,
-            event_type='DONE',
-            level='INFO',
-            message=f'Job completed: {job.status} ({success_count}/{total_count} successful)',
-            progress=job.progress_total,
-            payload={
-                'success_count': success_count,
-                'failed_count': failed_count,
-                'total_count': total_count
-            }
-        )
+                message = f'Job {final_new_status.lower()}: {final_success_count}/{final_total_count} successful'
+            
+            emit_event(
+                job_id=job_id,
+                event_type='DONE',
+                level='INFO',
+                message=message,
+                progress=final_new_progress,
+                payload={
+                    'success_count': final_success_count,
+                    'failed_count': final_failed_count,
+                    'total_count': final_total_count
+                }
+            )
         
     except Exception as e:
         error_trace = traceback.format_exc()
