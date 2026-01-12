@@ -13,6 +13,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { Loader2, RotateCcw, X, Download, ChevronDown, BookmarkPlus, BookmarkCheck, Sparkles, Eye, Edit } from "lucide-react";
 import { UserInfo } from "@/shared/ui/UserInfo";
+import { ImageCard } from "@/shared/ui/ImageCard";
 import { Switch } from "@/shared/components/ui/switch";
 import { Label } from "@/shared/components/ui/label";
 import { env } from "@/shared/lib/env";
@@ -412,39 +413,19 @@ const TaskResultCard = ({
     };
 
     return (
-        <Card className="overflow-hidden">
-            <CardHeader className="py-4 bg-muted/30">
-                <div className="flex justify-between items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base font-medium truncate" title={task.algorithm_key}>
-                            {formatAlgorithmKey(task.algorithm_key)}
-                        </CardTitle>
-                        {(task.created_by_username || task.created_by_email || task.created_by) && (
-                            <div className="mt-1.5">
-                                <UserInfo
-                                    username={task.created_by_username}
-                                    email={task.created_by_email}
-                                    userId={task.created_by}
-                                    variant="compact"
-                                    showIcon={true}
-                                />
-                            </div>
-                        )}
-                    </div>
-                    <StatusBadge status={task.status} />
-                </div>
-            </CardHeader>
+        <>
+            <Card className="overflow-hidden">
             <CardContent className="p-0">
                 {task.status === JobStatus.SUCCESS && hasImages ? (
                     <div className="relative">
                         {isAutoProcessing && (
-                            <div className="absolute top-2 left-2 z-10 bg-primary/90 text-primary-foreground px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 shadow-lg">
+                            <div className="absolute top-2 left-2 z-20 bg-primary/90 text-primary-foreground px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 shadow-lg">
                                 <Sparkles className="h-3 w-3 animate-pulse" />
                                 Generando descripción...
                             </div>
                         )}
                         {descriptionTask && descriptionTask.status === "RUNNING" && (
-                            <div className="absolute top-2 right-2 z-10 bg-background/95 border px-3 py-1.5 rounded-md text-xs">
+                            <div className="absolute top-2 right-2 z-20 bg-background/95 border px-3 py-1.5 rounded-md text-xs">
                                 <div className="flex items-center gap-2">
                                     <Loader2 className="h-3 w-3 animate-spin" />
                                     <span>{descriptionProgress}%</span>
@@ -452,45 +433,19 @@ const TaskResultCard = ({
                                 <Progress value={descriptionProgress} className="h-1 mt-1 w-24" />
                             </div>
                         )}
-                        <Tabs defaultValue={svgUrl ? "svg" : "png"} className="w-full">
-                            <div className="p-4 bg-checkered min-h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-b relative">
-                            <TabsContent value="png" className="mt-0 w-full flex justify-center">
-                                {pngUrl ? (
-                                    <div className="relative w-full max-w-full h-[300px] flex items-center justify-center">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img 
-                                            src={pngUrl} 
-                                            alt={`${formatAlgorithmKey(task.algorithm_key)} - PNG`} 
-                                            className="max-h-[300px] max-w-full object-contain"
-                                        />
-                                    </div>
-                                ) : (
-                                    <span className="text-sm text-muted-foreground">No PNG available</span>
-                                )}
-                            </TabsContent>
-                            <TabsContent value="svg" className="mt-0 w-full flex justify-center">
-                                {svgUrl ? (
-                                    <div className="relative w-full max-w-full h-[300px] flex items-center justify-center">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img 
-                                            src={svgUrl} 
-                                            alt={`${formatAlgorithmKey(task.algorithm_key)} - SVG`} 
-                                            className="max-h-[300px] max-w-full object-contain"
-                                        />
-                                    </div>
-                                ) : (
-                                    <span className="text-sm text-muted-foreground">No SVG available</span>
-                                )}
-                            </TabsContent>
-                        </div>
-
-                        {hasBoth && (
-                            <TabsList className="w-full rounded-none border-b">
-                                <TabsTrigger value="svg" className="flex-1">SVG</TabsTrigger>
-                                <TabsTrigger value="png" className="flex-1">PNG</TabsTrigger>
-                            </TabsList>
-                        )}
-                        </Tabs>
+                        <ImageCard
+                            title={formatAlgorithmKey(task.algorithm_key)}
+                            imageUrl={pngUrl || undefined}
+                            svgUrl={svgUrl || undefined}
+                            status={task.status}
+                            subtitle={task.title || undefined}
+                            variant="detailed"
+                            showDownload={true}
+                            createdBy={task.created_by}
+                            createdByUsername={task.created_by_username}
+                            createdByEmail={task.created_by_email}
+                            className="border-0 shadow-none rounded-none"
+                        />
                     </div>
                 ) : task.status === JobStatus.RUNNING || task.status === JobStatus.PENDING ? (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
@@ -630,54 +585,33 @@ const TaskResultCard = ({
                             )}
                         </Button>
                     )}
-                    {pngUrl && (
-                        <a
-                            href={pngUrl}
-                            download
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
-                        >
-                            Download PNG
-                        </a>
-                    )}
-                    {svgUrl && (
-                        <a
-                            href={svgUrl}
-                            download
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
-                        >
-                            Download SVG
-                        </a>
-                    )}
                 </div>
             </CardFooter>
-            {imageTaskForDialog && (
-                <>
-                    <AIDescriptionDialog
-                        image={imageTaskForDialog}
-                        open={showDescriptionDialog}
-                        onOpenChange={setShowDescriptionDialog}
-                        onDescriptionSaved={() => {
-                            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
-                        }}
-                    />
-                    <ImageDetailDialog
-                        imageId={task.id}
-                        open={showImageDetailDialog}
-                        onOpenChange={setShowImageDetailDialog}
-                        initialTab={imageDetailDialogTab}
-                        autoPublishOnSave={true}
-                        onSave={() => {
-                            // Invalidate job queries to refresh the task status
-                            queryClient.invalidateQueries({ queryKey: ["job", jobId] });
-                        }}
-                    />
-                </>
-            )}
         </Card>
+        {imageTaskForDialog && (
+            <>
+                <AIDescriptionDialog
+                    image={imageTaskForDialog}
+                    open={showDescriptionDialog}
+                    onOpenChange={setShowDescriptionDialog}
+                    onDescriptionSaved={() => {
+                        queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                    }}
+                />
+                <ImageDetailDialog
+                    imageId={task.id}
+                    open={showImageDetailDialog}
+                    onOpenChange={setShowImageDetailDialog}
+                    initialTab={imageDetailDialogTab}
+                    autoPublishOnSave={true}
+                    onSave={() => {
+                        // Invalidate job queries to refresh the task status
+                        queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                    }}
+                />
+            </>
+        )}
+        </>
     );
 };
 

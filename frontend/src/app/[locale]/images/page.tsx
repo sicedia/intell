@@ -75,6 +75,9 @@ export default function ImagesPage() {
     return {
       id: image.id,
       job: image.job_id,
+      created_by: image.created_by,
+      created_by_username: image.created_by_username,
+      created_by_email: image.created_by_email,
       algorithm_key: image.algorithm_key,
       algorithm_version: "1.0",
       params: {},
@@ -89,6 +92,7 @@ export default function ImagesPage() {
       trace_id: null,
       title: image.title,
       user_description: image.user_description,
+      ai_context: image.ai_context,
       group: image.group,
       tags: image.tags.map((t) => t.id),
       is_published: image.is_published,
@@ -204,11 +208,14 @@ export default function ImagesPage() {
                       key={image.id}
                       title={image.title || `Imagen ${image.id}`}
                       imageUrl={image.artifact_png_url}
+                      svgUrl={image.artifact_svg_url}
                       status={image.status}
                       subtitle={image.algorithm_key}
                       createdBy={image.created_by}
                       createdByUsername={image.created_by_username}
                       createdByEmail={image.created_by_email}
+                      showFormatToggle={true}
+                      showDownload={true}
                       onView={() => handleViewImage(image.id)}
                       onEdit={() => handleEditImage(image.id)}
                       onGenerateDescription={() => handleGenerateDescription(image)}
@@ -227,11 +234,14 @@ export default function ImagesPage() {
               key={image.id}
               title={image.title || `Imagen ${image.id}`}
               imageUrl={image.artifact_png_url}
+              svgUrl={image.artifact_svg_url}
               status={image.status}
               subtitle={image.algorithm_key}
               createdBy={image.created_by}
               createdByUsername={image.created_by_username}
               createdByEmail={image.created_by_email}
+              showFormatToggle={true}
+              showDownload={true}
               onView={() => handleViewImage(image.id)}
               onEdit={() => handleEditImage(image.id)}
               onGenerateDescription={() => handleGenerateDescription(image)}

@@ -103,7 +103,9 @@ export default function DashboardPage() {
                 title={image.title || image.algorithm_key || "Untitled"}
                 status={image.status}
                 imageUrl={image.artifact_png_url}
+                svgUrl={image.artifact_svg_url}
                 subtitle={image.algorithm_key}
+                showDownload={true}
                 onView={() => handleImageClick(image)}
               />
             ))}
