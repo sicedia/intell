@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { Loader2, RotateCcw, X, Download, ChevronDown, BookmarkPlus, BookmarkCheck, Sparkles, Eye, Edit } from "lucide-react";
+import { UserInfo } from "@/shared/ui/UserInfo";
 import { Switch } from "@/shared/components/ui/switch";
 import { Label } from "@/shared/components/ui/label";
 import { env } from "@/shared/lib/env";
@@ -413,10 +414,23 @@ const TaskResultCard = ({
     return (
         <Card className="overflow-hidden">
             <CardHeader className="py-4 bg-muted/30">
-                <div className="flex justify-between items-center">
-                    <CardTitle className="text-base font-medium truncate" title={task.algorithm_key}>
-                        {formatAlgorithmKey(task.algorithm_key)}
-                    </CardTitle>
+                <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base font-medium truncate" title={task.algorithm_key}>
+                            {formatAlgorithmKey(task.algorithm_key)}
+                        </CardTitle>
+                        {(task.created_by_username || task.created_by_email || task.created_by) && (
+                            <div className="mt-1.5">
+                                <UserInfo
+                                    username={task.created_by_username}
+                                    email={task.created_by_email}
+                                    userId={task.created_by}
+                                    variant="compact"
+                                    showIcon={true}
+                                />
+                            </div>
+                        )}
+                    </div>
                     <StatusBadge status={task.status} />
                 </div>
             </CardHeader>

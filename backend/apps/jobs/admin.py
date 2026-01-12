@@ -29,14 +29,14 @@ class JobAdmin(admin.ModelAdmin):
 @admin.register(ImageTask)
 class ImageTaskAdmin(admin.ModelAdmin):
     """Admin interface for ImageTask model."""
-    list_display = ['id', 'job', 'algorithm_key', 'algorithm_version', 'status', 'progress', 'created_at']
-    list_filter = ['status', 'algorithm_key', 'output_format', 'created_at']
-    search_fields = ['id', 'job__id', 'algorithm_key', 'trace_id']
+    list_display = ['id', 'job', 'created_by', 'algorithm_key', 'algorithm_version', 'status', 'progress', 'created_at']
+    list_filter = ['status', 'algorithm_key', 'output_format', 'created_by', 'created_at']
+    search_fields = ['id', 'job__id', 'algorithm_key', 'trace_id', 'created_by__email', 'created_by__username']
     readonly_fields = ['id', 'created_at', 'updated_at']
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('id', 'job', 'algorithm_key', 'algorithm_version', 'params', 'output_format')
+            'fields': ('id', 'job', 'created_by', 'algorithm_key', 'algorithm_version', 'params', 'output_format')
         }),
         ('Status', {
             'fields': ('status', 'progress')

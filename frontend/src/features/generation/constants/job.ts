@@ -11,6 +11,9 @@ export enum JobStatus {
 export interface BackendImageTask {
     id: number;
     job: number;
+    created_by: number | null;
+    created_by_username?: string | null;
+    created_by_email?: string | null;
     algorithm_key: string;
     algorithm_version: string;
     params: Record<string, unknown>;
@@ -74,6 +77,9 @@ export interface ImageTask {
     chart_data?: unknown;
     title?: string | null;
     user_description?: string | null;
+    created_by?: number | null;
+    created_by_username?: string | null;
+    created_by_email?: string | null;
 }
 
 export interface Job {
@@ -171,6 +177,9 @@ export function transformImageTask(backendTask: BackendImageTask): ImageTask {
         created_at: backendTask.created_at,
         updated_at: backendTask.updated_at,
         chart_data: backendTask.chart_data,
+        created_by: backendTask.created_by || null,
+        created_by_username: backendTask.created_by_username || null,
+        created_by_email: backendTask.created_by_email || null,
     };
 }
 

@@ -21,6 +21,7 @@ import { ImageTask } from "../types";
 import { Save, Sparkles, BookmarkPlus, BookmarkCheck } from "lucide-react";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { Badge } from "@/shared/components/ui/badge";
+import { UserInfo } from "@/shared/ui/UserInfo";
 
 interface ImageDetailDialogProps {
   imageId: number | null;
@@ -168,6 +169,18 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                 <div>
                   <Label className="text-muted-foreground">Algoritmo</Label>
                   <p className="text-sm">{image.algorithm_key} v{image.algorithm_version}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Generado por</Label>
+                  <div className="mt-1">
+                    <UserInfo
+                      username={image.created_by_username}
+                      email={image.created_by_email}
+                      userId={image.created_by}
+                      variant="default"
+                      showIcon={true}
+                    />
+                  </div>
                 </div>
                 {image.user_description && (
                   <div>

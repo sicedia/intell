@@ -261,6 +261,7 @@ class JobViewSet(viewsets.ViewSet):
                     
                     image_task = ImageTask.objects.create(
                         job=job,
+                        created_by=job.created_by,  # Associate user for statistics
                         algorithm_key=alg_key,
                         algorithm_version=image_req.get('algorithm_version', '1.0'),
                         params=task_params,
@@ -496,7 +497,7 @@ class JobViewSet(viewsets.ViewSet):
 )
 class ImageTaskViewSet(viewsets.ModelViewSet):
     """ViewSet for ImageTask with library management capabilities."""
-    queryset = ImageTask.objects.select_related('job', 'group').prefetch_related('tags').all()
+    queryset = ImageTask.objects.select_related('job', 'job__created_by', 'group', 'created_by').prefetch_related('tags').all()
     serializer_class = ImageTaskSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'algorithm_key', 'user_description']
@@ -1319,7 +1320,7 @@ def latest_published_images(request):
     images = ImageTask.objects.filter(
         is_published=True,
         status=ImageTask.Status.SUCCESS
-    ).select_related('job', 'group').prefetch_related('tags').order_by('-published_at', '-created_at')[:limit]
+    ).select_related('job', 'job__created_by', 'group', 'created_by').prefetch_related('tags').order_by('-published_at', '-created_at')[:limit]
     
     serializer = ImageLibrarySerializer(images, many=True, context={'request': request})
     return Response(serializer.data)

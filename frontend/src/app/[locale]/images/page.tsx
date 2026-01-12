@@ -206,6 +206,9 @@ export default function ImagesPage() {
                       imageUrl={image.artifact_png_url}
                       status={image.status}
                       subtitle={image.algorithm_key}
+                      createdBy={image.created_by}
+                      createdByUsername={image.created_by_username}
+                      createdByEmail={image.created_by_email}
                       onView={() => handleViewImage(image.id)}
                       onEdit={() => handleEditImage(image.id)}
                       onGenerateDescription={() => handleGenerateDescription(image)}
@@ -226,6 +229,9 @@ export default function ImagesPage() {
               imageUrl={image.artifact_png_url}
               status={image.status}
               subtitle={image.algorithm_key}
+              createdBy={image.created_by}
+              createdByUsername={image.created_by_username}
+              createdByEmail={image.created_by_email}
               onView={() => handleViewImage(image.id)}
               onEdit={() => handleEditImage(image.id)}
               onGenerateDescription={() => handleGenerateDescription(image)}

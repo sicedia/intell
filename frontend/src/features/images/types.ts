@@ -27,6 +27,9 @@ export interface ImageGroup {
 export interface ImageTask {
   id: number;
   job: number;
+  created_by: number | null;
+  created_by_username?: string | null;
+  created_by_email?: string | null;
   algorithm_key: string;
   algorithm_version: string;
   params: Record<string, unknown>;
@@ -60,6 +63,9 @@ export interface ImageTaskUpdate {
 export interface ImageLibraryItem {
   id: number;
   job_id: number;
+  created_by: number | null;
+  created_by_username?: string | null;
+  created_by_email?: string | null;
   title: string | null;
   algorithm_key: string;
   status: ImageTaskStatus;

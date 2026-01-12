@@ -6,6 +6,7 @@ import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { cn } from "@/shared/lib/utils";
 import { Edit, Sparkles, Eye } from "lucide-react";
+import { UserInfo } from "./UserInfo";
 
 interface ImageCardProps {
     title: string;
@@ -17,6 +18,9 @@ interface ImageCardProps {
     onEdit?: () => void;
     onGenerateDescription?: () => void;
     onDownload?: () => void; // Reserved for future use
+    createdByUsername?: string | null;
+    createdByEmail?: string | null;
+    createdBy?: number | null;
 }
 
 export function ImageCard({ 
@@ -27,7 +31,10 @@ export function ImageCard({
     className, 
     onView,
     onEdit,
-    onGenerateDescription 
+    onGenerateDescription,
+    createdByUsername,
+    createdByEmail,
+    createdBy
 }: ImageCardProps) {
     const isSuccess = status === "SUCCESS";
     
@@ -56,6 +63,15 @@ export function ImageCard({
                     <h4 className="font-semibold text-sm line-clamp-1" title={title}>{title || "Sin título"}</h4>
                     {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
                 </div>
+                {(createdByUsername || createdByEmail || createdBy) && (
+                    <UserInfo
+                        username={createdByUsername}
+                        email={createdByEmail}
+                        userId={createdBy}
+                        variant="compact"
+                        showIcon={true}
+                    />
+                )}
             </div>
             <div className="p-3 pt-0 flex gap-2">
                 {isSuccess && onView && (

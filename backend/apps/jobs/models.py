@@ -134,6 +134,14 @@ class ImageTask(models.Model):
         on_delete=models.CASCADE,
         related_name='image_tasks'
     )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='image_tasks',
+        help_text="User who created this image task (inherited from job if not set)"
+    )
     algorithm_key = models.CharField(
         max_length=100,
         help_text="Algorithm identifier"
@@ -247,10 +255,40 @@ class ImageTask(models.Model):
             models.Index(fields=['algorithm_key', 'algorithm_version']),
             models.Index(fields=['group', 'created_at']),
             models.Index(fields=['is_published', 'created_at']),
+            models.Index(fields=['created_by', 'created_at']),  # For user statistics queries
+            models.Index(fields=['created_by', 'status']),  # For user statistics by status
         ]
     
     def __str__(self):
         return f"ImageTask {self.id} ({self.algorithm_key} v{self.algorithm_version})"
+    
+    def save(self, *args, **kwargs):
+        """
+        Override save to automatically set created_by from job if not provided.
+        This ensures user association for statistics even if not explicitly set.
+        
+        This method is idempotent and only sets created_by if it's not already set,
+        preventing unnecessary database queries and infinite loops.
+        """
+        # Auto-populate created_by from job if not set
+        # Only do this if created_by is None and we have a job reference
+        if self.created_by_id is None and self.job_id:
+            # Check if job is already loaded (avoids extra query)
+            if hasattr(self, '_state') and hasattr(self, 'job'):
+                # Job is already loaded, use it directly
+                if hasattr(self.job, 'created_by_id') and self.job.created_by_id:
+                    self.created_by_id = self.job.created_by_id
+            elif self.job_id:
+                # Job not loaded, fetch only created_by to minimize query
+                try:
+                    job = Job.objects.only('created_by_id').get(pk=self.job_id)
+                    if job.created_by_id:
+                        self.created_by_id = job.created_by_id
+                except Job.DoesNotExist:
+                    # Job doesn't exist yet (shouldn't happen, but handle gracefully)
+                    pass
+        
+        super().save(*args, **kwargs)
     
     def publish(self):
         """Publish the image to the library."""

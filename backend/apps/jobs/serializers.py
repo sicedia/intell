@@ -57,18 +57,44 @@ class ImageTaskSerializer(serializers.ModelSerializer):
         allow_null=True,
         help_text='Group this image belongs to'
     )
+    created_by_username = serializers.SerializerMethodField(
+        help_text='Username of the user who created this image'
+    )
+    created_by_email = serializers.SerializerMethodField(
+        help_text='Email of the user who created this image'
+    )
+    
+    def get_created_by_username(self, obj):
+        """Get username of the user who created this image."""
+        if obj.created_by:
+            return obj.created_by.username
+        # Fallback: try to get from job if created_by is not set
+        if hasattr(obj, 'job') and obj.job and obj.job.created_by:
+            return obj.job.created_by.username
+        return None
+    
+    def get_created_by_email(self, obj):
+        """Get email of the user who created this image."""
+        if obj.created_by:
+            return obj.created_by.email
+        # Fallback: try to get from job if created_by is not set
+        if hasattr(obj, 'job') and obj.job and obj.job.created_by:
+            return obj.job.created_by.email
+        return None
     
     class Meta:
         model = ImageTask
         fields = [
-            'id', 'job', 'algorithm_key', 'algorithm_version', 'params',
+            'id', 'job', 'created_by', 'created_by_username', 'created_by_email',
+            'algorithm_key', 'algorithm_version', 'params',
             'output_format', 'status', 'progress', 'artifact_png_url',
             'artifact_svg_url', 'chart_data', 'error_code', 'error_message',
             'trace_id', 'title', 'user_description', 'ai_context', 'group', 'tags',
             'is_published', 'published_at', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'status', 'progress', 'artifact_png_url', 'artifact_svg_url',
+            'id', 'created_by', 'created_by_username', 'created_by_email',
+            'status', 'progress', 'artifact_png_url', 'artifact_svg_url',
             'chart_data', 'error_code', 'error_message', 'trace_id',
             'is_published', 'published_at', 'created_at', 'updated_at'
         ]
@@ -616,11 +642,36 @@ class ImageLibrarySerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     group_name = serializers.CharField(source='group.name', read_only=True)
     job_id = serializers.IntegerField(source='job.id', read_only=True)
+    created_by_username = serializers.SerializerMethodField(
+        help_text='Username of the user who created this image'
+    )
+    created_by_email = serializers.SerializerMethodField(
+        help_text='Email of the user who created this image'
+    )
+    
+    def get_created_by_username(self, obj):
+        """Get username of the user who created this image."""
+        if obj.created_by:
+            return obj.created_by.username
+        # Fallback: try to get from job if created_by is not set
+        if hasattr(obj, 'job') and obj.job and obj.job.created_by:
+            return obj.job.created_by.username
+        return None
+    
+    def get_created_by_email(self, obj):
+        """Get email of the user who created this image."""
+        if obj.created_by:
+            return obj.created_by.email
+        # Fallback: try to get from job if created_by is not set
+        if hasattr(obj, 'job') and obj.job and obj.job.created_by:
+            return obj.job.created_by.email
+        return None
     
     class Meta:
         model = ImageTask
         fields = [
-            'id', 'job_id', 'title', 'algorithm_key', 'status',
+            'id', 'job_id', 'created_by', 'created_by_username', 'created_by_email',
+            'title', 'algorithm_key', 'status',
             'artifact_png_url', 'artifact_svg_url', 'user_description', 'ai_context',
             'tags', 'group', 'group_name', 'is_published', 'published_at',
             'created_at', 'updated_at'
