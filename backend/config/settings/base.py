@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'apps.artifacts',
     'apps.ai_descriptions',
     'apps.audit',
+    'apps.notifications',
 ]
 
 MIDDLEWARE = [

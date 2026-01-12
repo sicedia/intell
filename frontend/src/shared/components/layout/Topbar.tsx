@@ -2,12 +2,13 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, Search, Bell, ChevronRight, Home } from 'lucide-react';
+import { Menu, Search, ChevronRight, Home } from 'lucide-react';
 import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Separator } from "@/shared/components/ui/separator";
 import { Sidebar } from './Sidebar';
 import { UserMenu } from "@/features/auth";
+import { NotificationDropdown } from "@/features/notifications";
 import { cn } from "@/shared/lib/utils";
 
 // Map path segments to readable labels
@@ -100,12 +101,7 @@ export function Topbar() {
 
                 {/* Right Side Actions */}
                 <div className="flex items-center gap-2 ml-auto">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
-                        <Bell className="h-5 w-5" />
-                        {/* Notification badge could go here */}
-                        <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" aria-label="New notifications" />
-                        <span className="sr-only">Notifications</span>
-                    </Button>
+                    <NotificationDropdown />
                     
                     <Separator orientation="vertical" className="h-6 mx-1" />
                     

@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/auth/', include('apps.authentication.urls')),
     # API endpoints
     path('api/', include('apps.jobs.urls')),
+    path('api/', include('apps.notifications.urls')),
     # Health checks
     path('api/health/', health_check, name='health'),
     path('api/health/redis/', redis_health_check, name='health-redis'),
