@@ -14,7 +14,7 @@ const STEPS = [
 ];
 
 export const GenerateWizard = () => {
-  const { currentStep, setStep, reset } = useWizardStore();
+  const { currentStep, setStep, reset, isJobCompleted } = useWizardStore();
 
   const handleNext = () => setStep(currentStep + 1);
   const handleBack = () => setStep(currentStep - 1);
@@ -28,6 +28,7 @@ export const GenerateWizard = () => {
           steps={STEPS}
           currentStep={currentStep}
           orientation="horizontal"
+          allCompleted={isJobCompleted}
         />
       </div>
 

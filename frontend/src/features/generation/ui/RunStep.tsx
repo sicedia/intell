@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { useJobProgress } from "../hooks/useJobProgress";
 import { useJobCreation } from "../hooks/useJobCreation";
+import { useWizardStore } from "../stores/useWizardStore";
 import { JobProgress } from "./JobProgress";
 import { JobResults } from "./JobResults";
 import { Button } from "@/shared/components/ui/button";
@@ -13,6 +15,7 @@ interface RunStepProps {
 export const RunStep = ({ onReset }: RunStepProps) => {
     const { jobId, isCreating, createError, handleRetry, handleCancel } = useJobCreation();
     const { job, events, connectionStatus } = useJobProgress(jobId);
+    const setJobCompleted = useWizardStore((state) => state.setJobCompleted);
 
     const isFinished = job?.status && [
         JobStatus.SUCCESS,
@@ -20,6 +23,13 @@ export const RunStep = ({ onReset }: RunStepProps) => {
         JobStatus.CANCELLED,
         JobStatus.PARTIAL_SUCCESS
     ].includes(job.status);
+
+    // Update wizard store when job completes
+    useEffect(() => {
+        if (isFinished) {
+            setJobCompleted(true);
+        }
+    }, [isFinished, setJobCompleted]);
 
     return (
         <div className="space-y-6">

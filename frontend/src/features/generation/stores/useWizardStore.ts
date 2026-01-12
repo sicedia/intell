@@ -10,6 +10,7 @@ interface WizardState {
     selectedAlgorithms: AlgorithmConfig[];
     visualizationConfig: VisualizationConfig;
     jobId: number | null;
+    isJobCompleted: boolean;
 
     // Actions
     setStep: (step: number) => void;
@@ -18,6 +19,7 @@ interface WizardState {
     setSelectedAlgorithms: (algorithms: AlgorithmConfig[]) => void;
     setVisualizationConfig: (config: VisualizationConfig) => void;
     setJobId: (id: number | null) => void;
+    setJobCompleted: (completed: boolean) => void;
     reset: () => void;
 }
 
@@ -33,6 +35,7 @@ export const useWizardStore = create<WizardState>()(
             selectedAlgorithms: [],
             visualizationConfig: DEFAULT_VISUALIZATION_CONFIG,
             jobId: null,
+            isJobCompleted: false,
 
             setStep: (step) => set({ currentStep: step }),
             setSourceType: (type) => set({ sourceType: type }),
@@ -40,6 +43,7 @@ export const useWizardStore = create<WizardState>()(
             setSelectedAlgorithms: (algorithms) => set({ selectedAlgorithms: algorithms }),
             setVisualizationConfig: (config) => set({ visualizationConfig: config }),
             setJobId: (id) => set({ jobId: id }),
+            setJobCompleted: (completed) => set({ isJobCompleted: completed }),
             reset: () =>
                 set({
                     currentStep: 0,
@@ -48,6 +52,7 @@ export const useWizardStore = create<WizardState>()(
                     selectedAlgorithms: [],
                     visualizationConfig: DEFAULT_VISUALIZATION_CONFIG,
                     jobId: null,
+                    isJobCompleted: false,
                 }),
         }),
         {
@@ -60,12 +65,14 @@ export const useWizardStore = create<WizardState>()(
                 selectedAlgorithms: state.selectedAlgorithms,
                 visualizationConfig: state.visualizationConfig,
                 jobId: state.jobId,
+                isJobCompleted: state.isJobCompleted,
                 setStep: state.setStep,
                 setSourceType: state.setSourceType,
                 setSourceFile: state.setSourceFile,
                 setSelectedAlgorithms: state.setSelectedAlgorithms,
                 setVisualizationConfig: state.setVisualizationConfig,
                 setJobId: state.setJobId,
+                setJobCompleted: state.setJobCompleted,
                 reset: state.reset,
             }),
         }

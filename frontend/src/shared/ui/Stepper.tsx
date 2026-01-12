@@ -13,16 +13,17 @@ export interface StepperProps {
   currentStep: number;
   className?: string;
   orientation?: 'horizontal' | 'vertical';
+  allCompleted?: boolean;
 }
 
-export function Stepper({ steps, currentStep, className, orientation = 'horizontal' }: StepperProps) {
+export function Stepper({ steps, currentStep, className, orientation = 'horizontal', allCompleted = false }: StepperProps) {
   if (orientation === 'vertical') {
     return (
       <div className={cn("flex flex-col gap-4", className)}>
         {steps.map((step, index) => {
-          const isActive = index === currentStep;
-          const isCompleted = index < currentStep;
-          const isUpcoming = index > currentStep;
+          const isActive = index === currentStep && !allCompleted;
+          const isCompleted = index < currentStep || allCompleted;
+          const isUpcoming = index > currentStep && !allCompleted;
 
           return (
             <div key={step.id} className="flex gap-4">
@@ -80,9 +81,9 @@ export function Stepper({ steps, currentStep, className, orientation = 'horizont
     <div className={cn("w-full", className)}>
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
-          const isActive = index === currentStep;
-          const isCompleted = index < currentStep;
-          const isUpcoming = index > currentStep;
+          const isActive = index === currentStep && !allCompleted;
+          const isCompleted = index < currentStep || allCompleted;
+          const isUpcoming = index > currentStep && !allCompleted;
 
           return (
             <React.Fragment key={step.id}>
