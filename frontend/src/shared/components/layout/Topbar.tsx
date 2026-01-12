@@ -7,6 +7,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Separator } from "@/shared/components/ui/separator";
 import { Sidebar } from './Sidebar';
+import { UserMenu } from "@/features/auth";
 import { cn } from "@/shared/lib/utils";
 
 // Map path segments to readable labels
@@ -105,6 +106,11 @@ export function Topbar() {
                         <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full" aria-label="New notifications" />
                         <span className="sr-only">Notifications</span>
                     </Button>
+                    
+                    <Separator orientation="vertical" className="h-6 mx-1" />
+                    
+                    {/* User Menu */}
+                    <UserMenu showName />
                 </div>
             </div>
         </header>

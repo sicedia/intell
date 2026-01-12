@@ -3086,3 +3086,158 @@ INFO 2026-01-09 19:40:32,252 views 22336 31368 Job 222 created successfully with
 INFO 2026-01-09 19:40:32,253 views 22336 36828 Job 221 created successfully with 1 image tasks
 WARNING 2026-01-12 08:31:04,172 runserver 35848 2508 [33mHTTP GET / 404 [0.07, 127.0.0.1:65134][0m
 WARNING 2026-01-12 08:31:04,801 runserver 35848 2508 [33mHTTP GET / 404 [0.02, 127.0.0.1:65134][0m
+WARNING 2026-01-12 09:26:35,480 runserver 25972 20428 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:59855][0m
+WARNING 2026-01-12 09:26:42,245 runserver 25972 20428 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:59855][0m
+WARNING 2026-01-12 09:32:10,981 runserver 25972 20428 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:64403][0m
+WARNING 2026-01-12 09:32:14,280 runserver 25972 20428 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:64403][0m
+WARNING 2026-01-12 09:32:51,282 runserver 25972 20428 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:54558][0m
+WARNING 2026-01-12 09:36:26,305 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.04, 127.0.0.1:63356][0m
+WARNING 2026-01-12 09:36:41,599 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:63356][0m
+WARNING 2026-01-12 09:37:40,193 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:64955][0m
+WARNING 2026-01-12 09:38:05,942 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:60463][0m
+WARNING 2026-01-12 09:38:07,321 views 37668 34904 Failed login attempt for username: admin
+WARNING 2026-01-12 09:38:07,325 runserver 37668 42932 [31;1mHTTP POST /api/auth/login/ 400 [1.38, 127.0.0.1:60463][0m
+WARNING 2026-01-12 09:39:29,151 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:62120][0m
+WARNING 2026-01-12 09:39:35,564 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:39:59,605 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:62120][0m
+WARNING 2026-01-12 09:39:59,684 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:40:14,503 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:40:45,622 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.05, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:40:45,625 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.05, 127.0.0.1:62120][0m
+WARNING 2026-01-12 09:40:46,859 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:62120][0m
+WARNING 2026-01-12 09:40:46,876 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:41:01,273 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:41:05,617 runserver 37668 42932 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:62120][0m
+WARNING 2026-01-12 09:41:58,699 views 37668 36180 Failed login attempt for username: admin
+WARNING 2026-01-12 09:41:58,704 runserver 37668 42932 [31;1mHTTP POST /api/auth/login/ 400 [1.38, 127.0.0.1:57241][0m
+WARNING 2026-01-12 09:45:19,381 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:57142][0m
+INFO 2026-01-12 09:46:31,507 views_microsoft 46832 36164 Microsoft OAuth2: initiating login flow
+WARNING 2026-01-12 09:46:37,880 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.05, 127.0.0.1:55470][0m
+WARNING 2026-01-12 09:46:39,818 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.05, 127.0.0.1:55470][0m
+WARNING 2026-01-12 09:46:50,835 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.06, 127.0.0.1:55470][0m
+WARNING 2026-01-12 09:46:52,422 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.04, 127.0.0.1:55470][0m
+INFO 2026-01-12 09:49:26,127 views 46832 23472 Job 223 created successfully with 1 image tasks
+INFO 2026-01-12 09:49:26,139 views 46832 25272 Job 224 created successfully with 1 image tasks
+WARNING 2026-01-12 09:49:34,920 runserver 46832 12904 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.02, 127.0.0.1:54337][0m
+WARNING 2026-01-12 10:03:19,115 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.05, 127.0.0.1:61785][0m
+WARNING 2026-01-12 10:03:19,877 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.07, 127.0.0.1:61785][0m
+WARNING 2026-01-12 10:03:35,431 runserver 46832 12904 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:61785][0m
+INFO 2026-01-12 10:03:36,526 views_microsoft 46832 13440 Microsoft OAuth2: initiating login flow
+WARNING 2026-01-12 10:04:05,871 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.10, 127.0.0.1:54945][0m
+WARNING 2026-01-12 10:04:07,162 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.06, 127.0.0.1:54945][0m
+WARNING 2026-01-12 10:04:15,871 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:54945][0m
+INFO 2026-01-12 10:04:16,900 views_microsoft 57840 12440 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:04:20,377 microsoft 57840 7752 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:04:20,396 views_microsoft 57840 7752 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:06:26,001 views 57840 11832 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:06:26,025 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:53138][0m
+INFO 2026-01-12 10:06:33,910 views_microsoft 57840 19088 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:06:37,652 microsoft 57840 34152 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:06:37,672 views_microsoft 57840 34152 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+WARNING 2026-01-12 10:08:31,561 runserver 57840 44564 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:62777][0m
+INFO 2026-01-12 10:11:01,507 views 57840 51956 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:11:01,528 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:53168][0m
+WARNING 2026-01-12 10:12:42,001 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:58868][0m
+INFO 2026-01-12 10:13:12,134 views_microsoft 57840 20676 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:13:15,614 microsoft 57840 49000 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:13:15,630 views_microsoft 57840 49000 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:14:40,976 views 57840 16136 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:14:41,013 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:58868][0m
+WARNING 2026-01-12 10:14:44,592 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:58868][0m
+INFO 2026-01-12 10:14:47,962 views_microsoft 57840 32412 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:14:50,948 microsoft 57840 27296 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:14:50,968 views_microsoft 57840 27296 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:15:39,583 views 57840 45448 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:15:39,603 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:58868][0m
+INFO 2026-01-12 10:15:41,220 views_microsoft 57840 15040 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:15:43,994 microsoft 57840 46664 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:15:44,011 views_microsoft 57840 46664 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:16:10,036 views 57840 13304 Job 225 created successfully with 2 image tasks
+ERROR 2026-01-12 10:16:10,043 views 57840 38400 Unexpected error during job creation
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "unique_job_idempotency_scoped"
+DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768230969372_pg0eytxbj) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 236, in create
+    job = Job.objects.create(
+        dataset=main_dataset,
+    ...<3 lines>...
+        status=Job.Status.PENDING
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.IntegrityError: duplicate key value violates unique constraint "unique_job_idempotency_scoped"
+DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768230969372_pg0eytxbj) already exists.
+
+ERROR 2026-01-12 10:16:10,087 log 57840 20568 Internal Server Error: /api/jobs/
+ERROR 2026-01-12 10:16:10,088 runserver 57840 44564 [35;1mHTTP POST /api/jobs/ 500 [0.40, 127.0.0.1:65261][0m

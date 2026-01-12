@@ -62,6 +62,13 @@ CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=boo
 # Remove this in production!
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 
+# CSRF Configuration for cross-origin requests in development
+# Required because frontend (localhost:3000) and backend (localhost:8000) are different origins
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+
 # Django REST Framework - enable browsable API and AllowAny in development
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,

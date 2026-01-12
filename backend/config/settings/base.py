@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'channels',
     # Local apps
     'apps.core',
+    'apps.authentication',
     'apps.ingestion',
     'apps.datasets',
     'apps.algorithms',
@@ -113,7 +114,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],  # Override in environment-specific settings
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # Custom SessionAuthentication that only enforces CSRF on mutating methods
+        # This fixes 403 errors on GET requests when CSRF token isn't fetched yet
+        'apps.authentication.authentication.CsrfExemptSessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -133,6 +136,22 @@ REST_FRAMEWORK = {
 # These are base settings - environment-specific files will override CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
 CORS_ALLOW_ALL_ORIGINS = False  # Never allow all origins in production
+
+# CSRF Configuration
+# Session cookie is HttpOnly by default in Django (SESSION_COOKIE_HTTPONLY = True)
+# CSRF cookie must be readable by JavaScript to send X-CSRFToken header
+CSRF_COOKIE_HTTPONLY = False  # Allow JS to read csrftoken cookie
+CSRF_COOKIE_SAMESITE = 'Lax'  # Works for same-site and cross-site with credentials
+
+# Microsoft OAuth2 Configuration (Azure AD / Entra ID)
+# These must be set in environment variables
+MICROSOFT_CLIENT_ID = config('MICROSOFT_CLIENT_ID', default='')
+MICROSOFT_CLIENT_SECRET = config('MICROSOFT_CLIENT_SECRET', default='')
+MICROSOFT_TENANT_ID = config('MICROSOFT_TENANT_ID', default='common')  # 'common' for multi-tenant
+MICROSOFT_REDIRECT_URI = config('MICROSOFT_REDIRECT_URI', default='http://localhost:8000/api/auth/microsoft/callback/')
+MICROSOFT_LOGIN_REDIRECT_URL = config('MICROSOFT_LOGIN_REDIRECT_URL', default='http://localhost:3000/en/dashboard')
+MICROSOFT_LOGIN_ERROR_URL = config('MICROSOFT_LOGIN_ERROR_URL', default='http://localhost:3000/en/login')
+MICROSOFT_SCOPES = ['openid', 'profile', 'email', 'User.Read']
 
 # Logging configuration
 LOGGING = {

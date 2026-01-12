@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useWizardStore } from "../stores/useWizardStore";
 import { createJob, cancelJob } from "../api/jobs";
 
@@ -28,16 +28,27 @@ export function useJobCreation(): UseJobCreationReturn {
     const [isCreating, setIsCreating] = useState(false);
     const [hasStarted, setHasStarted] = useState(false);
 
-    // Generate idempotency key once
-    const [idempotencyKey] = useState(() =>
+    // Ref to prevent double submissions (React Strict Mode, race conditions)
+    const isSubmittingRef = useRef(false);
+
+    // Generate idempotency key - regenerate on retry
+    const [idempotencyKey, setIdempotencyKey] = useState(() =>
         `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     );
+
+    const generateNewIdempotencyKey = useCallback(() => {
+        setIdempotencyKey(`job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+    }, []);
 
     // Auto-start job creation when component mounts and conditions are met
     useEffect(() => {
         const startJob = async () => {
             // If we already have a job ID, or are currently creating, or missing file, or already attempted
             if (jobId || isCreating || !sourceFile || hasStarted) return;
+
+            // Prevent double submissions using ref (persists across renders)
+            if (isSubmittingRef.current) return;
+            isSubmittingRef.current = true;
 
             try {
                 setIsCreating(true);
@@ -62,6 +73,7 @@ export function useJobCreation(): UseJobCreationReturn {
                 // Don't reset hasStarted so it doesn't retry automatically
             } finally {
                 setIsCreating(false);
+                isSubmittingRef.current = false;
             }
         };
 
@@ -69,9 +81,10 @@ export function useJobCreation(): UseJobCreationReturn {
     }, [jobId, isCreating, sourceFile, sourceType, selectedAlgorithms, visualizationConfig, idempotencyKey, setJobId, hasStarted]);
 
     const handleRetry = useCallback(() => {
+        generateNewIdempotencyKey(); // Generate new key for retry
         setHasStarted(false);
         setCreateError(null);
-    }, []);
+    }, [generateNewIdempotencyKey]);
 
     const handleCancel = useCallback(async () => {
         if (!jobId) return;

@@ -1,4 +1,5 @@
 import { env } from "./env";
+import { getCsrfToken } from "./csrf";
 
 // ============================================================================
 // Error Types - Jerarquía de errores tipados
@@ -119,6 +120,14 @@ const UPLOAD_TIMEOUT = 60000; // 60s para uploads
 // Fetch JSON - Pipeline simple sin interceptores complejos
 // ============================================================================
 
+/**
+ * Check if method is mutating (requires CSRF token)
+ */
+function isMutatingMethod(method: string | undefined): boolean {
+  const mutatingMethods = ["POST", "PUT", "PATCH", "DELETE"];
+  return mutatingMethods.includes(method?.toUpperCase() ?? "");
+}
+
 async function fetchJSON<T>(
   endpoint: string,
   options?: RequestInit & { timeout?: number }
@@ -130,14 +139,26 @@ async function fetchJSON<T>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+  // Build headers with CSRF token for mutating methods
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    ...options?.headers,
+  };
+
+  // Add CSRF token for mutating requests
+  if (isMutatingMethod(options?.method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      (headers as Record<string, string>)["X-CSRFToken"] = csrfToken;
+    }
+  }
+
   try {
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
+      credentials: "include", // Send cookies (sessionid, csrftoken)
+      headers,
     });
 
     clearTimeout(timeoutId);

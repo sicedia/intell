@@ -5,6 +5,7 @@ import {
     CancelledError,
     UPLOAD_TIMEOUT 
 } from "@/shared/lib/api-client";
+import { getCsrfToken } from "@/shared/lib/csrf";
 import { Job, BackendJob, transformJob } from "../constants/job";
 import { env } from "@/shared/lib/env";
 import { createLogger } from "@/shared/lib/logger";
@@ -30,11 +31,20 @@ export const createJob = async (formData: FormData): Promise<{ job_id: number; s
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT);
 
+    // Get CSRF token for POST request
+    const csrfToken = getCsrfToken();
+    const headers: HeadersInit = {};
+    if (csrfToken) {
+        headers["X-CSRFToken"] = csrfToken;
+    }
+
     try {
         const response = await fetch(fullUrl, {
             method: "POST",
             body: formData,
             signal: controller.signal,
+            credentials: "include", // Send cookies (sessionid, csrftoken)
+            headers,
         });
 
         clearTimeout(timeoutId);
@@ -137,7 +147,9 @@ export const downloadJobZip = async (
     // Use 'image_format' param (not 'format' to avoid conflict with DRF's format negotiation)
     const url = `${apiUrl}${BASE_URL}/${jobId}/download-zip/?image_format=${format}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        credentials: "include", // Send cookies for authenticated downloads
+    });
 
     if (!response.ok) {
         let errorMessage = `Download failed: ${response.statusText}`;
