@@ -1222,7 +1222,7 @@ class ImageGroupViewSet(viewsets.ModelViewSet):
 
 @extend_schema(
     summary='Dashboard statistics',
-    description='Get dashboard statistics including total images, published images, jobs count, and success rate.',
+    description='Get dashboard statistics including total images, published images, AI described images, and active users.',
     tags=['Dashboard'],
     responses={
         200: inline_serializer(
@@ -1230,9 +1230,8 @@ class ImageGroupViewSet(viewsets.ModelViewSet):
             fields={
                 'total_images': serializers.IntegerField(help_text='Total number of successfully generated images'),
                 'total_published_images': serializers.IntegerField(help_text='Total number of published images'),
-                'total_jobs': serializers.IntegerField(help_text='Total number of jobs'),
-                'successful_jobs': serializers.IntegerField(help_text='Number of successful jobs'),
-                'success_rate': serializers.FloatField(help_text='Success rate percentage (0-100)'),
+                'total_ai_described_images': serializers.IntegerField(help_text='Total number of images with AI-generated descriptions'),
+                'total_active_users_this_month': serializers.IntegerField(help_text='Number of unique users who created content this month'),
                 'images_this_month': serializers.IntegerField(help_text='Images generated this month'),
                 'published_this_month': serializers.IntegerField(help_text='Published images this month'),
             },
@@ -1244,7 +1243,10 @@ def dashboard_stats(request):
     """Get dashboard statistics."""
     from django.db.models import Count, Q
     from django.utils import timezone
+    from django.contrib.auth import get_user_model
     from datetime import timedelta
+    
+    User = get_user_model()
     
     # Get current month start
     now = timezone.now()
@@ -1259,16 +1261,28 @@ def dashboard_stats(request):
         status=ImageTask.Status.SUCCESS
     ).count()
     
-    # Total jobs
-    total_jobs = Job.objects.count()
-    
-    # Successful jobs
-    successful_jobs = Job.objects.filter(
-        status__in=[Job.Status.SUCCESS, Job.Status.PARTIAL_SUCCESS]
+    # Total images described by AI (images with user_description, which indicates AI description was generated)
+    total_ai_described_images = ImageTask.objects.filter(
+        user_description__isnull=False,
+        user_description__gt=''  # Exclude empty strings
     ).count()
     
-    # Success rate
-    success_rate = (successful_jobs / total_jobs * 100) if total_jobs > 0 else 0.0
+    # Total active users this month (users who created jobs or image tasks this month)
+    # Get unique users from both Job and ImageTask created this month using union
+    from django.db.models import Q
+    job_user_ids = Job.objects.filter(
+        created_at__gte=month_start,
+        created_by__isnull=False
+    ).values_list('created_by', flat=True).distinct()
+    
+    image_task_user_ids = ImageTask.objects.filter(
+        created_at__gte=month_start,
+        created_by__isnull=False
+    ).values_list('created_by', flat=True).distinct()
+    
+    # Combine and get unique count (using set union for efficiency)
+    all_active_user_ids = set(job_user_ids) | set(image_task_user_ids)
+    total_active_users_this_month = len(all_active_user_ids)
     
     # Images this month
     images_this_month = ImageTask.objects.filter(
@@ -1286,9 +1300,8 @@ def dashboard_stats(request):
     return Response({
         'total_images': total_images,
         'total_published_images': total_published_images,
-        'total_jobs': total_jobs,
-        'successful_jobs': successful_jobs,
-        'success_rate': round(success_rate, 1),
+        'total_ai_described_images': total_ai_described_images,
+        'total_active_users_this_month': total_active_users_this_month,
         'images_this_month': images_this_month,
         'published_this_month': published_this_month,
     })

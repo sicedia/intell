@@ -75,14 +75,18 @@ export function AIDescriptionDialog({
   // Update editable description when task completes
   useEffect(() => {
     if (descriptionTask?.status === "SUCCESS" && descriptionTask.result_text) {
-      setEditableDescription(descriptionTask.result_text);
-      setViewMode("result"); // Switch to result view when description is ready
+      // Update description if result_text is available
+      const resultText = descriptionTask.result_text.trim();
+      if (resultText) {
+        setEditableDescription(resultText);
+        setViewMode("result"); // Switch to result view when description is ready
+      }
       // Store the context that was used for this generation
       if (userContext.trim() && !originalContext) {
         setOriginalContext(userContext.trim());
       }
     }
-  }, [descriptionTask, userContext, originalContext]);
+  }, [descriptionTask?.status, descriptionTask?.result_text, userContext, originalContext]);
 
   const handleGenerate = () => {
     // Store original context on first generation
@@ -109,7 +113,10 @@ export function AIDescriptionDialog({
   const handleRefineContext = () => {
     setIsRefiningContext(true);
     setViewMode("input");
-    // Keep current context for editing
+    // Restore original context for editing if available
+    if (originalContext) {
+      setUserContext(originalContext);
+    }
   };
 
   const handleRefineAndRegenerate = () => {
@@ -132,12 +139,13 @@ export function AIDescriptionDialog({
   };
 
   const handleSave = async () => {
-    if (!editableDescription.trim()) return;
+    const descriptionToSave = displayDescription || editableDescription;
+    if (!descriptionToSave.trim()) return;
 
     try {
       await updateImage.mutateAsync({
         imageId: image.id,
-        data: { user_description: editableDescription.trim() },
+        data: { user_description: descriptionToSave.trim() },
       });
       onDescriptionSaved?.();
       onOpenChange(false);
@@ -147,8 +155,13 @@ export function AIDescriptionDialog({
   };
 
   const contextLength = userContext.length;
-  const hasDescription = descriptionTask?.status === "SUCCESS" && editableDescription;
+  // Check if we have a description (either from task result or already saved)
+  const hasDescription = (descriptionTask?.status === "SUCCESS" && descriptionTask.result_text) || 
+                         (editableDescription && editableDescription.trim().length > 0);
   const canRegenerate = hasDescription && !isGenerating;
+  
+  // Use result_text directly if available, otherwise use editableDescription
+  const displayDescription = descriptionTask?.result_text || editableDescription;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -166,7 +179,7 @@ export function AIDescriptionDialog({
 
         <div className="space-y-6 py-4">
           {/* Input Mode: Context and Provider Selection */}
-          {(viewMode === "input" || !hasDescription) && (
+          {(viewMode === "input" || isRefiningContext) && (
             <>
               {/* Context Input */}
               <div className="space-y-2">
@@ -235,7 +248,9 @@ export function AIDescriptionDialog({
                     variant="outline"
                     onClick={() => {
                       setIsRefiningContext(false);
-                      setViewMode("result");
+                      if (hasDescription) {
+                        setViewMode("result");
+                      }
                     }}
                     disabled={isGenerating}
                   >
@@ -290,7 +305,7 @@ export function AIDescriptionDialog({
           )}
 
           {/* Result Mode: Show Generated Description */}
-          {viewMode === "result" && hasDescription && (
+          {hasDescription && !isRefiningContext && (
             <>
               <Card>
                 <CardContent className="pt-6">
@@ -322,17 +337,18 @@ export function AIDescriptionDialog({
                     </div>
                     <Textarea
                       id="description"
-                      value={editableDescription}
+                      value={displayDescription || ""}
                       onChange={(e) => setEditableDescription(e.target.value)}
                       rows={12}
                       className="resize-none font-mono text-sm"
+                      placeholder="La descripción se está cargando..."
                     />
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        Generado con {descriptionTask.provider_used || "proveedor automático"} (
-                        {descriptionTask.model_used || "modelo desconocido"})
+                        Generado con {descriptionTask?.provider_used || "proveedor automático"} (
+                        {descriptionTask?.model_used || "modelo desconocido"})
                       </span>
-                      <span>{editableDescription.length} caracteres</span>
+                      <span>{displayDescription.length} caracteres</span>
                     </div>
                   </div>
                 </CardContent>
@@ -358,7 +374,7 @@ export function AIDescriptionDialog({
                 </Button>
                 <Button
                   onClick={handleSave}
-                  disabled={updateImage.isPending || !editableDescription.trim()}
+                  disabled={updateImage.isPending || !displayDescription.trim()}
                   className="flex-1"
                 >
                   {updateImage.isPending ? (
@@ -382,8 +398,8 @@ export function AIDescriptionDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {hasDescription ? "Cerrar" : "Cancelar"}
           </Button>
-          {hasDescription && viewMode === "result" && (
-            <Button onClick={handleSave} disabled={updateImage.isPending || !editableDescription.trim()}>
+          {hasDescription && (
+            <Button onClick={handleSave} disabled={updateImage.isPending || !displayDescription?.trim()}>
               {updateImage.isPending ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />

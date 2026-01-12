@@ -62,27 +62,18 @@ export default function DashboardPage() {
           variant="success"
         />
         <StatsCard
-          title="Total Jobs"
-          value={statsLoading ? "..." : stats?.total_jobs ?? 0}
-          description={`${stats?.successful_jobs ?? 0} successful`}
+          title="Active Users This Month"
+          value={statsLoading ? "..." : stats?.total_active_users_this_month ?? 0}
+          description="Users who created content this month"
           icon={Sparkles}
           variant="default"
         />
         <StatsCard
-          title="Success Rate"
-          value={statsLoading ? "..." : `${stats?.success_rate ?? 0}%`}
+          title="AI Described Images"
+          value={statsLoading ? "..." : stats?.total_ai_described_images ?? 0}
           description={`${stats?.images_this_month ?? 0} images this month`}
           icon={TrendingUp}
-          variant={stats && stats.success_rate >= 80 ? "success" : "warning"}
-          trend={
-            stats && stats.success_rate > 0
-              ? {
-                  value: stats.success_rate,
-                  isPositive: stats.success_rate >= 80,
-                  label: "success rate",
-                }
-              : undefined
-          }
+          variant="primary"
         />
       </div>
 

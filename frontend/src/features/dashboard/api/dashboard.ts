@@ -7,9 +7,8 @@ import { ImageLibraryItem } from "@/features/images/types";
 export interface DashboardStats {
   total_images: number;
   total_published_images: number;
-  total_jobs: number;
-  successful_jobs: number;
-  success_rate: number;
+  total_ai_described_images: number;
+  total_active_users_this_month: number;
   images_this_month: number;
   published_this_month: number;
 }
