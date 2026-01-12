@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { GalleryGrid } from "@/shared/ui/GalleryGrid";
@@ -16,11 +16,41 @@ import { Button } from "@/shared/components/ui/button";
 import { LoadingState } from "@/shared/ui/LoadingState";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { useMemo } from "react";
+import { useImageLibraryViewMode } from "@/features/images/hooks/useImageLibraryViewMode";
 
 export default function ImagesPage() {
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState<ImageFilters>({});
+  const { viewMode: libraryViewMode, setViewMode: setLibraryViewMode } = useImageLibraryViewMode();
+  const [filters, setFilters] = useState<ImageFilters>(() => {
+    // Initialize filters based on localStorage view mode after hydration
+    // This will be updated by the useEffect below
+    return {};
+  });
+
+  // Sync filters.group_by with libraryViewMode whenever it changes
+  // This handles both initial load from localStorage and manual changes
+  useEffect(() => {
+    const expectedGroupBy = libraryViewMode === "grouped" ? "job" : undefined;
+    setFilters((prev) => {
+      // Only update if the value actually changed to avoid unnecessary re-renders
+      if (prev.group_by !== expectedGroupBy) {
+        return { ...prev, group_by: expectedGroupBy };
+      }
+      return prev;
+    });
+  }, [libraryViewMode]);
+
+  // Handler to update both libraryViewMode and filters immediately
+  // Using useCallback to avoid recreating the function on each render
+  const handleLibraryViewModeChange = useCallback((mode: "all" | "grouped") => {
+    setLibraryViewMode(mode);
+    // Immediately update filters to avoid delay
+    const expectedGroupBy = mode === "grouped" ? "job" : undefined;
+    setFilters((prev) => ({
+      ...prev,
+      group_by: expectedGroupBy,
+    }));
+  }, [setLibraryViewMode]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
@@ -29,52 +59,54 @@ export default function ImagesPage() {
 
   const { data: images, isLoading, error } = useImages(filters, true);
 
-  const handleViewImage = (imageId: number) => {
+  // Memoize handlers to avoid recreating them on each render
+  const handleViewImage = useCallback((imageId: number) => {
     setSelectedImageId(imageId);
     setIsDetailDialogOpen(true);
-  };
+  }, []);
 
-  const handleEditImage = (imageId: number) => {
+  const handleEditImage = useCallback((imageId: number) => {
     setSelectedImageId(imageId);
     setIsDetailDialogOpen(true);
-  };
+  }, []);
 
-  const handleGenerateDescription = (image: ImageLibraryItem | ImageTask) => {
+  // Helper function to convert ImageLibraryItem to ImageTask
+  const convertLibraryItemToTask = useCallback((image: ImageLibraryItem): ImageTask => {
+    return {
+      id: image.id,
+      job: image.job_id,
+      algorithm_key: image.algorithm_key,
+      algorithm_version: "1.0",
+      params: {},
+      output_format: "both",
+      status: image.status,
+      progress: 100,
+      artifact_png_url: image.artifact_png_url,
+      artifact_svg_url: image.artifact_svg_url,
+      chart_data: null,
+      error_code: null,
+      error_message: null,
+      trace_id: null,
+      title: image.title,
+      user_description: image.user_description,
+      group: image.group,
+      tags: image.tags.map((t) => t.id),
+      is_published: image.is_published,
+      published_at: image.published_at,
+      created_at: image.created_at,
+      updated_at: image.updated_at,
+    };
+  }, []);
+
+  const handleGenerateDescription = useCallback((image: ImageLibraryItem | ImageTask) => {
     // Convert ImageLibraryItem to ImageTask format if needed
-    if ("job_id" in image) {
-      // It's ImageLibraryItem, need to fetch full ImageTask
-      // For now, create a minimal ImageTask from ImageLibraryItem
-      const imageTask: ImageTask = {
-        id: image.id,
-        job: image.job_id,
-        algorithm_key: image.algorithm_key,
-        algorithm_version: "1.0",
-        params: {},
-        output_format: "both",
-        status: image.status,
-        progress: 100,
-        artifact_png_url: image.artifact_png_url,
-        artifact_svg_url: image.artifact_svg_url,
-        chart_data: null,
-        error_code: null,
-        error_message: null,
-        trace_id: null,
-        title: image.title,
-        user_description: image.user_description,
-        group: image.group,
-        tags: image.tags.map((t) => t.id),
-        is_published: image.is_published,
-        published_at: image.published_at,
-        created_at: image.created_at,
-        updated_at: image.updated_at,
-      };
-      setAiImage(imageTask);
-    } else {
-      // It's already ImageTask
-      setAiImage(image);
-    }
+    const imageTask: ImageTask = "job_id" in image 
+      ? convertLibraryItemToTask(image as ImageLibraryItem)
+      : (image as ImageTask);
+    
+    setAiImage(imageTask);
     setIsAIDialogOpen(true);
-  };
+  }, [convertLibraryItemToTask]);
 
   const imagesList = (images as ImageLibraryItem[]) || [];
   const isGrouped = filters.group_by === "job";
@@ -128,11 +160,13 @@ export default function ImagesPage() {
         onFiltersChange={setFilters}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        libraryViewMode={libraryViewMode}
+        onLibraryViewModeChange={handleLibraryViewModeChange}
       />
 
       {/* Content */}
       {isLoading ? (
-        <LoadingState variant="skeleton" itemCount={8} />
+        <LoadingState variant="skeleton" />
       ) : error ? (
         <EmptyState
           title="Error al cargar imágenes"

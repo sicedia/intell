@@ -1,8 +1,11 @@
 """
 Helper functions for jobs app.
 """
+import logging
 from django.utils import timezone
 from .models import Job, Tag, ImageTask
+
+logger = logging.getLogger(__name__)
 
 
 def get_or_create_date_tag_for_job(job: Job) -> Tag:
@@ -25,8 +28,7 @@ def get_or_create_date_tag_for_job(job: Job) -> Tag:
         try:
             job.refresh_from_db(fields=['created_at', 'created_by'])
         except Exception:
-            # If refresh fails, try to get created_at from the database directly
-            from django.utils import timezone
+            # If refresh fails, use current time as fallback
             job.created_at = timezone.now()
     
     # Format: YYYY-MM-DD based on Job creation date
@@ -73,8 +75,6 @@ def assign_date_tag_to_image_task(image_task: ImageTask) -> None:
         if not job:
             return
     except Job.DoesNotExist:
-        import logging
-        logger = logging.getLogger(__name__)
         logger.warning(
             f'Job {image_task.job_id} does not exist for ImageTask {image_task.id}',
             extra={'image_task_id': image_task.id, 'job_id': image_task.job_id}
@@ -89,8 +89,6 @@ def assign_date_tag_to_image_task(image_task: ImageTask) -> None:
         image_task.tags.add(tag)
     except Exception as e:
         # Log but don't raise - tag assignment failure shouldn't break publishing
-        import logging
-        logger = logging.getLogger(__name__)
         logger.warning(
             f'Failed to assign date tag to ImageTask {image_task.id}: {str(e)}',
             exc_info=True,
@@ -116,8 +114,6 @@ def ensure_date_tag_on_publish(image_task: ImageTask) -> None:
         assign_date_tag_to_image_task(image_task)
     except Exception as e:
         # Log but don't raise - tag assignment failure shouldn't break publishing
-        import logging
-        logger = logging.getLogger(__name__)
         logger.error(
             f'Failed to ensure date tag on publish for ImageTask {image_task.id}: {str(e)}',
             exc_info=True,

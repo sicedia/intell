@@ -898,9 +898,17 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
         publish = request.data.get('publish', True)
         
         try:
+            with transaction.atomic():
+                if publish:
+                    image_task.publish()
+                    message = 'Imagen publicada exitosamente en la librería'
+                else:
+                    image_task.unpublish()
+                    message = 'Imagen despublicada (convertida a borrador)'
+            
+            # Ensure date tag is assigned when publishing (outside transaction to avoid blocking)
+            # This is done after the transaction commits to avoid blocking the publish operation
             if publish:
-                image_task.publish()
-                # Ensure date tag is assigned when publishing
                 # Re-fetch with job relationship to ensure it's loaded after save
                 image_task = ImageTask.objects.select_related('job').get(pk=image_task.pk)
                 # Try to assign tag, but don't fail if it doesn't work
@@ -912,10 +920,6 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
                         f'Failed to assign date tag during publish for ImageTask {image_task.id}: {str(tag_error)}',
                         extra={'image_task_id': image_task.id}
                     )
-                message = 'Imagen publicada exitosamente en la librería'
-            else:
-                image_task.unpublish()
-                message = 'Imagen despublicada (convertida a borrador)'
             
             # Refresh from DB to get latest state (including published_at)
             image_task.refresh_from_db()

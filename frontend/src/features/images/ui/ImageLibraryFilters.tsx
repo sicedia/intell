@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/shared/components/ui/input";
 import {
   Select,
@@ -23,6 +23,8 @@ interface ImageLibraryFiltersProps {
   onFiltersChange: (filters: ImageFilters) => void;
   viewMode?: "grid" | "list";
   onViewModeChange?: (mode: "grid" | "list") => void;
+  libraryViewMode?: "all" | "grouped";
+  onLibraryViewModeChange?: (mode: "all" | "grouped") => void;
   className?: string;
 }
 
@@ -31,38 +33,48 @@ export function ImageLibraryFilters({
   onFiltersChange,
   viewMode = "grid",
   onViewModeChange,
+  libraryViewMode: externalLibraryViewMode,
+  onLibraryViewModeChange,
   className,
 }: ImageLibraryFiltersProps) {
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const { data: tags = [], isLoading: tagsLoading } = useTags();
   const { data: groups = [], isLoading: groupsLoading } = useGroups();
-  const { viewMode: libraryViewMode, setViewMode: setLibraryViewMode } = useImageLibraryViewMode();
+  
+  // Use external libraryViewMode if provided (from parent), otherwise use hook
+  const { viewMode: internalLibraryViewMode, setViewMode: setInternalLibraryViewMode } = useImageLibraryViewMode();
+  const libraryViewMode = externalLibraryViewMode ?? internalLibraryViewMode;
+  
+  const handleLibraryViewModeChange = useCallback((mode: "all" | "grouped") => {
+    if (onLibraryViewModeChange) {
+      // Use external handler if provided (for immediate sync)
+      onLibraryViewModeChange(mode);
+    } else {
+      // Fallback to internal hook
+      setInternalLibraryViewMode(mode);
+    }
+  }, [onLibraryViewModeChange, setInternalLibraryViewMode]);
 
-  // Debounce search
+  // Debounce search - use ref to avoid stale closure issues
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      onFiltersChange({ ...filters, search: searchValue || undefined });
+      onFiltersChange({ ...filtersRef.current, search: searchValue || undefined });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchValue]);
+  }, [searchValue, onFiltersChange]);
 
-  // Sync library view mode with filters
-  useEffect(() => {
-    onFiltersChange({
-      ...filters,
-      group_by: libraryViewMode === "grouped" ? "job" : undefined,
-    });
-  }, [libraryViewMode]);
+  const handleFilterChange = useCallback((key: keyof ImageFilters, value: string | number[] | undefined) => {
+    onFiltersChange({ ...filtersRef.current, [key]: value });
+  }, [onFiltersChange]);
 
-  const handleFilterChange = (key: keyof ImageFilters, value: string | number[] | undefined) => {
-    onFiltersChange({ ...filters, [key]: value });
-  };
-
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchValue("");
     onFiltersChange({});
-  };
+  }, [onFiltersChange]);
 
   const hasActiveFilters =
     filters.status || filters.tags?.length || filters.group || filters.search || filters.date_from || filters.date_to;
@@ -107,7 +119,7 @@ export function ImageLibraryFilters({
                 <Button
                   variant={libraryViewMode === "all" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setLibraryViewMode("all")}
+                  onClick={() => handleLibraryViewModeChange("all")}
                   className="h-8"
                 >
                   <LayoutGrid className="h-3 w-3 mr-1" />
@@ -116,7 +128,7 @@ export function ImageLibraryFilters({
                 <Button
                   variant={libraryViewMode === "grouped" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setLibraryViewMode("grouped")}
+                  onClick={() => handleLibraryViewModeChange("grouped")}
                   className="h-8"
                 >
                   <Layers className="h-3 w-3 mr-1" />

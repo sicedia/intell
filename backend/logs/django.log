@@ -24983,3 +24983,4 @@ ERROR 2026-01-12 13:57:17,838 log 56504 47780 Internal Server Error: /api/image-
 ERROR 2026-01-12 13:57:17,839 runserver 56504 4232 [35;1mHTTP POST /api/image-tasks/1132/publish/ 500 [0.05, 127.0.0.1:56115][0m
 WARNING 2026-01-12 13:59:52,355 views 29548 18460 Failed to assign date tag during publish for ImageTask 1134: name 'ensure_date_tag_on_publish' is not defined
 INFO 2026-01-12 14:02:35,708 views 45832 53424 Job 245 created successfully with 1 image tasks
+INFO 2026-01-12 14:04:02,527 views 45832 42772 Job 246 created successfully with 1 image tasks

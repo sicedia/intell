@@ -4,6 +4,7 @@ Job models - orchestration of chart generation and AI description tasks.
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -248,7 +249,6 @@ class ImageTask(models.Model):
     
     def publish(self):
         """Publish the image to the library."""
-        from django.utils import timezone
         if not self.is_published:
             self.is_published = True
             self.published_at = timezone.now()
