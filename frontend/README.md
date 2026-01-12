@@ -452,10 +452,16 @@ Private - Intell.AI Project
 
 ## Design & UX Patterns
 
+### Design System (`src/shared/design-system/`)
+- **tokens.ts**: Central design tokens (colors, typography, spacing, shadows)
+- **patterns.ts**: Documented UI/UX patterns with code examples
+
 ### Tokens & Styles
 - **Breakpoints**: Desktop-first optimizations (max-w-7xl)
 - **Colors**: Defined in `globals.css` (HSL variables) + Tailwind config
 - **Spacing**: Standard layout padding `p-4 md:p-6`
+- **Terminal colors**: Dedicated palette for log displays (slate-950 bg, colored levels)
+- **Status colors**: Consistent border/bg tints for running/success/failed states
 
 ### Shared Components (`src/shared/ui/`)
 - `PageHeader`: Standard top-of-page header.
@@ -464,6 +470,53 @@ Private - Intell.AI Project
 - `ProgressPanel`: Progress bar with step info.
 - `EventTimeline`: Vertical list of logs/events.
 - `GalleryGrid`: Responsive grid for image cards.
+- `Stepper`: Multi-step wizard indicator with completion state.
+
+### Feature Components (`src/features/generation/ui/`)
+- `ActivityLog`: Collapsible terminal-style event log.
+- `JobProgress`: Progress card with task summary badges.
+- `JobResults`: Generated images with actions.
+
+### UI/UX Patterns (see `design-system/patterns.ts`)
+
+#### Progressive Disclosure
+Order content by priority:
+1. **Primary**: Always visible (status, progress, results)
+2. **Secondary**: Visible but de-emphasized (task details)
+3. **Tertiary**: Collapsed by default (logs, debug info)
+
+#### Collapsible Sections
+For secondary information users may want to see:
+- Default: collapsed
+- Full-width clickable toggle
+- ChevronRight/ChevronDown icons
+- "Click to expand/collapse" hint
+
+#### Status Headers
+For page/section headers with status:
+- Icon in colored circle
+- Title with tracking-tight
+- Status badges inline
+- Action buttons aligned right
+
+#### Task Items
+List items with status indication:
+- Border color changes by status
+- Background tint by status
+- Progress bar only when running
+
+#### Terminal Log
+For event/log output:
+- Dark background (slate-950)
+- Monospace font, small text
+- Colored levels (ERROR=red, WARNING=amber, INFO=blue)
+- Auto-scroll with manual override
+
+#### Badge Variants
+- `default`: Success, completed
+- `secondary`: Neutral, in-progress, counts
+- `destructive`: Errors, failures
+- `outline`: Supplementary info
 
 ### App Shell
 Responsive sidebar + topbar layout using `AppShell` component.

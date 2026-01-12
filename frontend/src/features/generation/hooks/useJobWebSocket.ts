@@ -7,8 +7,7 @@ import { transformJobEvent } from "../constants/job";
 
 interface UseJobWebSocketOptions {
     jobId: number | null;
-    jobRef: React.MutableRefObject<Job | undefined>;
-    refetchJob: () => void;
+    onJobUpdate?: (job: Job) => void;
     onEvent?: (event: JobEvent) => void;
 }
 
@@ -19,29 +18,12 @@ interface UseJobWebSocketReturn {
 }
 
 /**
- * Throttle function specifically for Job updates
- */
-function throttleJobUpdate(
-    func: (updatedJob: Job) => void,
-    delay: number
-): (updatedJob: Job) => void {
-    let lastCall = 0;
-    return (updatedJob: Job) => {
-        const now = Date.now();
-        if (now - lastCall >= delay) {
-            lastCall = now;
-            func(updatedJob);
-        }
-    };
-}
-
-/**
  * Hook to manage WebSocket connection for job progress updates
+ * Simplified: focuses only on receiving events and updating React Query cache
  */
 export function useJobWebSocket({
     jobId,
-    jobRef,
-    refetchJob,
+    onJobUpdate,
     onEvent,
 }: UseJobWebSocketOptions): UseJobWebSocketReturn {
     const [events, setEvents] = useState<JobEvent[]>([]);
@@ -53,218 +35,210 @@ export function useJobWebSocket({
     const wsRef = useRef<WSClient | null>(null);
     const connectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Throttled update function to prevent excessive re-renders
-    // Use useRef to store the throttled function and recreate when dependencies change
-    const throttledUpdateCacheRef = useRef<((updatedJob: Job) => void) | null>(null);
-    
-    useEffect(() => {
-        const updateCache = (updatedJob: Job) => {
-            queryClient.setQueryData(["job", jobId, "initial"], updatedJob);
-            jobRef.current = updatedJob;
-        };
-        throttledUpdateCacheRef.current = throttleJobUpdate(updateCache, 200);
-        // jobRef is stable, no need to include in deps
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [jobId, queryClient]);
-
-    const throttledUpdateCache = useCallback(
-        (updatedJob: Job) => {
-            throttledUpdateCacheRef.current?.(updatedJob);
+    // Update job in React Query cache - NO THROTTLING to avoid missing updates
+    const updateJobCache = useCallback(
+        (updater: (currentJob: Job | undefined) => Job | undefined) => {
+            // Update the main query cache
+            queryClient.setQueryData<Job | undefined>(
+                ["job", jobId, "initial"],
+                (currentJob) => {
+                    const updated = updater(currentJob);
+                    if (updated) {
+                        onJobUpdate?.(updated);
+                    }
+                    return updated;
+                }
+            );
+            // Also update poll cache to keep them in sync
+            queryClient.setQueryData<Job | undefined>(
+                ["job", jobId, "poll"],
+                (currentJob) => updater(currentJob)
+            );
         },
-        []
+        [jobId, queryClient, onJobUpdate]
     );
 
     // Process job event and update job state
     const processJobEvent = useCallback(
         (transformedEvent: JobEvent) => {
-            const currentJob = jobRef.current;
-            if (!currentJob) return false;
+            updateJobCache((currentJob) => {
+                if (!currentJob) return currentJob;
 
-            const updatedJob: Job = { ...currentJob };
-            let shouldRefetch = false;
+                const updatedJob: Job = { 
+                    ...currentJob,
+                    images: [...currentJob.images],
+                };
+                let shouldRefetch = false;
 
-            // Handle job-level events
-            if (transformedEvent.entity_type === ENTITY_TYPES.JOB) {
-                // Update overall progress
-                if (
-                    transformedEvent.progress !== undefined &&
-                    transformedEvent.progress !== null
-                ) {
-                    updatedJob.progress = transformedEvent.progress;
-                }
-
-                // Handle job status changes
-                if (
-                    transformedEvent.event_type === JOB_EVENT_TYPES.JOB_STATUS_CHANGED
-                ) {
-                    const newStatus = (transformedEvent.payload as { status?: string })
-                        ?.status;
-                    if (
-                        newStatus &&
-                        Object.values(JobStatus).includes(newStatus as JobStatus)
-                    ) {
-                        updatedJob.status = newStatus as JobStatus;
-                        shouldRefetch = [
-                            JobStatus.SUCCESS,
-                            JobStatus.FAILED,
-                            JobStatus.CANCELLED,
-                            JobStatus.PARTIAL_SUCCESS,
-                        ].includes(newStatus as JobStatus);
-                    }
-                }
-                
-                // Handle RETRY event - job status may change from FAILED/PARTIAL_SUCCESS to RUNNING
-                if (transformedEvent.event_type === JOB_EVENT_TYPES.RETRY) {
-                    if (updatedJob.status === JobStatus.FAILED || updatedJob.status === JobStatus.PARTIAL_SUCCESS) {
-                        updatedJob.status = JobStatus.RUNNING;
-                    }
-                }
-
-                // Handle job completion events
-                if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
-                    updatedJob.status = JobStatus.SUCCESS;
+                // Handle job-level events
+                if (transformedEvent.entity_type === ENTITY_TYPES.JOB) {
+                    // Update overall progress for any job event
                     if (
                         transformedEvent.progress !== undefined &&
                         transformedEvent.progress !== null
                     ) {
                         updatedJob.progress = transformedEvent.progress;
                     }
-                    shouldRefetch = true;
-                } else if (transformedEvent.event_type === JOB_EVENT_TYPES.ERROR) {
-                    updatedJob.status = JobStatus.FAILED;
-                    shouldRefetch = true;
-                } else if (transformedEvent.event_type === JOB_EVENT_TYPES.START) {
-                    updatedJob.status = JobStatus.RUNNING;
-                }
-            }
 
-            // Handle individual image task updates
-            if (
-                transformedEvent.entity_type === ENTITY_TYPES.IMAGE_TASK &&
-                transformedEvent.entity_id
-            ) {
-                const taskId = Number(transformedEvent.entity_id);
-                const taskIndex = updatedJob.images.findIndex((img) => img.id === taskId);
-
-                if (taskIndex >= 0) {
-                    const updatedImages = [...updatedJob.images];
-                    updatedImages[taskIndex] = {
-                        ...updatedImages[taskIndex],
-                        progress:
-                            Number(
-                                transformedEvent.progress ??
-                                    updatedImages[taskIndex].progress
-                            ) || 0,
-                    };
-
-                    // Update status based on event type
-                    if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
-                        updatedImages[taskIndex].status = JobStatus.SUCCESS;
-                        // Refetch to get artifact URLs (PNG/SVG)
-                        shouldRefetch = true;
-                    } else if (
-                        transformedEvent.event_type === JOB_EVENT_TYPES.ERROR ||
-                        transformedEvent.event_type === JOB_EVENT_TYPES.ALGORITHM_ERROR
-                    ) {
-                        updatedImages[taskIndex].status = JobStatus.FAILED;
-                        updatedImages[taskIndex].error_message = transformedEvent.message;
-                    } else if (transformedEvent.event_type === JOB_EVENT_TYPES.CANCELLED) {
-                        updatedImages[taskIndex].status = JobStatus.CANCELLED;
-                    } else if (
-                        transformedEvent.event_type === JOB_EVENT_TYPES.START ||
-                        transformedEvent.event_type === JOB_EVENT_TYPES.RETRY
-                    ) {
-                        // RETRY event resets task to PENDING/RUNNING state
-                        updatedImages[taskIndex].status = JobStatus.RUNNING;
-                        updatedImages[taskIndex].error_message = undefined;
-                        updatedImages[taskIndex].progress = 0;
-                    }
-
-                    updatedJob.images = updatedImages;
-
-                    // Check if job is finalized
-                    const isFinalized =
-                        updatedJob.status === JobStatus.SUCCESS ||
-                        updatedJob.status === JobStatus.FAILED ||
-                        updatedJob.status === JobStatus.PARTIAL_SUCCESS ||
-                        updatedJob.status === JobStatus.CANCELLED;
-
-                    // Only recalculate progress if job is not finalized
-                    if (
-                        !isFinalized &&
-                        updatedJob.status !== JobStatus.CANCELLED &&
-                        updatedJob.images.length > 0
-                    ) {
-                        const totalProgress = updatedJob.images.reduce(
-                            (sum, img) => sum + (Number(img.progress) || 0),
-                            0
-                        );
-                        updatedJob.progress = Math.round(
-                            totalProgress / updatedJob.images.length
-                        );
-                    }
-
-                    // Check if all tasks are done
-                    const allDone = updatedJob.images.every(
-                        (img) =>
-                            img.status === JobStatus.SUCCESS ||
-                            img.status === JobStatus.FAILED ||
-                            img.status === JobStatus.CANCELLED
-                    );
-
-                    if (allDone && updatedJob.status === JobStatus.RUNNING) {
-                        const successCount = updatedJob.images.filter(
-                            (img) => img.status === JobStatus.SUCCESS
-                        ).length;
-                        const cancelledCount = updatedJob.images.filter(
-                            (img) => img.status === JobStatus.CANCELLED
-                        ).length;
-
-                        if (cancelledCount === updatedJob.images.length) {
-                            updatedJob.status = JobStatus.CANCELLED;
-                        } else if (successCount === updatedJob.images.length) {
-                            updatedJob.status = JobStatus.SUCCESS;
-                            updatedJob.progress = 100;
-                        } else if (successCount > 0) {
-                            updatedJob.status = JobStatus.PARTIAL_SUCCESS;
-                            updatedJob.progress = 100;
-                        } else {
-                            updatedJob.status = JobStatus.FAILED;
-                            updatedJob.progress = 100;
+                    // Handle PROGRESS event - ensure job is marked as running
+                    if (transformedEvent.event_type === JOB_EVENT_TYPES.PROGRESS) {
+                        // Only update to RUNNING if not already in a final state
+                        const isFinalized = [
+                            JobStatus.SUCCESS,
+                            JobStatus.FAILED,
+                            JobStatus.CANCELLED,
+                            JobStatus.PARTIAL_SUCCESS,
+                        ].includes(updatedJob.status);
+                        
+                        if (!isFinalized && updatedJob.status !== JobStatus.RUNNING) {
+                            updatedJob.status = JobStatus.RUNNING;
                         }
+                    }
+
+                    // Handle job status changes
+                    if (
+                        transformedEvent.event_type === JOB_EVENT_TYPES.JOB_STATUS_CHANGED
+                    ) {
+                        const newStatus = (transformedEvent.payload as { status?: string })
+                            ?.status;
+                        if (
+                            newStatus &&
+                            Object.values(JobStatus).includes(newStatus as JobStatus)
+                        ) {
+                            updatedJob.status = newStatus as JobStatus;
+                            shouldRefetch = [
+                                JobStatus.SUCCESS,
+                                JobStatus.FAILED,
+                                JobStatus.CANCELLED,
+                                JobStatus.PARTIAL_SUCCESS,
+                            ].includes(newStatus as JobStatus);
+                        }
+                    }
+                    
+                    // Handle RETRY event
+                    if (transformedEvent.event_type === JOB_EVENT_TYPES.RETRY) {
+                        if (updatedJob.status === JobStatus.FAILED || updatedJob.status === JobStatus.PARTIAL_SUCCESS) {
+                            updatedJob.status = JobStatus.RUNNING;
+                        }
+                    }
+
+                    // Handle job completion events
+                    if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
+                        updatedJob.status = JobStatus.SUCCESS;
+                        updatedJob.progress = 100;
                         shouldRefetch = true;
+                    } else if (transformedEvent.event_type === JOB_EVENT_TYPES.ERROR) {
+                        updatedJob.status = JobStatus.FAILED;
+                        shouldRefetch = true;
+                    } else if (transformedEvent.event_type === JOB_EVENT_TYPES.START) {
+                        updatedJob.status = JobStatus.RUNNING;
                     }
                 }
-            } else if (
-                transformedEvent.progress !== undefined &&
-                transformedEvent.progress !== null &&
-                transformedEvent.entity_type !== ENTITY_TYPES.IMAGE_TASK
-            ) {
-                // Update overall progress for other job-level events
-                if (updatedJob.status !== JobStatus.CANCELLED) {
-                    updatedJob.progress = transformedEvent.progress;
+
+                // Handle individual image task updates
+                if (
+                    transformedEvent.entity_type === ENTITY_TYPES.IMAGE_TASK &&
+                    transformedEvent.entity_id
+                ) {
+                    const taskId = Number(transformedEvent.entity_id);
+                    const taskIndex = updatedJob.images.findIndex((img) => img.id === taskId);
+
+                    if (taskIndex >= 0) {
+                        updatedJob.images[taskIndex] = {
+                            ...updatedJob.images[taskIndex],
+                            progress:
+                                Number(
+                                    transformedEvent.progress ??
+                                        updatedJob.images[taskIndex].progress
+                                ) || 0,
+                        };
+
+                        // Update status based on event type
+                        if (transformedEvent.event_type === JOB_EVENT_TYPES.DONE) {
+                            updatedJob.images[taskIndex].status = JobStatus.SUCCESS;
+                            updatedJob.images[taskIndex].progress = 100;
+                            shouldRefetch = true;
+                        } else if (
+                            transformedEvent.event_type === JOB_EVENT_TYPES.ERROR ||
+                            transformedEvent.event_type === JOB_EVENT_TYPES.ALGORITHM_ERROR
+                        ) {
+                            updatedJob.images[taskIndex].status = JobStatus.FAILED;
+                            updatedJob.images[taskIndex].error_message = transformedEvent.message;
+                        } else if (transformedEvent.event_type === JOB_EVENT_TYPES.CANCELLED) {
+                            updatedJob.images[taskIndex].status = JobStatus.CANCELLED;
+                        } else if (
+                            transformedEvent.event_type === JOB_EVENT_TYPES.START ||
+                            transformedEvent.event_type === JOB_EVENT_TYPES.RETRY
+                        ) {
+                            updatedJob.images[taskIndex].status = JobStatus.RUNNING;
+                            updatedJob.images[taskIndex].error_message = undefined;
+                            updatedJob.images[taskIndex].progress = 0;
+                        }
+
+                        // Recalculate overall progress from tasks
+                        const isJobFinalized =
+                            updatedJob.status === JobStatus.SUCCESS ||
+                            updatedJob.status === JobStatus.FAILED ||
+                            updatedJob.status === JobStatus.PARTIAL_SUCCESS ||
+                            updatedJob.status === JobStatus.CANCELLED;
+
+                        if (!isJobFinalized && updatedJob.images.length > 0) {
+                            const totalProgress = updatedJob.images.reduce(
+                                (sum, img) => sum + (Number(img.progress) || 0),
+                                0
+                            );
+                            updatedJob.progress = Math.round(
+                                totalProgress / updatedJob.images.length
+                            );
+                        }
+
+                        // Check if all tasks are done and update job status
+                        const allDone = updatedJob.images.every(
+                            (img) =>
+                                img.status === JobStatus.SUCCESS ||
+                                img.status === JobStatus.FAILED ||
+                                img.status === JobStatus.CANCELLED
+                        );
+
+                        if (allDone && updatedJob.status === JobStatus.RUNNING) {
+                            const successCount = updatedJob.images.filter(
+                                (img) => img.status === JobStatus.SUCCESS
+                            ).length;
+                            const cancelledCount = updatedJob.images.filter(
+                                (img) => img.status === JobStatus.CANCELLED
+                            ).length;
+
+                            if (cancelledCount === updatedJob.images.length) {
+                                updatedJob.status = JobStatus.CANCELLED;
+                            } else if (successCount === updatedJob.images.length) {
+                                updatedJob.status = JobStatus.SUCCESS;
+                            } else if (successCount > 0) {
+                                updatedJob.status = JobStatus.PARTIAL_SUCCESS;
+                            } else {
+                                updatedJob.status = JobStatus.FAILED;
+                            }
+                            updatedJob.progress = 100;
+                            shouldRefetch = true;
+                        }
+                    }
                 }
-            }
 
-            // Update cache with throttling
-            throttledUpdateCache(updatedJob);
+                // Refetch from server to get complete data (e.g., artifact URLs)
+                if (shouldRefetch) {
+                    setTimeout(() => {
+                        queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+                    }, 300);
+                }
 
-            // Refetch if job finished
-            if (shouldRefetch) {
-                setTimeout(() => {
-                    refetchJob();
-                }, 500);
-            }
-
-            return shouldRefetch;
+                return updatedJob;
+            });
         },
-        [jobRef, refetchJob, throttledUpdateCache]
+        [updateJobCache, queryClient, jobId]
     );
 
     // WebSocket connection logic
     useEffect(() => {
         if (!jobId) {
-            // Use setTimeout to avoid setState in effect
             const timeoutId = setTimeout(() => {
                 setConnectionStatus("disconnected");
                 setEvents([]);
@@ -292,7 +266,7 @@ export function useJobWebSocket({
                     // Transform and add event
                     const transformedEvent = transformJobEvent(data);
                     setEvents((prev) => {
-                        // Avoid duplicates based on trace_id and created_at
+                        // Avoid duplicates
                         const exists = prev.some(
                             (e) =>
                                 e.trace_id === transformedEvent.trace_id &&

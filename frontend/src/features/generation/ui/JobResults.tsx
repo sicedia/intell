@@ -188,6 +188,7 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
         setIsRetrying(true);
         try {
             await retryImageTask(task.id);
+            
             // Invalidate ALL job queries to refetch updated state
             // Use partial key match to cover both ["job", jobId] and ["job", jobId, "initial"]
             await queryClient.invalidateQueries({ 
@@ -195,6 +196,23 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
                 // Force refetch even if query is stale
                 refetchType: "all"
             });
+            
+            // Also invalidate poll query to ensure polling picks up the change
+            await queryClient.invalidateQueries({
+                queryKey: ["job", jobId, "poll"],
+                refetchType: "all"
+            });
+            
+            // Schedule additional refetches to catch the update
+            // This helps when WebSocket is not working properly
+            setTimeout(() => {
+                queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            }, 1500);
+            
+            setTimeout(() => {
+                queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            }, 4000);
+            
         } catch (error) {
             // Ignorar cancelaciones (ej: usuario navegó a otra página)
             if (isCancelledError(error)) return;
@@ -216,13 +234,18 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
         setIsCancelling(true);
         try {
             await cancelImageTask(task.id);
+            
             // Invalidate ALL job queries to refetch updated state
-            // Use partial key match to cover both ["job", jobId] and ["job", jobId, "initial"]
             await queryClient.invalidateQueries({ 
                 queryKey: ["job", jobId],
-                // Force refetch even if query is stale
                 refetchType: "all"
             });
+            
+            // Schedule a follow-up refetch
+            setTimeout(() => {
+                queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            }, 1000);
+            
         } catch (error) {
             // Ignorar cancelaciones (ej: usuario navegó a otra página)
             if (isCancelledError(error)) return;

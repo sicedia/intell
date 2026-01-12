@@ -50,6 +50,34 @@ export const designTokens = {
       DEFAULT: "hsl(var(--popover))",
       foreground: "hsl(var(--popover-foreground))",
     },
+    // Terminal/Log colors for ActivityLog and code displays
+    terminal: {
+      background: "rgb(2, 6, 23)", // slate-950
+      backgroundDark: "rgb(0, 0, 0)", // black
+      border: "rgb(30, 41, 59)", // slate-800
+      text: "rgb(226, 232, 240)", // slate-200
+      muted: "rgb(100, 116, 139)", // slate-500
+      error: "rgb(248, 113, 113)", // red-400
+      warning: "rgb(251, 191, 36)", // amber-400
+      info: "rgb(96, 165, 250)", // blue-400
+      success: "rgb(74, 222, 128)", // green-400
+      debug: "rgb(100, 116, 139)", // slate-500
+    },
+    // Status-specific colors for consistent state representation
+    status: {
+      running: {
+        border: "hsl(var(--primary) / 0.5)",
+        background: "hsl(var(--primary) / 0.05)",
+      },
+      success: {
+        border: "rgb(34, 197, 94, 0.3)", // green-500/30
+        background: "rgb(34, 197, 94, 0.05)", // green-500/5
+      },
+      failed: {
+        border: "rgb(239, 68, 68, 0.3)", // red-500/30
+        background: "rgb(239, 68, 68, 0.05)", // red-500/5
+      },
+    },
   },
   typography: {
     fontFamily: {

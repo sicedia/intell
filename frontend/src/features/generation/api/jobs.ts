@@ -123,6 +123,32 @@ export const retryImageTask = async (imageTaskId: number | string): Promise<{ im
     return result;
 };
 
+/**
+ * Retry all failed image tasks for a job
+ * @returns Array of results for each retry attempt
+ */
+export const retryAllFailedTasks = async (
+    failedTaskIds: number[]
+): Promise<{ successes: number; failures: number }> => {
+    let successes = 0;
+    let failures = 0;
+    
+    // Execute retries in parallel for better performance
+    const results = await Promise.allSettled(
+        failedTaskIds.map(id => retryImageTask(id))
+    );
+    
+    results.forEach(result => {
+        if (result.status === "fulfilled") {
+            successes++;
+        } else {
+            failures++;
+        }
+    });
+    
+    return { successes, failures };
+};
+
 export const cancelImageTask = async (imageTaskId: number | string): Promise<{ image_task_id: number; status: string; message: string; task: unknown }> => {
     // Note: apiClient already prepends NEXT_PUBLIC_API_BASE_URL which includes /api
     const result = await apiClient.post<{ image_task_id: number; status: string; message: string; task: unknown }>(

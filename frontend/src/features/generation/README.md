@@ -13,18 +13,18 @@ generation/
 │   └── job.ts        # Job-related types and transformers
 ├── hooks/            # Custom React hooks
 │   ├── useJobCreation.ts    # Job creation logic
-│   ├── useJobProgress.ts    # Main hook for job progress tracking
-│   ├── useJobPolling.ts    # Polling fallback when WebSocket unavailable
-│   └── useJobWebSocket.ts  # WebSocket connection management
+│   ├── useJobProgress.ts    # Main hook for job progress (polling + WebSocket)
+│   └── useJobWebSocket.ts   # WebSocket events and cache updates
 ├── stores/           # Zustand state management
 │   └── useWizardStore.ts   # Wizard state with sessionStorage persistence
 └── ui/               # UI components
-    ├── GenerateWizard.tsx  # Main wizard container
+    ├── GenerateWizard.tsx   # Main wizard container
     ├── SourceStep.tsx       # Step 1: Data source selection
     ├── VisualizationStep.tsx # Step 2: Algorithm selection
-    ├── RunStep.tsx         # Step 3: Job execution and monitoring
-    ├── JobProgress.tsx     # Progress display component
-    └── JobResults.tsx      # Results display component
+    ├── RunStep.tsx          # Step 3: Job execution and monitoring
+    ├── JobProgress.tsx      # Progress display component
+    ├── JobResults.tsx       # Results display component
+    └── ActivityLog.tsx      # Collapsible event log with terminal UI
 ```
 
 ## API
@@ -128,11 +128,11 @@ export default function GeneratePage() {
 ## Features
 
 - **Multi-step wizard** for job creation
-- **Real-time progress** via WebSocket with automatic polling fallback
+- **Real-time progress** via polling (every 2s) with WebSocket for instant events
 - **Session persistence** - wizard state survives page refresh
 - **Error handling** with retry mechanisms
 - **Job cancellation** support
-- **Throttled updates** to prevent excessive re-renders
+- **Robust updates** - polling continues until job AND all tasks are finished
 
 ## Constants
 

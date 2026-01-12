@@ -1,9 +1,8 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getJob } from "../api/jobs";
-import { Job, JobEvent, transformJobEvent } from "../constants/job";
+import { Job, JobEvent, JobStatus, transformJobEvent } from "../constants/job";
 import { useJobWebSocket } from "./useJobWebSocket";
-import { useJobPolling } from "./useJobPolling";
 
 interface UseJobProgressReturn {
     job: Job | undefined;
@@ -13,63 +12,86 @@ interface UseJobProgressReturn {
 }
 
 /**
- * Main hook to track job progress via WebSocket and polling fallback
+ * Check if job is truly finished (status is final AND all tasks are done)
+ */
+function isJobTrulyFinished(job: Job | undefined): boolean {
+    if (!job) return false;
+    
+    const finalStatuses = [
+        JobStatus.SUCCESS,
+        JobStatus.FAILED,
+        JobStatus.CANCELLED,
+        JobStatus.PARTIAL_SUCCESS,
+    ];
+    
+    if (!finalStatuses.includes(job.status)) {
+        return false;
+    }
+    
+    // All tasks must also be in final states
+    if (job.images && job.images.length > 0) {
+        return job.images.every(
+            (img) => img.status === JobStatus.SUCCESS || 
+                     img.status === JobStatus.FAILED || 
+                     img.status === JobStatus.CANCELLED
+        );
+    }
+    
+    return true;
+}
+
+/**
+ * Main hook to track job progress
+ * 
+ * Architecture:
+ * - React Query as single source of truth
+ * - WebSocket updates the cache directly (no throttling)
+ * - Polling as safety net (every 2 seconds until finished)
  */
 export const useJobProgress = (jobId: number | null): UseJobProgressReturn => {
-    const jobRef = useRef<Job | undefined>(undefined);
-
-    // Main job query - fetches initial state and refetches on completion
-    const { data: jobData, refetch: refetchJob } = useQuery({
+    // Main job query - this is the single source of truth
+    const { data: job } = useQuery({
         queryKey: ["job", jobId, "initial"],
         queryFn: () => getJob(jobId!),
         enabled: !!jobId,
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
+        // Poll every 2 seconds until job is truly finished
+        // This is our primary update mechanism - reliable and simple
+        refetchInterval: (query) => {
+            const jobData = query.state.data;
+            if (isJobTrulyFinished(jobData)) {
+                return false; // Stop polling when done
+            }
+            return 2000; // Poll every 2 seconds
+        },
+        // Keep data fresh
+        staleTime: 1000,
     });
 
-    // Update job ref when data changes
-    useEffect(() => {
-        if (jobData) {
-            jobRef.current = jobData;
-        }
-    }, [jobData]);
-
-    // WebSocket connection for real-time updates
+    // WebSocket for real-time events (Activity Log) and faster updates
+    // WebSocket updates the same cache that the query uses
     const {
         connectionStatus,
         isConnected,
         events: wsEvents,
     } = useJobWebSocket({
         jobId,
-        jobRef,
-        refetchJob,
     });
 
-    // Polling fallback when WebSocket is unavailable
-    const polledJob = useJobPolling({
-        jobId,
-        enabled: connectionStatus === "failed" || connectionStatus === "disconnected",
-    });
-
-    // Effective job object - prefer polled (if WS failed) or initial (if WS connected)
-    const job = polledJob || jobData;
-
-    // Extract job events for dependency tracking
-    const jobEvents = job?.events;
-
-    // Derive initial events from job history
+    // Derive events from job history when WebSocket events are empty
     const initialEvents = useMemo(() => {
-        if (jobEvents && jobEvents.length > 0) {
-            return jobEvents.map(transformJobEvent);
+        if (job?.events && job.events.length > 0) {
+            return job.events.map(transformJobEvent);
         }
         return [];
-    }, [jobEvents]);
+    }, [job?.events]);
 
-    // Use WebSocket events if available, otherwise use initial events from job
-    const effectiveEvents = wsEvents.length > 0 ? wsEvents : initialEvents;
+    // Prefer WebSocket events (real-time) over job history events
+    const events = wsEvents.length > 0 ? wsEvents : initialEvents;
 
     return {
         job,
-        events: effectiveEvents,
+        events,
         connectionStatus,
         isConnected,
     };

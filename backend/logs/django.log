@@ -3247,3 +3247,40 @@ WARNING 2026-01-12 10:23:27,247 runserver 57840 44564 [31;1mHTTP GET /api/auth/
 INFO 2026-01-12 10:23:35,797 views_microsoft 57840 48580 Microsoft OAuth2: initiating login flow
 INFO 2026-01-12 10:23:39,168 microsoft 57840 12080 Microsoft login: existing user felipe.mendieta@cedia.org.ec
 INFO 2026-01-12 10:23:39,181 views_microsoft 57840 12080 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:39:23,790 views 57840 42660 User logged out: felipe.mendieta
+WARNING 2026-01-12 10:39:23,820 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:60436][0m
+WARNING 2026-01-12 10:39:26,856 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:60436][0m
+INFO 2026-01-12 10:39:28,030 views_microsoft 57840 8256 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 10:39:31,618 microsoft 57840 20128 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 10:39:31,641 views_microsoft 57840 20128 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+WARNING 2026-01-12 10:43:42,981 tasks 27980 12936 ImageTask 1058 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 10:43:42,983 views 57840 16732 Job 227 created successfully with 8 image tasks
+INFO 2026-01-12 10:44:19,951 views 57840 39472 ImageTask 1058 retry requested - task re-enqueued
+WARNING 2026-01-12 10:44:50,467 runserver 57840 44564 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:50061][0m
+INFO 2026-01-12 10:46:20,053 views 57840 12280 Job 228 created successfully with 8 image tasks
+WARNING 2026-01-12 10:46:20,055 tasks 27980 12936 ImageTask 1066 does not exist - task may have been cancelled or deleted
+WARNING 2026-01-12 10:50:47,324 tasks 27980 12936 ImageTask 1074 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 10:50:47,328 views 57840 21268 Job 229 created successfully with 8 image tasks
+INFO 2026-01-12 10:53:57,374 views 57840 33128 ImageTask 1074 retry requested - task re-enqueued
+INFO 2026-01-12 10:54:21,071 views 57840 37408 Job 230 created successfully with 3 image tasks
+WARNING 2026-01-12 10:56:51,837 tasks 27980 12936 ImageTask 1085 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 10:56:51,841 views 57840 56120 Job 231 created successfully with 8 image tasks
+INFO 2026-01-12 10:57:13,328 views 57840 26352 ImageTask 1085 retry requested - task re-enqueued
+INFO 2026-01-12 10:57:38,371 views 57840 36016 Job 232 created successfully with 3 image tasks
+WARNING 2026-01-12 10:58:25,828 tasks 27980 12936 ImageTask 1096 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 10:58:25,832 views 57840 8076 Job 233 created successfully with 8 image tasks
+INFO 2026-01-12 10:58:46,585 views 57840 51000 ImageTask 1096 cancelled
+WARNING 2026-01-12 10:58:55,681 runserver 57840 44564 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:62681][0m
+INFO 2026-01-12 11:01:43,089 views 57840 7228 User logged out: felipe.mendieta
+WARNING 2026-01-12 11:01:43,107 runserver 57840 44564 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:54945][0m
+INFO 2026-01-12 11:02:03,753 views_microsoft 57840 47848 Microsoft OAuth2: initiating login flow
+INFO 2026-01-12 11:02:07,159 microsoft 57840 26036 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 11:02:07,173 views_microsoft 57840 26036 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-12 11:02:37,309 views 57840 1760 Job 234 created successfully with 5 image tasks
+WARNING 2026-01-12 11:02:53,173 runserver 57840 44564 [31;1mHTTP POST /api/image-tasks/1097/retry/ 400 [0.03, 127.0.0.1:54945][0m
+WARNING 2026-01-12 11:03:02,757 runserver 57840 44564 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:54945][0m
+INFO 2026-01-12 11:15:28,290 views 57840 40020 Job 235 created successfully with 1 image tasks
+WARNING 2026-01-12 11:21:45,529 tasks 27980 12936 ImageTask 1110 does not exist - task may have been cancelled or deleted
+INFO 2026-01-12 11:21:45,535 views 22792 43064 Job 236 created successfully with 8 image tasks
+INFO 2026-01-12 11:22:01,134 views 22792 51520 ImageTask 1110 retry requested - task re-enqueued
+INFO 2026-01-12 11:22:14,843 views 22792 17120 Job 237 created successfully with 1 image tasks

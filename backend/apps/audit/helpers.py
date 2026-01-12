@@ -112,16 +112,20 @@ def emit_event(
                     
                     if not is_finalized:
                         # Recalculate job progress_total from all image tasks
-                        image_tasks = ImageTask.objects.filter(job=job)
-                        if image_tasks.exists():
+                        image_tasks_qs = ImageTask.objects.filter(job=job)
+                        if image_tasks_qs.exists():
                             # Calculate average progress, only counting tasks that have started
-                            total_progress = sum(task.progress for task in image_tasks)
-                            task_count = image_tasks.count()
+                            total_progress = sum(task.progress for task in image_tasks_qs)
+                            task_count = image_tasks_qs.count()
                             avg_progress = int(total_progress / task_count) if task_count > 0 else 0
                             job.progress_total = avg_progress
                             # Only update status if not already finalized
                             job.status = Job.Status.RUNNING
                             job.save(update_fields=['status', 'progress_total', 'updated_at'])
+                            
+                            # Emit a job-level progress event so frontend gets immediate update
+                            # This helps when WebSocket is working but polling hasn't run yet
+                            _emit_job_progress_event(job, avg_progress, trace_id)
                     # Set job_id for WebSocket emission
                     if not job_id:
                         job_id = job.id
@@ -176,6 +180,35 @@ def emit_event(
                     "data": ws_payload
                 }
             )
+
+
+def _emit_job_progress_event(job, progress: int, trace_id: str):
+    """
+    Emit a lightweight job progress event to WebSocket.
+    This ensures the frontend gets immediate progress updates without waiting for polling.
+    """
+    channel_layer = get_channel_layer()
+    if channel_layer:
+        ws_payload = {
+            "job_id": job.id,
+            "entity_type": "job",
+            "entity_id": job.id,
+            "event_type": "PROGRESS",
+            "level": "INFO",
+            "progress": progress,
+            "message": f"Job progress: {progress}%",
+            "payload": {"progress": progress},
+            "trace_id": trace_id,
+            "created_at": timezone.now().isoformat()
+        }
+        
+        async_to_sync(channel_layer.group_send)(
+            f"job_{job.id}",
+            {
+                "type": "job_event",
+                "data": ws_payload
+            }
+        )
 
 
 def _update_job_status(job, event_type: str, progress: Optional[int]):
