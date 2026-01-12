@@ -195,6 +195,41 @@ class ImageTask(models.Model):
         blank=True,
         help_text="Trace ID for event correlation"
     )
+    # Metadata fields for library management
+    title = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="User-defined title for the image"
+    )
+    user_description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="User-editable description (can be AI-generated then edited)"
+    )
+    group = models.ForeignKey(
+        'ImageGroup',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='images',
+        help_text="Group this image belongs to"
+    )
+    tags = models.ManyToManyField(
+        'Tag',
+        blank=True,
+        related_name='images',
+        help_text="Tags associated with this image"
+    )
+    is_published = models.BooleanField(
+        default=False,
+        help_text="Whether the image is published to the library (draft if False)"
+    )
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the image was published"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -204,10 +239,27 @@ class ImageTask(models.Model):
         indexes = [
             models.Index(fields=['job', 'status']),
             models.Index(fields=['algorithm_key', 'algorithm_version']),
+            models.Index(fields=['group', 'created_at']),
+            models.Index(fields=['is_published', 'created_at']),
         ]
     
     def __str__(self):
         return f"ImageTask {self.id} ({self.algorithm_key} v{self.algorithm_version})"
+    
+    def publish(self):
+        """Publish the image to the library."""
+        from django.utils import timezone
+        if not self.is_published:
+            self.is_published = True
+            self.published_at = timezone.now()
+            self.save(update_fields=['is_published', 'published_at', 'updated_at'])
+    
+    def unpublish(self):
+        """Unpublish the image from the library (convert to draft)."""
+        if self.is_published:
+            self.is_published = False
+            self.published_at = None
+            self.save(update_fields=['is_published', 'published_at', 'updated_at'])
 
 
 class DescriptionTask(models.Model):
@@ -295,4 +347,74 @@ class DescriptionTask(models.Model):
     
     def __str__(self):
         return f"DescriptionTask {self.id} (ImageTask {self.image_task_id})"
+
+
+class Tag(models.Model):
+    """
+    Tag model for categorizing images.
+    """
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text="Tag name"
+    )
+    color = models.CharField(
+        max_length=7,
+        default='#6366f1',
+        help_text="Hex color code for tag display"
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_tags',
+        help_text="User who created this tag"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'jobs_tag'
+        ordering = ['name']
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+    
+    def __str__(self):
+        return self.name
+
+
+class ImageGroup(models.Model):
+    """
+    ImageGroup model for organizing images into collections.
+    """
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(
+        max_length=100,
+        help_text="Group name"
+    )
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Optional description of the group"
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='image_groups',
+        help_text="User who created this group"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'jobs_imagegroup'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['created_by', 'created_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} (by {self.created_by})"
 

@@ -5,7 +5,7 @@ import logging
 import json
 import traceback
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError as DRFValidationError
@@ -14,16 +14,22 @@ from django.db import transaction
 from django.http import FileResponse
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 from pathlib import Path
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample, OpenApiParameter, inline_serializer
 
-from .models import Job, ImageTask, DescriptionTask
+from .models import Job, ImageTask, DescriptionTask, Tag, ImageGroup
+from .helpers import assign_date_tag_to_image_task, ensure_date_tag_on_publish
 from .serializers import (
     JobCreateSerializer, JobDetailSerializer,
     ImageTaskSerializer, DescriptionTaskSerializer,
     AIDescribeRequestSerializer,
     JobCreateResponseSerializer, JobCancelResponseSerializer,
-    AIDescribeResponseSerializer, ErrorResponseSerializer
+    AIDescribeResponseSerializer, ErrorResponseSerializer,
+    TagSerializer, ImageGroupSerializer, ImageTaskUpdateSerializer,
+    ImageLibrarySerializer
 )
 from apps.artifacts.services import create_images_zip
 from apps.datasets.normalizers import normalize, normalize_from_excel, get_sheet_for_algorithm
@@ -253,7 +259,7 @@ class JobViewSet(viewsets.ViewSet):
                             correct_dataset = sheet_to_dataset[sheet]
                             task_params['_dataset_id'] = correct_dataset.id
                     
-                    ImageTask.objects.create(
+                    image_task = ImageTask.objects.create(
                         job=job,
                         algorithm_key=alg_key,
                         algorithm_version=image_req.get('algorithm_version', '1.0'),
@@ -261,6 +267,8 @@ class JobViewSet(viewsets.ViewSet):
                         output_format=image_req.get('output_format', ImageTask.OutputFormat.BOTH),
                         status=ImageTask.Status.PENDING
                     )
+                    # Assign date-based tag from Job
+                    assign_date_tag_to_image_task(image_task)
                 
                 # Enqueue job
                 run_job(job.id)
@@ -380,8 +388,59 @@ class JobViewSet(viewsets.ViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary='Listar tareas de imagen',
-        description='Obtiene una lista paginada de todas las tareas de generaciรณn de imรกgenes.',
+        description='Obtiene una lista paginada de todas las tareas de generaciรณn de imรกgenes. Soporta filtros por status, tags, date_range, search y group.',
         tags=['Image Tasks'],
+        parameters=[
+            OpenApiParameter(
+                name='status',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by status (PENDING, RUNNING, SUCCESS, FAILED, CANCELLED)',
+            ),
+            OpenApiParameter(
+                name='tags',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by tag IDs (comma-separated)',
+            ),
+            OpenApiParameter(
+                name='group',
+                type=int,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by group ID',
+            ),
+            OpenApiParameter(
+                name='search',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Search in title, algorithm_key, or user_description',
+            ),
+            OpenApiParameter(
+                name='date_from',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by created_at date (YYYY-MM-DD)',
+            ),
+            OpenApiParameter(
+                name='date_to',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by created_at date (YYYY-MM-DD)',
+            ),
+            OpenApiParameter(
+                name='library',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Use optimized library serializer (for gallery view)',
+            ),
+        ],
     ),
     retrieve=extend_schema(
         summary='Obtener detalles de una tarea de imagen',
@@ -389,6 +448,28 @@ class JobViewSet(viewsets.ViewSet):
         tags=['Image Tasks'],
         responses={
             200: ImageTaskSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    update=extend_schema(
+        summary='Actualizar metadata de imagen',
+        description='Actualiza los metadatos de una imagen (title, user_description, tags, group).',
+        tags=['Image Tasks'],
+        request=ImageTaskUpdateSerializer,
+        responses={
+            200: ImageTaskSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    partial_update=extend_schema(
+        summary='Actualizar metadata de imagen (parcial)',
+        description='Actualiza parcialmente los metadatos de una imagen.',
+        tags=['Image Tasks'],
+        request=ImageTaskUpdateSerializer,
+        responses={
+            200: ImageTaskSerializer,
+            400: ErrorResponseSerializer,
             404: ErrorResponseSerializer,
         },
     ),
@@ -413,14 +494,109 @@ class JobViewSet(viewsets.ViewSet):
         },
     ),
 )
-class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for ImageTask (read-only with retry and cancel actions)."""
-    queryset = ImageTask.objects.all()
+class ImageTaskViewSet(viewsets.ModelViewSet):
+    """ViewSet for ImageTask with library management capabilities."""
+    queryset = ImageTask.objects.select_related('job', 'group').prefetch_related('tags').all()
     serializer_class = ImageTaskSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'algorithm_key', 'user_description']
+    ordering_fields = ['created_at', 'updated_at', 'algorithm_key']
+    ordering = ['-created_at']
+    
+    def get_serializer_class(self):
+        """Return appropriate serializer based on action."""
+        if self.action == 'list' and self.request.query_params.get('library') == 'true':
+            return ImageLibrarySerializer
+        if self.action in ['update', 'partial_update']:
+            return ImageTaskUpdateSerializer
+        return ImageTaskSerializer
+    
+    def get_queryset(self):
+        """Filter queryset based on query parameters."""
+        queryset = super().get_queryset()
+        
+        # Filter by status
+        status_param = self.request.query_params.get('status')
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+        
+        # Filter by published status - library view shows only published by default
+        library_param = self.request.query_params.get('library')
+        published_param = self.request.query_params.get('published')
+        
+        if library_param == 'true':
+            # Library view: show only published images by default
+            if published_param is None:
+                queryset = queryset.filter(is_published=True)
+            elif published_param.lower() in ('true', 'false'):
+                queryset = queryset.filter(is_published=(published_param.lower() == 'true'))
+        else:
+            # Non-library view: show all images unless published filter is explicitly set
+            if published_param is not None:
+                if published_param.lower() in ('true', 'false'):
+                    queryset = queryset.filter(is_published=(published_param.lower() == 'true'))
+        
+        # Filter by tags
+        tags_param = self.request.query_params.get('tags')
+        if tags_param:
+            tag_ids = [int(tid) for tid in tags_param.split(',') if tid.strip().isdigit()]
+            if tag_ids:
+                queryset = queryset.filter(tags__id__in=tag_ids).distinct()
+        
+        # Filter by group
+        group_param = self.request.query_params.get('group')
+        if group_param:
+            try:
+                group_id = int(group_param)
+                queryset = queryset.filter(group_id=group_id)
+            except ValueError:
+                pass
+        
+        # Filter by date range
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+        if date_from:
+            try:
+                from datetime import datetime
+                date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+                queryset = queryset.filter(created_at__date__gte=date_from_obj)
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                from datetime import datetime
+                date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+                queryset = queryset.filter(created_at__date__lte=date_to_obj)
+            except ValueError:
+                pass
+        
+        # Order by job and created_at for grouping if requested
+        group_by = self.request.query_params.get('group_by')
+        if group_by == 'job':
+            # Group by job - order by job first, then by created_at within each job
+            queryset = queryset.select_related('job').order_by('job', '-created_at')
+        else:
+            # Default ordering
+            queryset = queryset.select_related('job').order_by('-created_at')
+        
+        return queryset
     
     def get_serializer_context(self):
         """Add request to serializer context."""
         return {'request': self.request}
+    
+    def update(self, request, *args, **kwargs):
+        """Update image metadata."""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        # Return full object with updated serializer
+        return Response(
+            ImageTaskSerializer(instance, context={'request': request}).data
+        )
     
     @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
@@ -677,6 +853,100 @@ class ImageTaskViewSet(viewsets.ReadOnlyModelViewSet):
                 {'error': f'Failed to retry task: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+    @extend_schema(
+        summary='Publicar/despublicar imagen',
+        description='Publica o despublica una imagen en la librería. Las imágenes publicadas aparecen en la galería.',
+        tags=['Image Tasks'],
+        request=inline_serializer(
+            name='PublishImageRequest',
+            fields={
+                'publish': serializers.BooleanField(help_text='True para publicar, False para despublicar'),
+            },
+        ),
+        responses={
+            200: inline_serializer(
+                name='PublishImageResponse',
+                fields={
+                    'id': serializers.IntegerField(),
+                    'is_published': serializers.BooleanField(),
+                    'published_at': serializers.DateTimeField(allow_null=True),
+                    'message': serializers.CharField(),
+                },
+            ),
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    )
+    @action(detail=True, methods=['post'])
+    def publish(self, request, pk=None):
+        """
+        Publish or unpublish an image to/from the library.
+        
+        Request body: {"publish": true} or {"publish": false}
+        """
+        # Ensure job is loaded with select_related to avoid extra queries
+        image_task = get_object_or_404(ImageTask.objects.select_related('job'), pk=pk)
+        
+        # Only allow publishing successful images
+        if image_task.status != ImageTask.Status.SUCCESS:
+            return Response(
+                {'error': f'Cannot publish image: status is {image_task.status}. Only SUCCESS images can be published.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        publish = request.data.get('publish', True)
+        
+        try:
+            if publish:
+                image_task.publish()
+                # Ensure date tag is assigned when publishing
+                # Re-fetch with job relationship to ensure it's loaded after save
+                image_task = ImageTask.objects.select_related('job').get(pk=image_task.pk)
+                # Try to assign tag, but don't fail if it doesn't work
+                try:
+                    ensure_date_tag_on_publish(image_task)
+                except Exception as tag_error:
+                    # Log tag assignment error but don't fail the publish
+                    logger.warning(
+                        f'Failed to assign date tag during publish for ImageTask {image_task.id}: {str(tag_error)}',
+                        extra={'image_task_id': image_task.id}
+                    )
+                message = 'Imagen publicada exitosamente en la librería'
+            else:
+                image_task.unpublish()
+                message = 'Imagen despublicada (convertida a borrador)'
+            
+            # Refresh from DB to get latest state (including published_at)
+            image_task.refresh_from_db()
+            
+            # Serialize published_at safely
+            published_at_str = None
+            if image_task.published_at:
+                try:
+                    published_at_str = image_task.published_at.isoformat()
+                except (AttributeError, ValueError):
+                    published_at_str = str(image_task.published_at) if image_task.published_at else None
+            
+            return Response({
+                'id': image_task.id,
+                'is_published': image_task.is_published,
+                'published_at': published_at_str,
+                'message': message,
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            logger.error(
+                f'Error publishing/unpublishing image {image_task.id}: {str(e)}',
+                exc_info=True,
+                extra={'image_task_id': image_task.id, 'trace': error_trace}
+            )
+            return Response(
+                {'error': f'Error al publicar/despublicar imagen: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @extend_schema_view(
@@ -805,4 +1075,129 @@ def serve_test_excel(request):
         )
     except Exception as e:
         return Response({'error': f'Error serving file: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary='Listar tags',
+        description='Obtiene una lista de todos los tags disponibles.',
+        tags=['Tags'],
+    ),
+    create=extend_schema(
+        summary='Crear tag',
+        description='Crea un nuevo tag.',
+        tags=['Tags'],
+        request=TagSerializer,
+        responses={
+            201: TagSerializer,
+            400: ErrorResponseSerializer,
+        },
+    ),
+)
+class TagViewSet(viewsets.ModelViewSet):
+    """ViewSet for Tag management."""
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    http_method_names = ['get', 'post', 'head', 'options']
+    
+    def get_queryset(self):
+        """Return all tags for list view."""
+        return Tag.objects.all()
+    
+    def perform_create(self, serializer):
+        """Set created_by to current user."""
+        serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary='Listar grupos de imágenes',
+        description='Obtiene una lista de grupos de imágenes del usuario actual.',
+        tags=['Image Groups'],
+    ),
+    create=extend_schema(
+        summary='Crear grupo de imágenes',
+        description='Crea un nuevo grupo de imágenes.',
+        tags=['Image Groups'],
+        request=ImageGroupSerializer,
+        responses={
+            201: ImageGroupSerializer,
+            400: ErrorResponseSerializer,
+        },
+    ),
+    retrieve=extend_schema(
+        summary='Obtener detalles de grupo',
+        description='Obtiene los detalles de un grupo de imágenes.',
+        tags=['Image Groups'],
+        responses={
+            200: ImageGroupSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    update=extend_schema(
+        summary='Actualizar grupo',
+        description='Actualiza un grupo de imágenes.',
+        tags=['Image Groups'],
+        request=ImageGroupSerializer,
+        responses={
+            200: ImageGroupSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    partial_update=extend_schema(
+        summary='Actualizar grupo (parcial)',
+        description='Actualiza parcialmente un grupo de imágenes.',
+        tags=['Image Groups'],
+        request=ImageGroupSerializer,
+        responses={
+            200: ImageGroupSerializer,
+            400: ErrorResponseSerializer,
+            404: ErrorResponseSerializer,
+        },
+    ),
+    destroy=extend_schema(
+        summary='Eliminar grupo',
+        description='Elimina un grupo de imágenes.',
+        tags=['Image Groups'],
+        responses={
+            204: None,
+            404: ErrorResponseSerializer,
+        },
+    ),
+)
+class ImageGroupViewSet(viewsets.ModelViewSet):
+    """ViewSet for ImageGroup management."""
+    queryset = ImageGroup.objects.all()
+    serializer_class = ImageGroupSerializer
+    
+    def get_queryset(self):
+        """Filter groups by current user."""
+        queryset = super().get_queryset()
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(created_by=self.request.user)
+        # Allow unauthenticated users to see empty list (for development)
+        return queryset
+    
+    def perform_create(self, serializer):
+        """Set created_by to current user."""
+        if not self.request.user.is_authenticated:
+            from rest_framework.exceptions import NotAuthenticated
+            raise NotAuthenticated('Authentication required')
+        serializer.save(created_by=self.request.user)
+    
+    def perform_update(self, serializer):
+        """Ensure user owns the group."""
+        instance = self.get_object()
+        if instance.created_by != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('You can only update your own groups')
+        serializer.save()
+    
+    def perform_destroy(self, instance):
+        """Ensure user owns the group."""
+        if instance.created_by != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('You can only delete your own groups')
+        instance.delete()
 

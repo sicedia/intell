@@ -3,7 +3,7 @@ Serializers for jobs app.
 """
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
-from .models import Job, ImageTask, DescriptionTask
+from .models import Job, ImageTask, DescriptionTask, Tag, ImageGroup
 from apps.audit.models import EventLog
 
 
@@ -45,6 +45,18 @@ class ImageTaskSerializer(serializers.ModelSerializer):
     artifact_svg_url = serializers.SerializerMethodField(
         help_text='URL del artefacto SVG generado'
     )
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Tag.objects.all(),
+        required=False,
+        help_text='Tags associated with this image'
+    )
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=ImageGroup.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text='Group this image belongs to'
+    )
     
     class Meta:
         model = ImageTask
@@ -52,12 +64,13 @@ class ImageTaskSerializer(serializers.ModelSerializer):
             'id', 'job', 'algorithm_key', 'algorithm_version', 'params',
             'output_format', 'status', 'progress', 'artifact_png_url',
             'artifact_svg_url', 'chart_data', 'error_code', 'error_message',
-            'trace_id', 'created_at', 'updated_at'
+            'trace_id', 'title', 'user_description', 'group', 'tags',
+            'is_published', 'published_at', 'created_at', 'updated_at'
         ]
         read_only_fields = [
             'id', 'status', 'progress', 'artifact_png_url', 'artifact_svg_url',
             'chart_data', 'error_code', 'error_message', 'trace_id',
-            'created_at', 'updated_at'
+            'is_published', 'published_at', 'created_at', 'updated_at'
         ]
     
     def get_artifact_png_url(self, obj):
@@ -421,9 +434,9 @@ class AIDescribeRequestSerializer(serializers.Serializer):
         help_text='ID de la tarea de imagen para la cual generar la descripci?n'
     )
     user_context = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        help_text='Contexto adicional proporcionado por el usuario para mejorar la descripci?n'
+        required=True,
+        min_length=200,
+        help_text='Contexto adicional proporcionado por el usuario para mejorar la descripci?n (mínimo 200 caracteres)'
     )
     provider_preference = serializers.ChoiceField(
         choices=['openai', 'anthropic', 'mock'],
@@ -515,4 +528,119 @@ class AIDescribeResponseSerializer(serializers.Serializer):
 class ErrorResponseSerializer(serializers.Serializer):
     """Response serializer for error responses."""
     error = serializers.CharField(help_text='Mensaje de error descriptivo')
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Tag example',
+            value={
+                'id': 1,
+                'name': 'patents',
+                'color': '#6366f1',
+                'created_by': 1,
+                'created_at': '2024-01-01T00:00:00Z'
+            }
+        ),
+    ]
+)
+class TagSerializer(serializers.ModelSerializer):
+    """Serializer for Tag."""
+    
+    class Meta:
+        model = Tag
+        fields = ['id', 'name', 'color', 'created_by', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'ImageGroup example',
+            value={
+                'id': 1,
+                'name': 'Q1 2024 Analysis',
+                'description': 'All charts from Q1 2024 analysis',
+                'created_by': 1,
+                'created_at': '2024-01-01T00:00:00Z',
+                'updated_at': '2024-01-01T00:00:00Z'
+            }
+        ),
+    ]
+)
+class ImageGroupSerializer(serializers.ModelSerializer):
+    """Serializer for ImageGroup."""
+    image_count = serializers.SerializerMethodField(
+        help_text='Number of images in this group'
+    )
+    
+    class Meta:
+        model = ImageGroup
+        fields = ['id', 'name', 'description', 'created_by', 'image_count', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_by', 'image_count', 'created_at', 'updated_at']
+    
+    def get_image_count(self, obj):
+        """Get count of images in this group."""
+        return obj.images.count()
+
+
+class ImageTaskUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating ImageTask metadata."""
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Tag.objects.all(),
+        required=False,
+        help_text='Tags associated with this image'
+    )
+    
+    class Meta:
+        model = ImageTask
+        fields = ['title', 'user_description', 'group', 'tags']
+    
+    def validate_group(self, value):
+        """Ensure user owns the group."""
+        if value and self.context.get('request'):
+            user = self.context['request'].user
+            if value.created_by != user:
+                raise serializers.ValidationError("You can only assign images to your own groups.")
+        return value
+
+
+class ImageLibrarySerializer(serializers.ModelSerializer):
+    """
+    Optimized serializer for image library listing.
+    Includes only essential fields for gallery view.
+    """
+    artifact_png_url = serializers.SerializerMethodField()
+    artifact_svg_url = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True, read_only=True)
+    group_name = serializers.CharField(source='group.name', read_only=True)
+    job_id = serializers.IntegerField(source='job.id', read_only=True)
+    
+    class Meta:
+        model = ImageTask
+        fields = [
+            'id', 'job_id', 'title', 'algorithm_key', 'status',
+            'artifact_png_url', 'artifact_svg_url', 'user_description',
+            'tags', 'group', 'group_name', 'is_published', 'published_at',
+            'created_at', 'updated_at'
+        ]
+    
+    def get_artifact_png_url(self, obj):
+        """Get PNG artifact URL."""
+        if obj.artifact_png:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.artifact_png.url)
+            return obj.artifact_png.url
+        return None
+    
+    def get_artifact_svg_url(self, obj):
+        """Get SVG artifact URL."""
+        if obj.artifact_svg:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.artifact_svg.url)
+            return obj.artifact_svg.url
+        return None
 

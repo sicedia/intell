@@ -83,6 +83,11 @@ def generate_description_task(self, description_task_id: int):
         if description_task.prompt_snapshot and isinstance(description_task.prompt_snapshot, dict):
             provider_preference = description_task.prompt_snapshot.get('provider_preference')
         
+        # Get additional context for enriched prompt
+        algorithm_key = image_task.algorithm_key
+        source_type = job.dataset.source_type if job.dataset else None
+        visualization_type = chart_data.get('type')
+        
         # Use router to generate description
         router = AIProviderRouter()
         result_text, provider_used = router.generate_description(
@@ -90,7 +95,10 @@ def generate_description_task(self, description_task_id: int):
             user_context=description_task.user_context,
             timeout=30,
             max_retries=3,
-            provider_preference=provider_preference
+            provider_preference=provider_preference,
+            algorithm_key=algorithm_key,
+            source_type=source_type,
+            visualization_type=visualization_type
         )
         
         # Determine model_used (simplified for MVP)
@@ -112,6 +120,8 @@ def generate_description_task(self, description_task_id: int):
         description_task.model_used = model_used
         description_task.prompt_snapshot = prompt_snapshot
         description_task.trace_id = trace_id
+        description_task.status = DescriptionTask.Status.SUCCESS
+        description_task.progress = 100
         description_task.save()
         
         # Emit DONE event

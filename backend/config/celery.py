@@ -36,6 +36,7 @@ app.conf.task_routes = {
     'apps.jobs.tasks.generate_image_task': {'queue': 'charts_cpu'},
     'apps.jobs.tasks.run_job': {'queue': 'charts_cpu'},
     'apps.jobs.tasks.finalize_job': {'queue': 'charts_cpu'},
+    'apps.jobs.tasks.cleanup_old_drafts': {'queue': 'charts_cpu'},
     'apps.ai_descriptions.*': {'queue': 'ai'},
 }
 
@@ -61,6 +62,11 @@ app.conf.task_annotations = {
         'soft_time_limit': 50,
         'acks_late': True,
     },
+    'apps.jobs.tasks.cleanup_old_drafts': {
+        'time_limit': 300,  # 5 minutes should be enough for cleanup
+        'soft_time_limit': 270,
+        'acks_late': True,
+    },
     'apps.ai_descriptions.*': {
         'time_limit': 60,
         'soft_time_limit': 50,
@@ -84,6 +90,17 @@ app.conf.task_queues = (
 # Broker transport options
 app.conf.broker_transport_options = {
     'visibility_timeout': 180,  # >= time_limit más alto (120s)
+}
+
+# Periodic task schedule (Celery Beat)
+from celery.schedules import crontab
+
+app.conf.beat_schedule = {
+    'cleanup-old-drafts': {
+        'task': 'apps.jobs.tasks.cleanup_old_drafts',
+        'schedule': crontab(hour=2, minute=0),  # Run daily at 2:00 AM
+        'kwargs': {'days_old': 14},  # Delete drafts older than 14 days
+    },
 }
 
 @app.task(bind=True)

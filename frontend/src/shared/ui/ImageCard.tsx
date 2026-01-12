@@ -1,10 +1,10 @@
 
 import React from 'react';
-import Image from "next/image";
 import { Card } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { cn } from "@/shared/lib/utils";
+import { Edit, Sparkles, Eye } from "lucide-react";
 
 interface ImageCardProps {
     title: string;
@@ -13,20 +13,33 @@ interface ImageCardProps {
     subtitle?: string; // e.g., Algorithm name
     className?: string;
     onView?: () => void;
+    onEdit?: () => void;
+    onGenerateDescription?: () => void;
     onDownload?: () => void; // Reserved for future use
 }
 
-export function ImageCard({ title, imageUrl, status, subtitle, className, onView }: ImageCardProps) {
+export function ImageCard({ 
+    title, 
+    imageUrl, 
+    status, 
+    subtitle, 
+    className, 
+    onView,
+    onEdit,
+    onGenerateDescription 
+}: ImageCardProps) {
+    const isSuccess = status === "SUCCESS";
+    
     return (
         <Card className={cn("overflow-hidden flex flex-col h-full", className)}>
             <div className="relative aspect-square w-full bg-muted/40 cursor-pointer group overflow-hidden" onClick={onView}>
                 {imageUrl ? (
-                    <Image
+                    // Use native img for external URLs to avoid Next.js Image optimization issues
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                         src={imageUrl}
                         alt={title}
-                        fill
-                        className="object-contain transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
@@ -39,14 +52,53 @@ export function ImageCard({ title, imageUrl, status, subtitle, className, onView
             </div>
             <div className="p-3 flex-1 flex flex-col gap-2">
                 <div>
-                    <h4 className="font-semibold text-sm line-clamp-1" title={title}>{title}</h4>
+                    <h4 className="font-semibold text-sm line-clamp-1" title={title}>{title || "Sin título"}</h4>
                     {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
                 </div>
             </div>
             <div className="p-3 pt-0 flex gap-2">
-                <Button variant="outline" size="sm" className="w-full text-xs h-8" onClick={onView} disabled={!imageUrl}>
-                    View
-                </Button>
+                {isSuccess && onView && (
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 text-xs h-8" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onView();
+                        }}
+                    >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Ver
+                    </Button>
+                )}
+                {isSuccess && onEdit && (
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 text-xs h-8" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit();
+                        }}
+                    >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Editar
+                    </Button>
+                )}
+                {isSuccess && onGenerateDescription && (
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 text-xs h-8" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onGenerateDescription();
+                        }}
+                        title="Generar descripción con IA"
+                    >
+                        <Sparkles className="h-3 w-3" />
+                    </Button>
+                )}
             </div>
         </Card>
     );

@@ -19,7 +19,10 @@ class AIProvider(ABC):
         self, 
         chart_data: Dict[str, Any], 
         user_context: Optional[str] = None,
-        timeout: int = 30
+        timeout: int = 30,
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
     ) -> str:
         """
         Generate description for chart.
@@ -34,34 +37,101 @@ class AIProvider(ABC):
         """
         pass
     
-    def _build_prompt(self, chart_data: Dict[str, Any], user_context: Optional[str]) -> str:
+    def _build_prompt(
+        self, 
+        chart_data: Dict[str, Any], 
+        user_context: Optional[str],
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
+    ) -> str:
         """
-        Build prompt from chart_data and user_context.
+        Build prompt from chart_data and user_context with enriched context.
         
         This is a shared implementation used by all AI providers.
         
         Args:
             chart_data: Structured chart data
             user_context: User-provided context
+            algorithm_key: Algorithm identifier (e.g., 'patent_trends_cumulative')
+            source_type: Data source type (e.g., 'lens', 'espacenet_excel')
+            visualization_type: Type of visualization (from chart_data or algorithm)
             
         Returns:
             Formatted prompt string
         """
-        prompt = f"Describe this chart:\n\n"
-        prompt += f"Chart Type: {chart_data.get('type', 'unknown')}\n"
-        prompt += f"Title: {chart_data.get('title', 'Untitled')}\n"
+        prompt = "You are a data visualization expert. Describe this chart in detail, focusing on:\n"
+        prompt += "- The main trends and patterns visible\n"
+        prompt += "- Key data points and metrics\n"
+        prompt += "- The significance of the visualization\n"
+        prompt += "- Any notable insights or observations\n\n"
+        prompt += "Chart Information:\n"
+        prompt += f"Chart Type: {chart_data.get('type', visualization_type or 'unknown')}\n"
         
+        # Title from chart_data or use algorithm-based title
+        title = chart_data.get('title')
+        if not title and algorithm_key:
+            # Generate a readable title from algorithm_key
+            title = algorithm_key.replace('_', ' ').title()
+        prompt += f"Title: {title or 'Untitled'}\n"
+        
+        # Algorithm and source context
+        if algorithm_key:
+            prompt += f"Algorithm: {algorithm_key}\n"
+        if source_type:
+            prompt += f"Data Source: {source_type}\n"
+        
+        # Axis labels
+        if 'x_axis' in chart_data:
+            prompt += f"X-Axis: {chart_data['x_axis']}\n"
+        if 'y_axis' in chart_data or 'y_axis_1' in chart_data:
+            y_axis = chart_data.get('y_axis') or chart_data.get('y_axis_1', '')
+            prompt += f"Y-Axis: {y_axis}\n"
+        if 'y_axis_2' in chart_data:
+            prompt += f"Y-Axis 2 (Secondary): {chart_data['y_axis_2']}\n"
+        
+        # Series information
         if 'series' in chart_data:
-            prompt += f"Series: {len(chart_data['series'])} data series\n"
+            series = chart_data['series']
+            prompt += f"\nData Series: {len(series)} data points\n"
+            # Include sample of first few data points if available
+            if isinstance(series, list) and len(series) > 0:
+                sample_size = min(3, len(series))
+                prompt += f"Sample data points (first {sample_size}):\n"
+                for i, point in enumerate(series[:sample_size]):
+                    prompt += f"  - {point}\n"
         
+        # Totals and summary metrics
         if 'totals' in chart_data:
             totals = chart_data['totals']
+            prompt += "\nSummary Metrics:\n"
             for key, value in totals.items():
                 if value is not None:
-                    prompt += f"{key}: {value}\n"
+                    prompt += f"  {key}: {value}\n"
         
+        # Additional totals at root level
+        for key in ['total_cumulative', 'total_publications', 'max_value', 'min_value']:
+            if key in chart_data and chart_data[key] is not None:
+                prompt += f"  {key}: {chart_data[key]}\n"
+        
+        # Date/time ranges
+        if 'years_range' in chart_data:
+            years = chart_data['years_range']
+            if isinstance(years, dict):
+                start = years.get('start')
+                end = years.get('end')
+                if start and end:
+                    prompt += f"\nTime Period: {start} - {end}\n"
+        
+        # Warnings or notes
+        if 'warnings' in chart_data and chart_data['warnings']:
+            prompt += f"\nNotes/Warnings: {', '.join(chart_data['warnings'])}\n"
+        
+        # User context (required, minimum 200 chars already validated)
         if user_context:
-            prompt += f"\nUser Context: {user_context}\n"
+            prompt += f"\nUser Context (important background information):\n{user_context}\n"
+        
+        prompt += "\nPlease provide a comprehensive, professional description of this chart."
         
         return prompt
 
@@ -103,7 +173,10 @@ class OpenAIProvider(AIProvider):
         self, 
         chart_data: Dict[str, Any], 
         user_context: Optional[str] = None,
-        timeout: int = 30
+        timeout: int = 30,
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
     ) -> str:
         """Generate description using OpenAI."""
         try:
@@ -112,7 +185,9 @@ class OpenAIProvider(AIProvider):
             # Build prompt
             prompt_template = ChatPromptTemplate.from_messages([
                 ("system", "You are a data visualization expert. Describe charts clearly and concisely."),
-                ("human", self._build_prompt(chart_data, user_context))
+                ("human", self._build_prompt(
+                    chart_data, user_context, algorithm_key, source_type, visualization_type
+                ))
             ])
             
             client = self._get_client()
@@ -169,7 +244,10 @@ class AnthropicProvider(AIProvider):
         self, 
         chart_data: Dict[str, Any], 
         user_context: Optional[str] = None,
-        timeout: int = 30
+        timeout: int = 30,
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
     ) -> str:
         """Generate description using Anthropic."""
         try:
@@ -178,7 +256,9 @@ class AnthropicProvider(AIProvider):
             # Build prompt
             prompt_template = ChatPromptTemplate.from_messages([
                 ("system", "You are a data visualization expert. Describe charts clearly and concisely."),
-                ("human", self._build_prompt(chart_data, user_context))
+                ("human", self._build_prompt(
+                    chart_data, user_context, algorithm_key, source_type, visualization_type
+                ))
             ])
             
             client = self._get_client()
@@ -205,13 +285,21 @@ class MockProvider(AIProvider):
         self, 
         chart_data: Dict[str, Any], 
         user_context: Optional[str] = None,
-        timeout: int = 30
+        timeout: int = 30,
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
     ) -> str:
         """Generate mock description."""
-        chart_type = chart_data.get('type', 'chart')
-        title = chart_data.get('title', 'Chart')
+        chart_type = chart_data.get('type', visualization_type or 'chart')
+        title = chart_data.get('title', algorithm_key or 'Chart')
         
         description = f"This is a {chart_type} chart titled '{title}'. "
+        
+        if algorithm_key:
+            description += f"Generated using algorithm: {algorithm_key}. "
+        if source_type:
+            description += f"Data source: {source_type}. "
         
         if 'totals' in chart_data:
             totals = chart_data['totals']
@@ -257,7 +345,10 @@ class AIProviderRouter:
         user_context: Optional[str] = None,
         timeout: int = 30,
         max_retries: int = 3,
-        provider_preference: Optional[str] = None
+        provider_preference: Optional[str] = None,
+        algorithm_key: Optional[str] = None,
+        source_type: Optional[str] = None,
+        visualization_type: Optional[str] = None
     ) -> tuple[str, str]:
         """
         Generate description with fallback.
@@ -269,6 +360,9 @@ class AIProviderRouter:
             max_retries: Maximum retries per provider
             provider_preference: Preferred provider name ('openai', 'anthropic', 'mock')
                                 If provided, starts from that provider
+            algorithm_key: Algorithm identifier
+            source_type: Data source type
+            visualization_type: Type of visualization
             
         Returns:
             Tuple of (description_text, provider_name)
@@ -294,7 +388,10 @@ class AIProviderRouter:
             # Retry logic with exponential backoff
             for attempt in range(max_retries):
                 try:
-                    description = provider.generate_description(chart_data, user_context, timeout)
+                    description = provider.generate_description(
+                        chart_data, user_context, timeout,
+                        algorithm_key, source_type, visualization_type
+                    )
                     return description, provider_name
                 except Exception as e:
                     logger.warning(

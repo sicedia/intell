@@ -5,6 +5,8 @@ import logging
 from celery import group, chord
 from celery import shared_task
 from django.core.files.base import ContentFile
+from django.utils import timezone
+from datetime import timedelta
 from apps.jobs.models import Job, ImageTask, DescriptionTask
 from apps.algorithms.registry import AlgorithmRegistry
 from apps.audit.helpers import emit_event
@@ -473,4 +475,71 @@ def finalize_job(self, task_results, job_id: int):
             job.save()
         
         raise
+
+
+@shared_task(bind=True, max_retries=3)
+def cleanup_old_drafts(self, days_old=14):
+    """
+    Cleanup old draft images that haven't been published.
+    
+    This task should be run periodically (e.g., daily) to remove draft images
+    that are older than the specified number of days.
+    
+    Args:
+        days_old: Number of days after which drafts should be deleted (default: 14)
+    """
+    try:
+        cutoff_date = timezone.now() - timedelta(days=days_old)
+        
+        # Find draft images older than cutoff_date that are successful
+        old_drafts = ImageTask.objects.filter(
+            is_published=False,
+            status=ImageTask.Status.SUCCESS,
+            created_at__lt=cutoff_date
+        )
+        
+        count = old_drafts.count()
+        
+        if count == 0:
+            logger.info('No old drafts to clean up')
+            return {'deleted_count': 0, 'message': 'No old drafts found'}
+        
+        # Delete artifacts and then the tasks
+        deleted_count = 0
+        for task in old_drafts:
+            try:
+                # Delete artifact files
+                if task.artifact_png:
+                    task.artifact_png.delete(save=False)
+                if task.artifact_svg:
+                    task.artifact_svg.delete(save=False)
+                
+                # Delete the task
+                task.delete()
+                deleted_count += 1
+            except Exception as e:
+                logger.warning(
+                    f'Error deleting draft ImageTask {task.id}: {str(e)}',
+                    extra={'image_task_id': task.id}
+                )
+        
+        logger.info(
+            f'Cleanup completed: deleted {deleted_count} old draft images',
+            extra={'deleted_count': deleted_count, 'cutoff_date': cutoff_date.isoformat()}
+        )
+        
+        return {
+            'deleted_count': deleted_count,
+            'cutoff_date': cutoff_date.isoformat(),
+            'message': f'Deleted {deleted_count} old draft images'
+        }
+        
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        logger.error(
+            f'Error in cleanup_old_drafts task: {str(e)}',
+            exc_info=True
+        )
+        # Retry the task
+        raise self.retry(exc=e, countdown=60 * 5)  # Retry after 5 minutes
 

@@ -10,10 +10,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Loader2, RotateCcw, X, Download, ChevronDown } from "lucide-react";
+import { Loader2, RotateCcw, X, Download, ChevronDown, BookmarkPlus, BookmarkCheck } from "lucide-react";
 import { env } from "@/shared/lib/env";
 import { cn } from "@/shared/lib/utils";
 import { retryImageTask, cancelImageTask, downloadJobZip, ZipFormat } from "../api/jobs";
+import { usePublishImage } from "@/features/images/hooks/useImages";
 import { useQueryClient } from "@tanstack/react-query";
 import { isConnectionError, isCancelledError, getConnectionErrorMessage } from "@/shared/lib/api-client";
 import { createLogger } from "@/shared/lib/logger";
@@ -167,6 +168,7 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
     const [isRetrying, setIsRetrying] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
     const queryClient = useQueryClient();
+    const publishImage = usePublishImage();
     const pngUrl = getFullUrl(task.result_urls.png);
     const svgUrl = getFullUrl(task.result_urls.svg);
     const hasImages = pngUrl || svgUrl;
@@ -181,6 +183,10 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
     // Check if task can be cancelled (RUNNING or PENDING only)
     const canCancel = task.status === JobStatus.RUNNING || 
                       task.status === JobStatus.PENDING;
+    
+    // Check if task can be published (must be SUCCESS)
+    const canPublish = task.status === JobStatus.SUCCESS;
+    const isPublished = task.is_published || false;
     
     const handleRetry = async () => {
         if (isRetrying || !canRetry) return;
@@ -258,6 +264,25 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
             }
         } finally {
             setIsCancelling(false);
+        }
+    };
+    
+    const handlePublish = async () => {
+        if (!canPublish || publishImage.isPending) return;
+        
+        try {
+            await publishImage.mutateAsync({
+                imageId: task.id,
+                publish: !isPublished,
+            });
+            
+            // Invalidate job queries to refresh the task status
+            await queryClient.invalidateQueries({ 
+                queryKey: ["job", jobId],
+                refetchType: "all"
+            });
+        } catch (error) {
+            // Error handled by hook (toast)
         }
     };
 
@@ -348,6 +373,33 @@ const TaskResultCard = ({ task, jobId }: { task: ImageTask; jobId: number }) => 
                     Task ID: {task.id}
                 </div>
                 <div className="flex gap-2">
+                    {canPublish && (
+                        <Button
+                            size="sm"
+                            variant={isPublished ? "default" : "outline"}
+                            onClick={handlePublish}
+                            disabled={publishImage.isPending}
+                            className="gap-2"
+                            title={isPublished ? "Imagen guardada en librería" : "Guardar en librería"}
+                        >
+                            {publishImage.isPending ? (
+                                <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    {isPublished ? "Despublicando..." : "Publicando..."}
+                                </>
+                            ) : isPublished ? (
+                                <>
+                                    <BookmarkCheck className="h-3 w-3" />
+                                    En librería
+                                </>
+                            ) : (
+                                <>
+                                    <BookmarkPlus className="h-3 w-3" />
+                                    Guardar
+                                </>
+                            )}
+                        </Button>
+                    )}
                     {canCancel && (
                         <Button
                             size="sm"

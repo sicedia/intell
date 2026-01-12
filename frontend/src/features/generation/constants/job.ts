@@ -23,6 +23,8 @@ export interface BackendImageTask {
     error_code?: string | null;
     error_message?: string | null;
     trace_id?: string | null;
+    is_published?: boolean;
+    published_at?: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -65,6 +67,8 @@ export interface ImageTask {
         svg?: string;
     };
     error_message?: string;
+    is_published?: boolean;
+    published_at?: string | null;
     created_at: string;
     updated_at: string;
     chart_data?: unknown;
@@ -160,6 +164,8 @@ export function transformImageTask(backendTask: BackendImageTask): ImageTask {
             svg: backendTask.artifact_svg_url || undefined,
         },
         error_message: backendTask.error_message || undefined,
+        is_published: backendTask.is_published || false,
+        published_at: backendTask.published_at || null,
         created_at: backendTask.created_at,
         updated_at: backendTask.updated_at,
         chart_data: backendTask.chart_data,
