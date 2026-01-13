@@ -5,7 +5,7 @@ import { Card } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { cn } from "@/shared/lib/utils";
-import { Edit, Sparkles, Eye, Download, Image as ImageIcon, FileImage } from "lucide-react";
+import { Edit, Sparkles, Eye, Download, Image as ImageIcon, FileImage, Trash2 } from "lucide-react";
 import { UserInfo } from "./UserInfo";
 import {
     DropdownMenu,
@@ -27,6 +27,7 @@ interface ImageCardProps {
     onView?: () => void;
     onEdit?: () => void;
     onGenerateDescription?: () => void;
+    onDelete?: () => void;
     createdByUsername?: string | null;
     createdByEmail?: string | null;
     createdBy?: number | null;
@@ -50,6 +51,7 @@ export function ImageCard({
     onView,
     onEdit,
     onGenerateDescription,
+    onDelete,
     createdByUsername,
     createdByEmail,
     createdBy,
@@ -71,16 +73,40 @@ export function ImageCard({
     // For detailed variant, use fixed height
     const isDetailed = variant === "detailed";
 
-    const handleDownload = (format: "png" | "svg", url: string | null | undefined) => {
+    const handleDownload = async (format: "png" | "svg", url: string | null | undefined) => {
         if (!url) return;
         
-        // Create a temporary anchor element to trigger download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${title || 'image'}.${format}`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        try {
+            // Fetch the image as a blob to force download instead of opening
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch image');
+            
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            // Create a temporary anchor element to trigger download
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `${title || 'image'}.${format}`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Error downloading image:', error);
+            // Fallback to direct download if fetch fails
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${title || 'image'}.${format}`;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
     const currentImageUrl = selectedFormat === "svg" && svgUrl ? svgUrl : imageUrl;
@@ -134,7 +160,7 @@ export function ImageCard({
 
                                 {/* Download Button - Top Left */}
                                 {isSuccess && showDownload && (
-                                    <div className="absolute top-2 left-2 z-10">
+                                    <div className="absolute top-2 left-2 z-10" onClick={(e) => e.stopPropagation()}>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button
@@ -195,13 +221,13 @@ export function ImageCard({
                             )}
                             
                             {/* Status Badge */}
-                            <div className="absolute top-2 right-2 z-10">
+                            <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                                 <StatusBadge status={status} />
                             </div>
 
                             {/* Download Button - Top Left */}
                             {isSuccess && showDownload && currentImageUrl && (
-                                <div className="absolute top-2 left-2 z-10">
+                                <div className="absolute top-2 left-2 z-10" onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button
@@ -268,13 +294,13 @@ export function ImageCard({
                     )}
                     
                     {/* Status Badge */}
-                    <div className="absolute top-2 right-2 z-10">
+                    <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                         <StatusBadge status={status} />
                     </div>
 
                     {/* Download Button - Top Left */}
                     {isSuccess && showDownload && currentImageUrl && (
-                        <div className="absolute top-2 left-2 z-10">
+                        <div className="absolute top-2 left-2 z-10" onClick={(e) => e.stopPropagation()}>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
@@ -316,7 +342,7 @@ export function ImageCard({
 
                     {/* Format Toggle - Bottom Right (only in images page) */}
                     {canToggleFormat && (
-                        <div className="absolute bottom-2 right-2 z-10">
+                        <div className="absolute bottom-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                             <Tabs value={selectedFormat} onValueChange={(v) => setSelectedFormat(v as "png" | "svg")}>
                                 <TabsList className="h-8 bg-background/90 shadow-md">
                                     <TabsTrigger 
@@ -343,7 +369,14 @@ export function ImageCard({
     };
 
     return (
-        <Card className={cn("overflow-hidden flex flex-col h-full", className)}>
+        <Card 
+            className={cn(
+                "overflow-hidden flex flex-col h-full",
+                isSuccess && onView && "cursor-pointer hover:shadow-md transition-shadow",
+                className
+            )}
+            onClick={isSuccess && onView ? () => onView() : undefined}
+        >
             {/* Header/Title Section - Only for detailed variant */}
             {isDetailed && (
                 <div className="py-4 px-4 bg-muted/30 border-b">
@@ -372,7 +405,7 @@ export function ImageCard({
             {/* Content Section - Only for compact variant */}
             {!isDetailed && (
                 <>
-                    <div className="p-3 flex-1 flex flex-col gap-2">
+                    <div className="p-3 flex-1 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
                         <div>
                             <h4 className="font-semibold text-sm line-clamp-1" title={title}>{title || "Sin título"}</h4>
                             {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
@@ -388,7 +421,7 @@ export function ImageCard({
                         )}
                     </div>
                     
-                    <div className="p-3 pt-0 flex gap-2">
+                    <div className="p-3 pt-0 flex gap-2" onClick={(e) => e.stopPropagation()}>
                         {isSuccess && onView && (
                             <Button 
                                 variant="outline" 
@@ -429,6 +462,20 @@ export function ImageCard({
                                 title="Generar descripción con IA"
                             >
                                 <Sparkles className="h-3 w-3" />
+                            </Button>
+                        )}
+                        {isSuccess && onDelete && (
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="flex-1 text-xs h-8 text-destructive hover:text-destructive hover:bg-destructive/10" 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete();
+                                }}
+                                title="Eliminar imagen"
+                            >
+                                <Trash2 className="h-3 w-3" />
                             </Button>
                         )}
                     </div>

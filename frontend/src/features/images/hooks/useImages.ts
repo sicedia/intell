@@ -1,13 +1,15 @@
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getImages, getImage, updateImageMetadata, publishImage } from "../api/images";
-import { ImageFilters, ImageTask, ImageTaskUpdate, ImageLibraryItem } from "../types";
+import { getImages, getImage, updateImageMetadata, publishImage, deleteImage } from "../api/images";
+import { ImageFilters, ImageTask, ImageTaskUpdate, ImageLibraryItem, PaginatedImageResponse, PaginationMetadata } from "../types";
 import { toast } from "sonner";
 
 /**
- * Hook to fetch images list with filters
+ * Hook to fetch images list with filters and pagination
+ * Returns images array and pagination metadata
  */
 export function useImages(filters?: ImageFilters, library: boolean = false) {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: ["images", filters, library],
     queryFn: () => getImages(filters, library),
     staleTime: 30 * 1000, // 30 seconds
@@ -19,6 +21,50 @@ export function useImages(filters?: ImageFilters, library: boolean = false) {
       return failureCount < 2;
     },
   });
+
+  // Extract pagination metadata from response
+  const paginationMetadata: PaginationMetadata | null = React.useMemo(() => {
+    if (!queryResult.data) return null;
+
+    // Check if response is paginated
+    if (Array.isArray(queryResult.data)) {
+      // Non-paginated response
+      return null;
+    }
+
+    const paginatedResponse = queryResult.data as PaginatedImageResponse<ImageLibraryItem | ImageTask>;
+    const pageSize = filters?.pageSize || 20;
+    const currentPage = filters?.page || 1;
+    const totalCount = paginatedResponse.count || 0;
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    return {
+      currentPage,
+      pageSize,
+      totalCount,
+      totalPages,
+      hasNext: !!paginatedResponse.next,
+      hasPrevious: !!paginatedResponse.previous,
+    };
+  }, [queryResult.data, filters?.page, filters?.pageSize]);
+
+  // Extract images array from response
+  const images: (ImageLibraryItem | ImageTask)[] = React.useMemo(() => {
+    if (!queryResult.data) return [];
+
+    if (Array.isArray(queryResult.data)) {
+      return queryResult.data;
+    }
+
+    const paginatedResponse = queryResult.data as PaginatedImageResponse<ImageLibraryItem | ImageTask>;
+    return paginatedResponse.results || [];
+  }, [queryResult.data]);
+
+  return {
+    ...queryResult,
+    data: images,
+    pagination: paginationMetadata,
+  };
 }
 
 /**
@@ -74,6 +120,28 @@ export function usePublishImage() {
     onError: (error) => {
       const errorMessage =
         error instanceof Error ? error.message : "Error al publicar/despublicar la imagen";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+/**
+ * Hook to delete an image
+ */
+export function useDeleteImage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (imageId: number) => deleteImage(imageId),
+    onSuccess: (_, imageId) => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+      queryClient.invalidateQueries({ queryKey: ["image", imageId] });
+      toast.success("Imagen eliminada exitosamente");
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al eliminar la imagen";
       toast.error(errorMessage);
     },
   });

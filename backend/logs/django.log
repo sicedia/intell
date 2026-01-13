@@ -29819,3 +29819,267 @@ INFO 2026-01-13 13:19:10,450 views 44316 21292 Job 273 created successfully with
 WARNING 2026-01-13 13:24:54,410 apps 44276 51396 Django apps not ready after 5.0s, skipping database check
 WARNING 2026-01-13 13:26:01,424 apps 37264 33756 Django apps not ready after 5.0s, skipping database check
 INFO 2026-01-13 13:26:42,452 views 37264 32948 Job 274 created successfully with 2 image tasks
+INFO 2026-01-13 13:33:18,893 apps 33880 44440 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:33:18,936 apps 33880 44440 Database connection established successfully
+INFO 2026-01-13 13:33:24,158 apps 3108 12176 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:33:24,232 apps 3108 12176 Database connection established successfully
+WARNING 2026-01-13 13:33:37,675 runserver 3108 21880 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:63549][0m
+WARNING 2026-01-13 13:33:38,979 runserver 3108 21880 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:63549][0m
+ERROR 2026-01-13 13:35:18,935 views 3108 34724 Error deleting ImageTask 1207: insert or update on table "audit_eventlog" violates foreign key constraint "audit_eventlog_image_task_id_dac34f0f_fk_jobs_imagetask_id"
+DETAIL:  Key (image_task_id)=(1207) is not present in table "jobs_imagetask".
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.ForeignKeyViolation: insert or update on table "audit_eventlog" violates foreign key constraint "audit_eventlog_image_task_id_dac34f0f_fk_jobs_imagetask_id"
+DETAIL:  Key (image_task_id)=(1207) is not present in table "jobs_imagetask".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 1013, in perform_destroy
+    emit_event(
+    ~~~~~~~~~~^
+        job_id=job_id,
+        ^^^^^^^^^^^^^^
+    ...<4 lines>...
+        payload={'image_task_id': image_id, 'algorithm_key': algorithm_key}
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\backend\apps\audit\helpers.py", line 71, in emit_event
+    event_log = EventLog.objects.create(
+        job_id=job_id,
+    ...<6 lines>...
+        payload=log_payload
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.IntegrityError: insert or update on table "audit_eventlog" violates foreign key constraint "audit_eventlog_image_task_id_dac34f0f_fk_jobs_imagetask_id"
+DETAIL:  Key (image_task_id)=(1207) is not present in table "jobs_imagetask".
+
+ERROR 2026-01-13 13:35:19,038 log 3108 49204 Internal Server Error: /api/image-tasks/1207/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.ForeignKeyViolation: insert or update on table "audit_eventlog" violates foreign key constraint "audit_eventlog_image_task_id_dac34f0f_fk_jobs_imagetask_id"
+DETAIL:  Key (image_task_id)=(1207) is not present in table "jobs_imagetask".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\rest_framework\mixins.py", line 91, in destroy
+    self.perform_destroy(instance)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 1013, in perform_destroy
+    emit_event(
+    ~~~~~~~~~~^
+        job_id=job_id,
+        ^^^^^^^^^^^^^^
+    ...<4 lines>...
+        payload={'image_task_id': image_id, 'algorithm_key': algorithm_key}
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\backend\apps\audit\helpers.py", line 71, in emit_event
+    event_log = EventLog.objects.create(
+        job_id=job_id,
+    ...<6 lines>...
+        payload=log_payload
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.IntegrityError: insert or update on table "audit_eventlog" violates foreign key constraint "audit_eventlog_image_task_id_dac34f0f_fk_jobs_imagetask_id"
+DETAIL:  Key (image_task_id)=(1207) is not present in table "jobs_imagetask".
+
+ERROR 2026-01-13 13:35:19,052 runserver 3108 21880 [35;1mHTTP DELETE /api/image-tasks/1207/ 500 [0.18, 127.0.0.1:62080][0m
+INFO 2026-01-13 13:36:05,352 apps 45364 42956 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:36:05,406 apps 45364 42956 Database connection established successfully
+INFO 2026-01-13 13:36:10,384 apps 40712 51752 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:36:10,435 apps 40712 51752 Database connection established successfully
+INFO 2026-01-13 13:36:23,457 apps 41628 41396 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:36:23,496 apps 41628 41396 Database connection established successfully
+INFO 2026-01-13 13:37:10,265 views 41628 7068 ImageTask 1206 deleted by user 1
+INFO 2026-01-13 13:37:27,120 views 41628 34368 User logged out: felipe.mendieta
+WARNING 2026-01-13 13:37:27,141 runserver 41628 29112 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:54577][0m
+INFO 2026-01-13 13:37:37,561 views_microsoft 41628 16420 Microsoft OAuth2: initiating login flow
+INFO 2026-01-13 13:37:41,303 microsoft 41628 33772 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-13 13:37:41,315 views_microsoft 41628 33772 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-13 13:38:30,234 views 41628 54584 Job 275 created successfully with 1 image tasks
+INFO 2026-01-13 13:39:08,638 apps 54140 18008 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:39:08,676 apps 54140 18008 Database connection established successfully
+INFO 2026-01-13 13:39:31,116 views 41628 12644 ImageTask 1192 deleted by user 1
+INFO 2026-01-13 13:39:52,050 apps 10540 33544 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 13:39:52,083 apps 10540 33544 Database connection established successfully
+INFO 2026-01-13 13:42:08,799 views 10540 15672 Job 276 created successfully with 1 image tasks
+INFO 2026-01-13 13:43:57,615 views 10540 34452 Job 277 created successfully with 1 image tasks
+INFO 2026-01-13 13:44:25,541 views 10540 50116 Job 278 created successfully with 8 image tasks
+INFO 2026-01-13 13:58:03,466 views 10540 47380 Job 279 created successfully with 8 image tasks
+INFO 2026-01-13 15:12:07,489 views 10540 37452 Job 280 created successfully with 3 image tasks
+WARNING 2026-01-13 15:15:41,818 runserver 10540 46484 [31;1mHTTP GET /api/auth/me/ 403 [0.04, 127.0.0.1:52629][0m
+INFO 2026-01-13 15:18:10,740 views 10540 31928 Job 281 created successfully with 8 image tasks
+WARNING 2026-01-13 15:21:17,478 runserver 10540 46484 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:61754][0m

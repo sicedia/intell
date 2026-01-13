@@ -4,11 +4,14 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { GalleryGrid } from "@/shared/ui/GalleryGrid";
+import { ImageList } from "@/shared/ui/ImageList";
 import { ImageCard } from "@/shared/ui/ImageCard";
+import { Pagination } from "@/shared/ui/Pagination";
 import { ImageLibraryFilters } from "@/features/images/ui/ImageLibraryFilters";
 import { ImageDetailDialog } from "@/features/images/ui/ImageDetailDialog";
 import { AIDescriptionDialog } from "@/features/images/ui/AIDescriptionDialog";
-import { useImages } from "@/features/images/hooks/useImages";
+import { useImages, useDeleteImage } from "@/features/images/hooks/useImages";
+import { useImageViewMode } from "@/features/images/hooks/useImageViewMode";
 import { ImageLibraryItem, ImageFilters, ImageTask } from "@/features/images/types";
 import { Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
@@ -17,14 +20,33 @@ import { LoadingState } from "@/shared/ui/LoadingState";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { useImageLibraryViewMode } from "@/features/images/hooks/useImageLibraryViewMode";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/shared/components/ui/alert-dialog";
+
+const DEFAULT_PAGE_SIZE = 20;
 
 export default function ImagesPage() {
   const queryClient = useQueryClient();
   const { viewMode: libraryViewMode, setViewMode: setLibraryViewMode } = useImageLibraryViewMode();
+  const { viewMode, setViewMode } = useImageViewMode(); // Grid/List view mode with persistence
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [currentPage, setCurrentPage] = useState(1);
+  
   const [filters, setFilters] = useState<ImageFilters>(() => {
     // Initialize filters based on localStorage view mode after hydration
     // This will be updated by the useEffect below
-    return {};
+    return {
+      page: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+    };
   });
 
   // Sync filters.group_by with libraryViewMode whenever it changes
@@ -34,11 +56,18 @@ export default function ImagesPage() {
     setFilters((prev) => {
       // Only update if the value actually changed to avoid unnecessary re-renders
       if (prev.group_by !== expectedGroupBy) {
-        return { ...prev, group_by: expectedGroupBy };
+        return { ...prev, group_by: expectedGroupBy, page: 1 }; // Reset to page 1 when changing view mode
       }
       return prev;
     });
   }, [libraryViewMode]);
+
+  // Sync current page with filters.page
+  useEffect(() => {
+    if (filters.page && filters.page !== currentPage) {
+      setCurrentPage(filters.page);
+    }
+  }, [filters.page, currentPage]);
 
   // Handler to update both libraryViewMode and filters immediately
   // Using useCallback to avoid recreating the function on each render
@@ -49,15 +78,67 @@ export default function ImagesPage() {
     setFilters((prev) => ({
       ...prev,
       group_by: expectedGroupBy,
+      page: 1, // Reset to page 1 when changing library view mode
     }));
   }, [setLibraryViewMode]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Handler for filter changes - reset to page 1 when filters change (not page/pageSize)
+  const handleFiltersChange = useCallback((newFilters: ImageFilters) => {
+    setFilters((prev) => {
+      // Check if any filter (except page/pageSize) changed
+      const filterChanged = 
+        prev.status !== newFilters.status ||
+        prev.search !== newFilters.search ||
+        JSON.stringify(prev.tags) !== JSON.stringify(newFilters.tags) ||
+        prev.group !== newFilters.group ||
+        prev.date_from !== newFilters.date_from ||
+        prev.date_to !== newFilters.date_to;
+      
+      const updatedFilters = {
+        ...prev,
+        ...newFilters,
+        page: filterChanged ? 1 : (newFilters.page || prev.page || 1),
+        pageSize: newFilters.pageSize || prev.pageSize || DEFAULT_PAGE_SIZE,
+      };
+      
+      if (filterChanged) {
+        setCurrentPage(1);
+      } else if (updatedFilters.page !== currentPage) {
+        setCurrentPage(updatedFilters.page);
+      }
+      
+      return updatedFilters;
+    });
+  }, [currentPage]);
+
+  // Handler for page change
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    setFilters((prev) => ({
+      ...prev,
+      page,
+    }));
+  }, []);
+
+  // Handler for page size change
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+    setFilters((prev) => ({
+      ...prev,
+      page: 1,
+      pageSize: newPageSize,
+    }));
+  }, []);
+
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [aiImage, setAiImage] = useState<ImageTask | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<{ id: number; title: string } | null>(null);
 
-  const { data: images, isLoading, error } = useImages(filters, true);
+  const { data: images, isLoading, error, pagination } = useImages(filters, true);
+  const deleteImage = useDeleteImage();
 
   // Memoize handlers to avoid recreating them on each render
   const handleViewImage = useCallback((imageId: number) => {
@@ -112,8 +193,31 @@ export default function ImagesPage() {
     setIsAIDialogOpen(true);
   }, [convertLibraryItemToTask]);
 
-  const imagesList = (images as ImageLibraryItem[]) || [];
-  const isGrouped = filters.group_by === "job";
+  const handleDeleteClick = useCallback((image: ImageLibraryItem) => {
+    setImageToDelete({
+      id: image.id,
+      title: image.title || `Imagen ${image.id}`,
+    });
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!imageToDelete) return;
+    
+    try {
+      await deleteImage.mutateAsync(imageToDelete.id);
+      setImageToDelete(null);
+      // If the deleted image was open in detail dialog, close it
+      if (selectedImageId === imageToDelete.id) {
+        setIsDetailDialogOpen(false);
+        setSelectedImageId(null);
+      }
+    } catch (error) {
+      // Error is handled by the hook (toast notification)
+    }
+  }, [imageToDelete, deleteImage, selectedImageId]);
+
+  const imagesList = useMemo(() => (images as ImageLibraryItem[]) || [], [images]);
+  const isGrouped = useMemo(() => filters.group_by === "job", [filters.group_by]);
 
   // Group images by job_id when in grouped mode
   const groupedImages = useMemo(() => {
@@ -161,7 +265,7 @@ export default function ImagesPage() {
       {/* Filters */}
       <ImageLibraryFilters
         filters={filters}
-        onFiltersChange={setFilters}
+        onFiltersChange={handleFiltersChange}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         libraryViewMode={libraryViewMode}
@@ -189,7 +293,7 @@ export default function ImagesPage() {
           }}
         />
       ) : isGrouped && groupedImages ? (
-        // Grouped view
+        // Grouped view (always grid, no list view for grouped)
         <div className="space-y-6">
           {groupedImages.map((group) => (
             <Card key={group.jobId}>
@@ -219,6 +323,7 @@ export default function ImagesPage() {
                       onView={() => handleViewImage(image.id)}
                       onEdit={() => handleEditImage(image.id)}
                       onGenerateDescription={() => handleGenerateDescription(image)}
+                      onDelete={() => handleDeleteClick(image)}
                     />
                   ))}
                 </GalleryGrid>
@@ -226,28 +331,63 @@ export default function ImagesPage() {
             </Card>
           ))}
         </div>
-      ) : (
-        // All images view
-        <GalleryGrid isLoading={false}>
-          {imagesList.map((image) => (
-            <ImageCard
-              key={image.id}
-              title={image.title || `Imagen ${image.id}`}
-              imageUrl={image.artifact_png_url}
-              svgUrl={image.artifact_svg_url}
-              status={image.status}
-              subtitle={image.algorithm_key}
-              createdBy={image.created_by}
-              createdByUsername={image.created_by_username}
-              createdByEmail={image.created_by_email}
-              showFormatToggle={true}
-              showDownload={true}
-              onView={() => handleViewImage(image.id)}
-              onEdit={() => handleEditImage(image.id)}
-              onGenerateDescription={() => handleGenerateDescription(image)}
+      ) : viewMode === "list" ? (
+        // List view
+        <div className="space-y-4">
+          <ImageList
+            images={imagesList}
+            isLoading={isLoading}
+            onView={handleViewImage}
+            onEdit={handleEditImage}
+            onGenerateDescription={handleGenerateDescription}
+            onDelete={handleDeleteClick}
+          />
+          {pagination && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              pageSize={pagination.pageSize}
+              totalCount={pagination.totalCount}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
             />
-          ))}
-        </GalleryGrid>
+          )}
+        </div>
+      ) : (
+        // Grid view
+        <div className="space-y-4">
+          <GalleryGrid isLoading={false}>
+            {imagesList.map((image) => (
+              <ImageCard
+                key={image.id}
+                title={image.title || `Imagen ${image.id}`}
+                imageUrl={image.artifact_png_url}
+                svgUrl={image.artifact_svg_url}
+                status={image.status}
+                subtitle={image.algorithm_key}
+                createdBy={image.created_by}
+                createdByUsername={image.created_by_username}
+                createdByEmail={image.created_by_email}
+                showFormatToggle={true}
+                showDownload={true}
+                onView={() => handleViewImage(image.id)}
+                onEdit={() => handleEditImage(image.id)}
+                onGenerateDescription={() => handleGenerateDescription(image)}
+                onDelete={() => handleDeleteClick(image)}
+              />
+            ))}
+          </GalleryGrid>
+          {pagination && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              pageSize={pagination.pageSize}
+              totalCount={pagination.totalCount}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          )}
+        </div>
       )}
 
       {/* Detail Dialog */}
@@ -277,6 +417,27 @@ export default function ImagesPage() {
           }}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!imageToDelete} onOpenChange={(open) => !open && setImageToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar "{imageToDelete?.title}"? Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

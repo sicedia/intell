@@ -101,15 +101,13 @@ function NotificationItem({
 }: {
   notification: Notification;
   onMarkAsRead: (id: number) => void;
-  onNavigate: (url: string | null) => void;
+  onNavigate: (url: string) => void;
 }) {
   const handleClick = () => {
     if (!notification.is_read) {
       onMarkAsRead(notification.id);
     }
-    if (notification.related_object_url) {
-      onNavigate(notification.related_object_url);
-    }
+    onNavigate("/generate");
   };
 
   return (
@@ -296,10 +294,8 @@ export function NotificationDropdown() {
                     notification={notification}
                     onMarkAsRead={markAsRead}
                     onNavigate={(url) => {
-                      if (url) {
-                        setIsOpen(false);
-                        router.push(url);
-                      }
+                      setIsOpen(false);
+                      router.push(url);
                     }}
                   />
                 ))}
@@ -323,10 +319,8 @@ export function NotificationDropdown() {
                     notification={notification}
                     onMarkAsRead={markAsRead}
                     onNavigate={(url) => {
-                      if (url) {
-                        setIsOpen(false);
-                        router.push(url);
-                      }
+                      setIsOpen(false);
+                      router.push(url);
                     }}
                   />
                 ))}

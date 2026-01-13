@@ -121,4 +121,24 @@ export interface ImageFilters {
   date_to?: string;
   published?: boolean; // Filter by published status (only used when not in library mode)
   group_by?: "job"; // Group images by Job (for grouped view)
+  page?: number; // Page number for pagination (1-indexed)
+  pageSize?: number; // Page size for pagination
+}
+
+// Paginated response from API
+export interface PaginatedImageResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+// Pagination metadata for UI
+export interface PaginationMetadata {
+  currentPage: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }

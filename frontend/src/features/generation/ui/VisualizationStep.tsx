@@ -12,6 +12,7 @@ import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Label } from "@/shared/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { cn } from "@/shared/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface VisualizationStepProps {
     onNext: () => void;
@@ -47,6 +48,24 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
 
     const isSelected = (key: string) => selectedAlgorithms.some((a) => a.algorithm_key === key);
 
+    const handleSelectAll = () => {
+        const allSelected = selectedAlgorithms.length === ALGORITHMS.length;
+        
+        if (allSelected) {
+            // Deselect all
+            setSelectedAlgorithms([]);
+        } else {
+            // Select all
+            const allAlgorithms: AlgorithmConfig[] = ALGORITHMS.map((algo) => ({
+                algorithm_key: algo.key,
+                algorithm_version: "1.0",
+                params: { ...algo.defaultParams },
+                output_format: "both",
+            }));
+            setSelectedAlgorithms(allAlgorithms);
+        }
+    };
+
     const handlePaletteChange = (value: string) => {
         setVisualizationConfig({
             ...visualizationConfig,
@@ -61,13 +80,40 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
         });
     };
 
+    const allSelected = selectedAlgorithms.length === ALGORITHMS.length;
+    const someSelected = selectedAlgorithms.length > 0 && selectedAlgorithms.length < ALGORITHMS.length;
+
     return (
         <div className="space-y-6">
+            {/* Navigation buttons at the top */}
+            <div className="flex justify-between items-center">
+                <Button variant="outline" onClick={onBack}>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Back
+                </Button>
+                <Button onClick={onNext} disabled={selectedAlgorithms.length === 0}>
+                    Next: Generate
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+            </div>
+
             {/* Algorithm Selection */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Select Visualizations</CardTitle>
-                    <CardDescription>Choose the analyses you want to perform on the data.</CardDescription>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Select Visualizations</CardTitle>
+                            <CardDescription>Choose the analyses you want to perform on the data.</CardDescription>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSelectAll}
+                            className="ml-4"
+                        >
+                            {allSelected ? "Deselect All" : "Select All"}
+                        </Button>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,12 +231,15 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
                 </CardContent>
             </Card>
 
+            {/* Navigation buttons at the bottom */}
             <div className="flex justify-between">
                 <Button variant="outline" onClick={onBack}>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
                     Back
                 </Button>
                 <Button onClick={onNext} disabled={selectedAlgorithms.length === 0}>
                     Next: Generate
+                    <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         </div>

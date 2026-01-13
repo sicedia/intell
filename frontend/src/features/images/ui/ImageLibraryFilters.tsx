@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Input } from "@/shared/components/ui/input";
 import {
   Select,
@@ -79,6 +79,17 @@ export function ImageLibraryFilters({
   const hasActiveFilters =
     filters.status || filters.tags?.length || filters.group || filters.search || filters.date_from || filters.date_to;
 
+  // Get active filter count for badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filters.status) count++;
+    if (filters.tags?.length) count++;
+    if (filters.group) count++;
+    if (filters.search) count++;
+    if (filters.date_from || filters.date_to) count++;
+    return count;
+  }, [filters.status, filters.tags, filters.group, filters.search, filters.date_from, filters.date_to]);
+
   return (
     <Card className={className}>
       <CardContent className="pt-6">
@@ -86,12 +97,16 @@ export function ImageLibraryFilters({
           {/* Search and Status Filter */}
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" 
+                aria-hidden="true"
+              />
               <Input
                 placeholder="Buscar por título, algoritmo o descripción..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="pl-10"
+                aria-label="Buscar imágenes"
               />
             </div>
             <Select
@@ -100,9 +115,12 @@ export function ImageLibraryFilters({
                 handleFilterChange("status", value === "all" ? undefined : (value as ImageTaskStatus))
               }
             >
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <Filter className="mr-2 h-4 w-4" />
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por estado">
+                <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
                 <SelectValue placeholder="Estado" />
+                {filters.status && (
+                  <span className="ml-2 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                )}
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los estados</SelectItem>
@@ -113,44 +131,54 @@ export function ImageLibraryFilters({
                 <SelectItem value="CANCELLED">Cancelado</SelectItem>
               </SelectContent>
             </Select>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-shrink-0">
               {/* Library View Mode Toggle */}
-              <div className="flex gap-1 border rounded-md p-1">
+              <div className="flex gap-1 border rounded-md p-1" role="group" aria-label="Modo de visualización de librería">
                 <Button
                   variant={libraryViewMode === "all" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleLibraryViewModeChange("all")}
                   className="h-8"
+                  aria-label="Ver todas las imágenes"
+                  aria-pressed={libraryViewMode === "all"}
                 >
-                  <LayoutGrid className="h-3 w-3 mr-1" />
-                  Todas
+                  <LayoutGrid className="h-3 w-3 mr-1" aria-hidden="true" />
+                  <span className="hidden sm:inline">Todas</span>
                 </Button>
                 <Button
                   variant={libraryViewMode === "grouped" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleLibraryViewModeChange("grouped")}
                   className="h-8"
+                  aria-label="Ver imágenes agrupadas por lote"
+                  aria-pressed={libraryViewMode === "grouped"}
                 >
-                  <Layers className="h-3 w-3 mr-1" />
-                  Por lote
+                  <Layers className="h-3 w-3 mr-1" aria-hidden="true" />
+                  <span className="hidden sm:inline">Por lote</span>
                 </Button>
               </div>
               {/* Grid/List Toggle */}
               {onViewModeChange && (
-                <div className="flex gap-2">
+                <div className="flex gap-1 border rounded-md p-1" role="group" aria-label="Vista de imágenes">
                   <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
+                    variant={viewMode === "grid" ? "default" : "ghost"}
                     size="icon"
                     onClick={() => onViewModeChange("grid")}
+                    className="h-8 w-8"
+                    aria-label="Vista de cuadrícula"
+                    aria-pressed={viewMode === "grid"}
                   >
-                    <Grid className="h-4 w-4" />
+                    <Grid className="h-4 w-4" aria-hidden="true" />
                   </Button>
                   <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
+                    variant={viewMode === "list" ? "default" : "ghost"}
                     size="icon"
                     onClick={() => onViewModeChange("list")}
+                    className="h-8 w-8"
+                    aria-label="Vista de lista"
+                    aria-pressed={viewMode === "list"}
                   >
-                    <List className="h-4 w-4" />
+                    <List className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>
               )}
@@ -158,15 +186,18 @@ export function ImageLibraryFilters({
           </div>
 
           {/* Additional Filters */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <Select
               value={filters.group?.toString() || "all"}
               onValueChange={(value) =>
                 handleFilterChange("group", value === "all" ? undefined : parseInt(value))
               }
             >
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por grupo">
                 <SelectValue placeholder="Grupo" />
+                {filters.group && (
+                  <span className="ml-2 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                )}
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los grupos</SelectItem>
@@ -184,8 +215,11 @@ export function ImageLibraryFilters({
                 handleFilterChange("tags", value === "all" ? undefined : [parseInt(value)])
               }
             >
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por tag">
                 <SelectValue placeholder="Tag" />
+                {filters.tags && filters.tags.length > 0 && (
+                  <span className="ml-2 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                )}
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los tags</SelectItem>
@@ -198,9 +232,19 @@ export function ImageLibraryFilters({
             </Select>
 
             {hasActiveFilters && (
-              <Button variant="outline" onClick={clearFilters} className="sm:ml-auto">
-                <X className="h-4 w-4 mr-2" />
+              <Button 
+                variant="outline" 
+                onClick={clearFilters} 
+                className="sm:ml-auto w-full sm:w-auto"
+                aria-label={`Limpiar ${activeFilterCount} filtro${activeFilterCount > 1 ? 's' : ''} activo${activeFilterCount > 1 ? 's' : ''}`}
+              >
+                <X className="h-4 w-4 mr-2" aria-hidden="true" />
                 Limpiar filtros
+                {activeFilterCount > 0 && (
+                  <span className="ml-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
               </Button>
             )}
           </div>

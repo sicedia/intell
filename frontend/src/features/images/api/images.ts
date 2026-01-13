@@ -1,16 +1,8 @@
 import { apiClient } from "@/shared/lib/api-client";
-import { ImageTask, ImageLibraryItem, ImageTaskUpdate, ImageFilters } from "../types";
+import { ImageTask, ImageLibraryItem, ImageTaskUpdate, ImageFilters, PaginatedImageResponse } from "../types";
 
 // Use simple paths - api-client already handles the base URL
 const BASE_URL = "/image-tasks";
-
-// DRF paginated response type
-interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
 
 /**
  * Build query string from filters
@@ -28,6 +20,9 @@ function buildQueryString(filters?: ImageFilters, library?: boolean): string {
     if (filters.date_from) params.append("date_from", filters.date_from);
     if (filters.date_to) params.append("date_to", filters.date_to);
     if (filters.group_by) params.append("group_by", filters.group_by);
+    // Pagination parameters (DRF uses 'page' for page number)
+    if (filters.page) params.append("page", filters.page.toString());
+    if (filters.pageSize) params.append("page_size", filters.pageSize.toString());
   }
   
   if (library) params.append("library", "true");
@@ -38,19 +33,39 @@ function buildQueryString(filters?: ImageFilters, library?: boolean): string {
 
 /**
  * Get list of images with optional filters
+ * Returns paginated response if backend supports it, otherwise returns array
  */
 export async function getImages(
   filters?: ImageFilters,
   library: boolean = false
-): Promise<ImageLibraryItem[] | ImageTask[]> {
+): Promise<PaginatedImageResponse<ImageLibraryItem | ImageTask> | (ImageLibraryItem | ImageTask)[]> {
   const queryString = buildQueryString(filters, library);
   const url = queryString ? `${BASE_URL}${queryString}` : `${BASE_URL}/`;
-  const response = await apiClient.get<PaginatedResponse<ImageLibraryItem | ImageTask> | (ImageLibraryItem | ImageTask)[]>(url);
+  const response = await apiClient.get<PaginatedImageResponse<ImageLibraryItem | ImageTask> | (ImageLibraryItem | ImageTask)[]>(url);
+  
   // Handle both paginated and non-paginated responses
   if (Array.isArray(response)) {
+    // Non-paginated response - return as is
     return response;
   }
-  return response.results || [];
+  
+  // Paginated response - check if it has the expected structure
+  if (response && typeof response === 'object' && 'results' in response) {
+    return response as PaginatedImageResponse<ImageLibraryItem | ImageTask>;
+  }
+  
+  // Fallback: if response has results but not full pagination structure
+  if (response && typeof response === 'object' && 'results' in response) {
+    return {
+      count: (response as any).count || (response as any).results?.length || 0,
+      next: (response as any).next || null,
+      previous: (response as any).previous || null,
+      results: (response as any).results || [],
+    };
+  }
+  
+  // Last resort: return empty array
+  return [];
 }
 
 /**
@@ -84,4 +99,11 @@ export async function publishImage(
     { publish }
   );
   return response;
+}
+
+/**
+ * Delete an image
+ */
+export async function deleteImage(imageId: number): Promise<void> {
+  await apiClient.delete(`${BASE_URL}/${imageId}/`);
 }

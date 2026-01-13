@@ -453,6 +453,9 @@ const TaskResultCard = ({
                             createdByUsername={task.created_by_username}
                             createdByEmail={task.created_by_email}
                             className="border-0 shadow-none rounded-none"
+                            onView={handleViewClick}
+                            onEdit={handleEditClick}
+                            onGenerateDescription={handleDescribeClick}
                         />
                     </div>
                 ) : task.status === JobStatus.RUNNING || task.status === JobStatus.PENDING ? (

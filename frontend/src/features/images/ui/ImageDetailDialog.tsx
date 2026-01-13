@@ -12,13 +12,23 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
-import { useImageDetail, useImageUpdate, usePublishImage } from "../hooks/useImages";
+import { useImageDetail, useImageUpdate, usePublishImage, useDeleteImage } from "../hooks/useImages";
 import { useQueryClient } from "@tanstack/react-query";
 import { TagSelector } from "./TagSelector";
 import { GroupSelector } from "./GroupSelector";
 import { AIDescriptionDialog } from "./AIDescriptionDialog";
 import { ImageTask } from "../types";
-import { Save, Sparkles, BookmarkPlus, BookmarkCheck } from "lucide-react";
+import { Save, Sparkles, BookmarkPlus, BookmarkCheck, Trash2, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/shared/components/ui/alert-dialog";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { Badge } from "@/shared/components/ui/badge";
 import { UserInfo } from "@/shared/ui/UserInfo";
@@ -36,9 +46,11 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
   const { data: image, isLoading, refetch } = useImageDetail(imageId);
   const updateImage = useImageUpdate();
   const publishImage = usePublishImage();
+  const deleteImage = useDeleteImage();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Update active tab when initialTab changes or dialog opens
   useEffect(() => {
@@ -129,14 +141,30 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {image.title || `Imagen ${image.id}`} - {image.algorithm_key}
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 flex flex-col">
+          {/* Fixed close button in top right corner */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background border shadow-sm"
+            onClick={() => onOpenChange(false)}
+            aria-label="Cerrar diálogo"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          
+          {/* Header - fixed */}
+          <div className="px-6 pt-6 pb-4 border-b">
+            <DialogHeader>
+              <DialogTitle>
+                {image.title || `Imagen ${image.id}`} - {image.algorithm_key}
+              </DialogTitle>
+            </DialogHeader>
+          </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-6 py-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="view">Vista</TabsTrigger>
               <TabsTrigger value="edit">Editar Metadata</TabsTrigger>
@@ -208,7 +236,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                   <p className="text-sm">{new Date(image.created_at).toLocaleString()}</p>
                 </div>
                 {image.status === "SUCCESS" && (
-                  <div className="pt-4 border-t">
+                  <div className="pt-4 border-t space-y-2">
                     <Button
                       variant={image.is_published ? "outline" : "default"}
                       onClick={async () => {
@@ -239,6 +267,24 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                         <>
                           <BookmarkPlus className="mr-2 h-4 w-4" />
                           Publicar en librería
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      disabled={deleteImage.isPending}
+                      className="w-full"
+                    >
+                      {deleteImage.isPending ? (
+                        <>
+                          <Spinner className="mr-2 h-4 w-4" />
+                          Eliminando...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar imagen
                         </>
                       )}
                     </Button>
@@ -363,6 +409,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
               </div>
             </TabsContent>
           </Tabs>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -380,6 +427,36 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
           }}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar "{image?.title || `Imagen ${image?.id}`}"? Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (!image) return;
+                try {
+                  await deleteImage.mutateAsync(image.id);
+                  setShowDeleteConfirm(false);
+                  onOpenChange(false);
+                } catch (error) {
+                  // Error handled by hook
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

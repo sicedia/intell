@@ -965,6 +965,79 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
                 {'error': f'Error al publicar/despublicar imagen: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+    def perform_destroy(self, instance):
+        """
+        Delete an ImageTask instance.
+        
+        Ensures only the user who created the image can delete it.
+        Deletes artifact files (PNG/SVG) before deleting the model instance.
+        Emits audit event for tracking.
+        """
+        from apps.audit.helpers import emit_event
+        from rest_framework.exceptions import PermissionDenied
+        
+        # Check permissions: only the user who created the image can delete it
+        if instance.created_by != self.request.user:
+            raise PermissionDenied('You can only delete your own images')
+        
+        # Store image info for audit event (before deletion)
+        image_id = instance.id
+        job_id = instance.job_id
+        algorithm_key = instance.algorithm_key
+        
+        try:
+            # Emit audit event BEFORE deleting (emit_event may try to update the ImageTask)
+            emit_event(
+                job_id=job_id,
+                image_task_id=image_id,
+                event_type='image_deleted',
+                level='INFO',
+                message=f'Image deleted: {algorithm_key}',
+                payload={'image_task_id': image_id, 'algorithm_key': algorithm_key}
+            )
+            
+            # Delete artifact files before deleting the model
+            if instance.artifact_png:
+                try:
+                    instance.artifact_png.delete(save=False)
+                except Exception as e:
+                    logger.warning(
+                        f'Error deleting PNG artifact for ImageTask {instance.id}: {str(e)}',
+                        extra={'image_task_id': instance.id}
+                    )
+            
+            if instance.artifact_svg:
+                try:
+                    instance.artifact_svg.delete(save=False)
+                except Exception as e:
+                    logger.warning(
+                        f'Error deleting SVG artifact for ImageTask {instance.id}: {str(e)}',
+                        extra={'image_task_id': instance.id}
+                    )
+            
+            # Delete the model instance
+            instance.delete()
+            
+            logger.info(
+                f'ImageTask {image_id} deleted by user {self.request.user.id}',
+                extra={
+                    'image_task_id': image_id,
+                    'job_id': job_id,
+                    'user_id': self.request.user.id,
+                    'algorithm_key': algorithm_key
+                }
+            )
+            
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            logger.error(
+                f'Error deleting ImageTask {image_id}: {str(e)}',
+                exc_info=True,
+                extra={'image_task_id': image_id, 'job_id': job_id, 'trace': error_trace}
+            )
+            # Re-raise the exception so DRF can handle it properly
+            raise
 
 
 @extend_schema_view(
