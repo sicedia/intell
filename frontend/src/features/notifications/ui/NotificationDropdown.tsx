@@ -116,9 +116,9 @@ function NotificationItem({
     <DropdownMenuItem
       key={notification.id}
       className={cn(
-        "flex flex-col items-start gap-2 p-3 cursor-pointer",
+        "flex items-start gap-3 p-3 cursor-pointer",
         "hover:bg-accent transition-colors",
-        !notification.is_read && "bg-accent/50"
+        !notification.is_read && "bg-accent/30 border-l-2 border-l-primary"
       )}
       onClick={handleClick}
       onSelect={(e) => {
@@ -126,31 +126,31 @@ function NotificationItem({
         handleClick();
       }}
     >
-      <div className="flex items-start gap-3 w-full">
-        <div className="mt-0.5 shrink-0">
-          {getNotificationIcon(notification.type)}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2 mb-1">
+      <div className="mt-0.5 shrink-0">
+        {getNotificationIcon(notification.type)}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <div className="flex-1 min-w-0">
             <p
               className={cn(
-                "text-sm font-medium line-clamp-1",
-                !notification.is_read && "font-semibold"
+                "text-sm font-medium line-clamp-2 mb-1",
+                !notification.is_read && "font-semibold text-foreground"
               )}
             >
               {notification.title}
             </p>
-            {!notification.is_read && (
-              <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-            )}
+            <p className="text-xs text-muted-foreground line-clamp-2 mb-1.5">
+              {notification.message}
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-2 mb-1">
-            {notification.message}
-          </p>
-          <p className="text-xs text-muted-foreground/70">
-            {formatNotificationTime(notification.created_at)}
-          </p>
+          {!notification.is_read && (
+            <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1" />
+          )}
         </div>
+        <p className="text-xs text-muted-foreground/70">
+          {formatNotificationTime(notification.created_at)}
+        </p>
       </div>
     </DropdownMenuItem>
   );
@@ -170,29 +170,33 @@ export function NotificationDropdown() {
     unreadCount,
     isLoading,
     isLoadingCount,
+    error,
     markAsRead,
     markAllAsRead,
     refetch,
   } = useNotifications();
 
-  // Mark all as read when dropdown is opened (to remove red badge)
+  // Debug: Log notifications when they change
   useEffect(() => {
-    if (isOpen && unreadCount > 0) {
-      // Mark all as read when opened to remove red badge
-      // This ensures the badge disappears immediately when user opens notifications
-      markAllAsRead();
+    if (notifications.length > 0) {
+      console.log(`[Notifications] Loaded ${notifications.length} notifications (${unreadCount} unread)`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]); // Only depend on isOpen to avoid infinite loops
+  }, [notifications.length, unreadCount]);
 
-  // Refetch when dropdown is opened
+  // Refetch when dropdown is opened to get latest notifications
   useEffect(() => {
     if (isOpen) {
       refetch();
     }
   }, [isOpen, refetch]);
 
-  const unreadNotifications = notifications.filter((n) => !n.is_read);
+  // Separate unread and read notifications for better organization
+  // Sort by created_at descending (newest first)
+  const sortedNotifications = [...notifications].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  const unreadNotifications = sortedNotifications.filter((n) => !n.is_read);
+  const readNotifications = sortedNotifications.filter((n) => n.is_read);
   const hasNotifications = notifications.length > 0;
 
   return (
@@ -224,29 +228,42 @@ export function NotificationDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[380px] max-h-[500px] overflow-y-auto"
+        className="w-[420px] max-h-[600px] overflow-hidden flex flex-col p-0"
       >
-        <div className="flex items-center justify-between px-2 py-2">
+        <div className="flex items-center justify-between px-4 py-3 border-b bg-background sticky top-0 z-10">
           <DropdownMenuLabel className="text-base font-semibold">
             Notificaciones
           </DropdownMenuLabel>
           {unreadNotifications.length > 0 && (
             <button
               type="button"
-              className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1 px-2 py-1 rounded-sm hover:bg-accent"
+              className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-accent"
               onClick={(e) => {
                 e.stopPropagation();
                 markAllAsRead();
               }}
             >
-              <CheckCheck className="h-3 w-3" />
+              <CheckCheck className="h-3.5 w-3.5" />
               Marcar todas como leídas
             </button>
           )}
         </div>
-        <DropdownMenuSeparator />
         
-        {isLoading ? (
+        {error ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4">
+            <AlertCircle className="h-8 w-8 text-destructive mb-2" />
+            <p className="text-sm text-destructive text-center">
+              Error al cargar notificaciones
+            </p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="text-xs text-primary hover:underline mt-2"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             <span className="ml-2 text-sm text-muted-foreground">
@@ -264,32 +281,65 @@ export function NotificationDropdown() {
             </p>
           </div>
         ) : (
-          <div className="max-h-[400px] overflow-y-auto">
-            {notifications.slice(0, 10).map((notification) => (
-              <NotificationItem
-                key={notification.id}
-                notification={notification}
-                onMarkAsRead={markAsRead}
-                onNavigate={(url) => {
-                  if (url) {
-                    setIsOpen(false);
-                    router.push(url);
-                  }
-                }}
-              />
-            ))}
-            {notifications.length > 10 && (
+          <div className="overflow-y-auto flex-1">
+            {/* Show unread notifications first */}
+            {unreadNotifications.length > 0 && (
               <>
-                <DropdownMenuSeparator />
-                <div className="px-2 py-2 text-center">
-                  <p className="text-xs text-muted-foreground">
-                    Mostrando las 10 notificaciones más recientes
-                  </p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">
-                    Total: {notifications.length} notificaciones
+                <div className="px-4 py-2.5 bg-primary/5 border-b sticky top-0 z-10">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Nuevas ({unreadNotifications.length})
                   </p>
                 </div>
+                {unreadNotifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onMarkAsRead={markAsRead}
+                    onNavigate={(url) => {
+                      if (url) {
+                        setIsOpen(false);
+                        router.push(url);
+                      }
+                    }}
+                  />
+                ))}
+                {readNotifications.length > 0 && (
+                  <div className="h-px bg-border" />
+                )}
               </>
+            )}
+
+            {/* Show read notifications (history) */}
+            {readNotifications.length > 0 && (
+              <>
+                <div className="px-4 py-2.5 bg-muted/30 border-b sticky top-0 z-10">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Anteriores ({readNotifications.length})
+                  </p>
+                </div>
+                {readNotifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onMarkAsRead={markAsRead}
+                    onNavigate={(url) => {
+                      if (url) {
+                        setIsOpen(false);
+                        router.push(url);
+                      }
+                    }}
+                  />
+                ))}
+              </>
+            )}
+
+            {/* Footer with total count */}
+            {hasNotifications && (
+              <div className="px-4 py-2.5 border-t bg-muted/20 text-center">
+                <p className="text-xs text-muted-foreground">
+                  {notifications.length} {notifications.length === 1 ? 'notificación' : 'notificaciones'} en total
+                </p>
+              </div>
             )}
           </div>
         )}

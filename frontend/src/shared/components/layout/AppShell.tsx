@@ -1,6 +1,24 @@
+"use client";
+
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { useNotificationToasts } from '@/features/notifications';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+
+/**
+ * Component to handle notification toasts.
+ * Only renders when user is authenticated.
+ */
+function NotificationToastsProvider() {
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    
+    // Always call the hook (hooks must be called unconditionally)
+    // The hook itself will handle the authentication check internally
+    useNotificationToasts();
+    
+    return null;
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
     return (
@@ -14,6 +32,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     {children}
                 </main>
             </div>
+            {/* Notification toasts provider - handles showing toasts for new notifications */}
+            <NotificationToastsProvider />
         </div>
     );
 }

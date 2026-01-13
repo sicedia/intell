@@ -29812,3 +29812,10 @@ INFO 2026-01-13 12:30:13,247 views 12176 46988 Job 270 created successfully with
 WARNING 2026-01-13 12:30:24,554 runserver 12176 30624 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.03, 127.0.0.1:57078][0m
 INFO 2026-01-13 12:30:40,191 apps 44316 53280 Waiting for database connection (timeout: 30.0s)...
 INFO 2026-01-13 12:30:40,238 apps 44316 53280 Database connection established successfully
+WARNING 2026-01-13 13:17:30,047 runserver 44316 57852 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:57987][0m
+INFO 2026-01-13 13:17:36,940 views 44316 11672 Job 271 created successfully with 3 image tasks
+INFO 2026-01-13 13:18:19,634 views 44316 11120 Job 272 created successfully with 8 image tasks
+INFO 2026-01-13 13:19:10,450 views 44316 21292 Job 273 created successfully with 7 image tasks
+WARNING 2026-01-13 13:24:54,410 apps 44276 51396 Django apps not ready after 5.0s, skipping database check
+WARNING 2026-01-13 13:26:01,424 apps 37264 33756 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-13 13:26:42,452 views 37264 32948 Job 274 created successfully with 2 image tasks

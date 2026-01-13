@@ -68,6 +68,8 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NotificationSerializer
     # Use IsOwnerOrReadOnly for object-level permissions, but allow global permission classes for view-level
     permission_classes = []  # Use global permission classes  # IsOwnerOrReadOnly already checks authentication
+    # Disable pagination to show all notifications (like Facebook/Instagram)
+    pagination_class = None
     
     def get_queryset(self):
         """
