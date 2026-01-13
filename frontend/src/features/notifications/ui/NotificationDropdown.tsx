@@ -158,6 +158,9 @@ function NotificationItem({
 
 /**
  * Notification dropdown component.
+ *
+ * Note: This component assumes the user is authenticated.
+ * Conditional rendering should be handled by the parent component.
  */
 export function NotificationDropdown() {
   const router = useRouter();

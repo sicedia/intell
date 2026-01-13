@@ -18,13 +18,22 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(','
 
 # Database configuration
 # Supports both SQLite (default) and PostgreSQL (via docker-compose)
+# Automatically uses retry-enabled backends for PostgreSQL
 DATABASE_URL = config('DATABASE_URL', default=None)
 
 if DATABASE_URL:
     # Use PostgreSQL if DATABASE_URL is provided
     import dj_database_url
+    db_config = dj_database_url.parse(DATABASE_URL)
+    
+    # Replace PostgreSQL backend with retry-enabled version
+    # dj_database_url uses 'django.db.backends.postgresql' or 'postgresql://' URLs
+    engine = db_config.get('ENGINE', '')
+    if 'postgresql' in engine or 'postgres' in engine:
+        db_config['ENGINE'] = 'apps.core.db.backends.postgresql'
+    
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
+        'default': db_config
     }
 else:
     # Default to SQLite for local development
@@ -35,10 +44,10 @@ else:
         }
     }
     # Alternatively, use PostgreSQL from docker-compose.yml
-    # Uncomment the following to use PostgreSQL:
+    # Uncomment the following to use PostgreSQL with retry support:
     # DATABASES = {
     #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql',
+    #         'ENGINE': 'apps.core.db.backends.postgresql',  # Retry-enabled backend
     #         'NAME': config('POSTGRES_DB', default='intell'),
     #         'USER': config('POSTGRES_USER', default='intell_user'),
     #         'PASSWORD': config('POSTGRES_PASSWORD', default='patents2026$'),
@@ -84,6 +93,12 @@ REST_FRAMEWORK = {
 # Logging - reduced verbosity in development
 LOGGING['root']['level'] = 'WARNING'
 LOGGING['loggers']['django']['level'] = 'WARNING'
+# Enable logging for database retry module to see retry attempts
+LOGGING['loggers']['apps.core.db'] = {
+    'handlers': ['console'],
+    'level': 'INFO',
+    'propagate': False,
+}
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = BASE_DIR / 'logs'

@@ -29562,3 +29562,253 @@ INFO 2026-01-12 16:08:41,309 views 15444 16148 ImageTask 1163 retry requested - 
 WARNING 2026-01-12 16:13:04,484 tasks 27980 12936 ImageTask 1171 does not exist - task may have been cancelled or deleted
 INFO 2026-01-12 16:13:04,502 views 50312 19220 Job 258 created successfully with 8 image tasks
 INFO 2026-01-12 16:13:19,899 views 50312 42104 ImageTask 1171 retry requested - task re-enqueued
+INFO 2026-01-13 10:33:21,999 apps 42596 8220 Waiting for database connection (timeout: 30.0s)...
+ERROR 2026-01-13 10:33:26,095 health 42596 8220 Database health check failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+INFO 2026-01-13 10:33:26,095 health 42596 8220 Waiting for database 'default'... (Database connection failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+)
+ERROR 2026-01-13 10:33:32,192 health 42596 8220 Database health check failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+INFO 2026-01-13 10:33:32,192 health 42596 8220 Waiting for database 'default'... (Database connection failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+)
+ERROR 2026-01-13 10:33:38,282 health 42596 8220 Database health check failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+INFO 2026-01-13 10:33:38,283 health 42596 8220 Waiting for database 'default'... (Database connection failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+)
+ERROR 2026-01-13 10:33:44,381 health 42596 8220 Database health check failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+INFO 2026-01-13 10:33:44,382 health 42596 8220 Waiting for database 'default'... (Database connection failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+)
+ERROR 2026-01-13 10:33:50,483 health 42596 8220 Database health check failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+INFO 2026-01-13 10:33:50,484 health 42596 8220 Waiting for database 'default'... (Database connection failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+)
+ERROR 2026-01-13 10:33:52,485 health 42596 8220 Timeout waiting for database 'default' after 30.0 seconds
+WARNING 2026-01-13 10:33:52,485 apps 42596 8220 Database not available after 30.0s. Server will start but database operations may fail.
+INFO 2026-01-13 10:38:55,497 apps 38128 53172 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:38:55,549 apps 38128 53172 Database connection established successfully
+INFO 2026-01-13 10:39:40,471 apps 5736 24452 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:39:40,526 apps 5736 24452 Database connection established successfully
+INFO 2026-01-13 10:40:40,445 apps 46344 17040 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:40:40,510 apps 46344 17040 Database connection established successfully
+INFO 2026-01-13 10:40:41,389 apps 15576 41088 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:40:41,432 apps 15576 41088 Database connection established successfully
+INFO 2026-01-13 10:41:28,223 apps 33260 50512 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:41:28,263 apps 33260 50512 Database connection established successfully
+INFO 2026-01-13 10:41:28,546 apps 17840 3524 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:41:28,604 apps 17840 3524 Database connection established successfully
+INFO 2026-01-13 10:41:45,227 apps 53800 15864 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:41:45,289 apps 53800 15864 Database connection established successfully
+INFO 2026-01-13 10:41:56,320 apps 8304 7980 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:41:56,355 apps 8304 7980 Database connection established successfully
+WARNING 2026-01-13 10:42:04,957 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.03, 127.0.0.1:52230][0m
+WARNING 2026-01-13 10:42:04,958 runserver 8304 56100 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:52231][0m
+WARNING 2026-01-13 10:42:08,823 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.04, 127.0.0.1:52231][0m
+WARNING 2026-01-13 10:42:08,824 runserver 8304 56100 [31;1mHTTP GET /api/auth/me/ 403 [0.04, 127.0.0.1:52230][0m
+WARNING 2026-01-13 10:42:08,827 runserver 8304 56100 [31;1mHTTP GET /api/notifications/ 403 [0.03, 127.0.0.1:52233][0m
+INFO 2026-01-13 10:42:23,636 views 8304 27844 Job 259 created successfully with 1 image tasks
+WARNING 2026-01-13 10:42:38,979 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+INFO 2026-01-13 10:42:56,382 apps 12184 15444 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:42:56,424 apps 12184 15444 Database connection established successfully
+WARNING 2026-01-13 10:43:09,002 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:43:39,020 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:44:09,043 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:44:39,063 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:45:09,077 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:45:39,094 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:46:09,124 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:46:39,143 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+INFO 2026-01-13 10:46:49,288 views 8304 20540 Job 260 created successfully with 1 image tasks
+WARNING 2026-01-13 10:47:09,168 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:47:39,184 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:48:09,207 runserver 8304 56100 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:52233][0m
+WARNING 2026-01-13 10:48:24,459 apps 32584 33964 Django apps not ready after 5.0s, skipping database check
+WARNING 2026-01-13 10:48:39,542 runserver 32584 18872 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:51441][0m
+INFO 2026-01-13 10:49:11,000 apps 13336 38064 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:49:11,044 apps 13336 38064 Database connection established successfully
+WARNING 2026-01-13 10:49:11,687 runserver 13336 10784 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:65105][0m
+INFO 2026-01-13 10:49:35,700 apps 50788 33916 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:49:35,755 apps 50788 33916 Database connection established successfully
+WARNING 2026-01-13 10:49:41,717 runserver 13336 10784 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:65105][0m
+INFO 2026-01-13 10:49:53,388 apps 46500 44104 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:49:53,423 apps 46500 44104 Database connection established successfully
+INFO 2026-01-13 10:50:13,092 apps 18336 57908 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:50:13,130 apps 18336 57908 Database connection established successfully
+INFO 2026-01-13 10:50:17,406 apps 45736 15608 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:50:17,439 apps 45736 15608 Database connection established successfully
+WARNING 2026-01-13 10:50:19,791 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.04, 127.0.0.1:57552][0m
+INFO 2026-01-13 10:50:41,254 views 45736 46464 Job 261 created successfully with 8 image tasks
+WARNING 2026-01-13 10:50:49,835 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:57552][0m
+WARNING 2026-01-13 10:51:19,872 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:57552][0m
+WARNING 2026-01-13 10:51:49,935 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.03, 127.0.0.1:57552][0m
+WARNING 2026-01-13 10:52:20,021 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.04, 127.0.0.1:57552][0m
+WARNING 2026-01-13 10:52:50,062 runserver 45736 31380 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:57552][0m
+INFO 2026-01-13 10:53:17,295 apps 19748 42284 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:53:17,329 apps 19748 42284 Database connection established successfully
+WARNING 2026-01-13 10:53:20,459 runserver 19748 13268 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.03, 127.0.0.1:57139][0m
+WARNING 2026-01-13 10:53:50,481 runserver 19748 13268 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:57139][0m
+INFO 2026-01-13 10:53:53,801 apps 53832 42428 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:54:25,494 apps 15168 48396 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:54:25,525 apps 15168 48396 Database connection established successfully
+WARNING 2026-01-13 10:54:25,995 runserver 15168 50396 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:52781][0m
+INFO 2026-01-13 10:54:38,695 apps 25548 17348 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:54:38,747 apps 25548 17348 Database connection established successfully
+WARNING 2026-01-13 10:54:56,326 runserver 25548 32284 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:60519][0m
+INFO 2026-01-13 10:55:06,700 views 25548 1996 Job 262 created successfully with 1 image tasks
+WARNING 2026-01-13 10:55:26,361 runserver 25548 32284 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:60519][0m
+INFO 2026-01-13 10:55:54,206 apps 30768 36460 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:55:54,251 apps 30768 36460 Database connection established successfully
+INFO 2026-01-13 10:55:57,405 apps 56660 46816 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:55:57,446 apps 56660 46816 Database connection established successfully
+WARNING 2026-01-13 10:55:58,010 runserver 56660 26884 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:65441][0m
+WARNING 2026-01-13 10:56:28,035 runserver 56660 26884 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.01, 127.0.0.1:65441][0m
+WARNING 2026-01-13 10:56:48,627 runserver 56660 26884 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:65441][0m
+INFO 2026-01-13 10:56:54,447 apps 25048 28392 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:56:54,497 apps 25048 28392 Database connection established successfully
+WARNING 2026-01-13 10:56:58,379 runserver 25048 18972 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.02, 127.0.0.1:64717][0m
+WARNING 2026-01-13 10:57:22,506 runserver 25048 18972 [31;1mHTTP GET /api/notifications/ 403 [0.06, 127.0.0.1:64717][0m
+WARNING 2026-01-13 10:57:22,511 runserver 25048 18972 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.07, 127.0.0.1:52178][0m
+WARNING 2026-01-13 10:57:29,356 runserver 25048 18972 [31;1mHTTP GET /api/notifications/ 403 [0.07, 127.0.0.1:52178][0m
+WARNING 2026-01-13 10:57:29,373 runserver 25048 18972 [31;1mHTTP GET /api/notifications/unread-count/ 403 [0.08, 127.0.0.1:64717][0m
+WARNING 2026-01-13 10:57:35,403 runserver 25048 18972 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:64717][0m
+INFO 2026-01-13 10:58:42,338 apps 54072 34536 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:58:42,378 apps 54072 34536 Database connection established successfully
+WARNING 2026-01-13 10:59:03,288 apps 10752 46732 Django apps not ready after 5.0s, skipping database check
+WARNING 2026-01-13 10:59:25,008 apps 14620 11328 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-13 10:59:51,101 apps 32688 53344 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:59:51,149 apps 32688 53344 Database connection established successfully
+INFO 2026-01-13 10:59:56,254 apps 38072 17040 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 10:59:56,326 apps 38072 17040 Database connection established successfully
+WARNING 2026-01-13 11:00:05,376 runserver 38072 53040 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:51243][0m
+INFO 2026-01-13 11:01:24,798 views 38072 33924 Job 263 created successfully with 1 image tasks
+INFO 2026-01-13 11:04:15,011 views 38072 4940 User logged out: felipe.mendieta
+WARNING 2026-01-13 11:04:15,033 runserver 38072 53040 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:51182][0m
+WARNING 2026-01-13 11:04:17,632 runserver 38072 53040 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:51182][0m
+INFO 2026-01-13 11:04:21,586 views_microsoft 38072 1880 Microsoft OAuth2: initiating login flow
+INFO 2026-01-13 11:04:25,428 microsoft 38072 15556 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-13 11:04:25,443 views_microsoft 38072 15556 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-13 11:04:44,270 views 38072 17052 Job 264 created successfully with 1 image tasks
+INFO 2026-01-13 11:07:05,720 apps 18052 18288 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:07:05,758 apps 18052 18288 Database connection established successfully
+INFO 2026-01-13 11:07:10,074 apps 15544 23348 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:07:10,127 apps 15544 23348 Database connection established successfully
+INFO 2026-01-13 11:07:38,351 views 15544 49264 Job 265 created successfully with 2 image tasks
+INFO 2026-01-13 11:08:43,744 apps 51160 25768 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:08:43,766 apps 51160 25768 Database connection established successfully
+INFO 2026-01-13 11:09:07,862 apps 25016 29832 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:09:07,903 apps 25016 29832 Database connection established successfully
+INFO 2026-01-13 11:09:09,639 apps 13504 15500 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:09:27,353 apps 17956 7660 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:09:27,427 apps 17956 7660 Database connection established successfully
+INFO 2026-01-13 11:09:35,320 apps 53396 53860 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:10:01,864 apps 10840 54660 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:10:01,894 apps 10840 54660 Database connection established successfully
+INFO 2026-01-13 11:10:36,281 apps 13760 51588 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:10:36,319 apps 13760 51588 Database connection established successfully
+WARNING 2026-01-13 11:11:01,368 apps 17240 37124 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-13 11:11:12,155 apps 37964 40904 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:11:12,203 apps 37964 40904 Database connection established successfully
+ERROR 2026-01-13 11:11:12,585 tasks 37964 50248 Image generation failed for ImageTask 1187: 'value' must be an instance of str or bytes, not a int
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\tasks.py", line 271, in generate_image_task
+    result = algorithm.run(dataset, image_task.params, viz_config=viz_config)
+  File "C:\Projects\intell\backend\apps\algorithms\demo\top_patent_countries.py", line 302, in run
+    bars = ax.barh(
+        top_n_and_ecuador[self.first_column_name],
+        top_n_and_ecuador[self.second_column_name],
+        color=bar_colors
+    )
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\axes\_axes.py", line 2834, in barh
+    patches = self.bar(x=left, height=height, width=width, bottom=y,
+                       align=align, data=data, **kwargs)
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\__init__.py", line 1524, in inner
+    return func(
+        ax,
+        *map(cbook.sanitize_sequence, args),
+        **{k: cbook.sanitize_sequence(v) for k, v in kwargs.items()})
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\axes\_axes.py", line 2563, in bar
+    self._process_unit_info(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        [("x", x), ("x", width), ("y", y)], kwargs, convert=False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\axes\_base.py", line 2663, in _process_unit_info
+    axis.update_units(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\axis.py", line 1754, in update_units
+    default = self._converter.default_units(data, self)
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\category.py", line 106, in default_units
+    axis.set_units(UnitData(data))
+                   ~~~~~~~~^^^^^^
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\category.py", line 182, in __init__
+    self.update(data)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\category.py", line 217, in update
+    _api.check_isinstance((str, bytes), value=val)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\felipe.mendieta\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\matplotlib\_api\__init__.py", line 92, in check_isinstance
+    raise TypeError(
+    ...<4 lines>...
+            type_name(type(v))))
+TypeError: 'value' must be an instance of str or bytes, not a int
+INFO 2026-01-13 11:11:24,746 apps 17696 15780 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:11:47,866 apps 21364 14520 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:11:47,895 apps 21364 14520 Database connection established successfully
+INFO 2026-01-13 11:12:04,116 apps 51168 37396 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:12:21,965 apps 24408 6180 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:12:21,988 apps 24408 6180 Database connection established successfully
+WARNING 2026-01-13 11:12:59,337 apps 38328 25728 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-13 11:13:08,274 apps 52504 25964 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:13:08,297 apps 52504 25964 Database connection established successfully
+INFO 2026-01-13 11:13:51,595 apps 720 32372 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:13:51,705 apps 720 32372 Database connection established successfully
+INFO 2026-01-13 11:14:00,949 apps 40980 52840 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:14:49,501 apps 41964 13800 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:14:49,555 apps 41964 13800 Database connection established successfully
+INFO 2026-01-13 11:15:08,156 apps 49884 52876 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:15:08,188 apps 49884 52876 Database connection established successfully
+INFO 2026-01-13 11:15:27,387 apps 17576 40400 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 11:15:27,414 apps 17576 40400 Database connection established successfully
+INFO 2026-01-13 11:16:03,326 views 720 26320 Job 268 created successfully with 2 image tasks
+INFO 2026-01-13 11:16:33,224 views 720 35216 Job 269 created successfully with 2 image tasks
+INFO 2026-01-13 12:28:48,773 apps 15564 47800 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 12:28:48,810 apps 15564 47800 Database connection established successfully
+INFO 2026-01-13 12:28:53,190 apps 12176 33508 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 12:28:53,259 apps 12176 33508 Database connection established successfully
+INFO 2026-01-13 12:29:00,900 apps 8816 44484 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 12:29:00,947 apps 8816 44484 Database connection established successfully
+INFO 2026-01-13 12:29:54,529 apps 18460 38896 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 12:29:54,583 apps 18460 38896 Database connection established successfully
+INFO 2026-01-13 12:30:13,247 views 12176 46988 Job 270 created successfully with 1 image tasks
+WARNING 2026-01-13 12:30:24,554 runserver 12176 30624 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.03, 127.0.0.1:57078][0m
+INFO 2026-01-13 12:30:40,191 apps 44316 53280 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 12:30:40,238 apps 44316 53280 Database connection established successfully

@@ -271,8 +271,8 @@ class JobViewSet(viewsets.ViewSet):
                     # Assign date-based tag from Job
                     assign_date_tag_to_image_task(image_task)
                 
-                # Enqueue job
-                run_job(job.id)
+                # Enqueue job asynchronously
+                run_job.delay(job.id)
                 
                 logger.info("Job %d created successfully with %d image tasks", job.id, len(data['images']))
                 

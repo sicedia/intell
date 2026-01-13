@@ -15,7 +15,14 @@ This module provides robust database connection handling with automatic retry lo
 ```
 apps/core/db/
 ├── __init__.py          # Public API exports
-├── backends.py          # Custom database backends with retry
+├── backends/            # Custom database backends with retry
+│   ├── __init__.py
+│   ├── postgresql/      # PostgreSQL backend with retry
+│   │   ├── __init__.py
+│   │   └── base.py      # DatabaseWrapper with retry logic
+│   └── sqlite3/         # SQLite backend with retry
+│       ├── __init__.py
+│       └── base.py      # DatabaseWrapper with retry logic
 ├── exceptions.py        # Database-specific exceptions
 ├── health.py            # Health check utilities
 ├── retry.py             # Core retry logic with exponential backoff

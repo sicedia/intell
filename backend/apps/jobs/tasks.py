@@ -305,27 +305,28 @@ def generate_image_task(self, image_task_id: int):
             progress=70
         )
         
-        # Save artifacts using FileField (handles storage automatically)
-        if result.png_bytes and image_task.output_format in ['png', 'both']:
-            image_task.artifact_png.save(
-                f'job_{job.id}_task_{image_task_id}.png',
-                ContentFile(result.png_bytes),
-                save=False
-            )
-        
-        if result.svg_text and image_task.output_format in ['svg', 'both']:
-            image_task.artifact_svg.save(
-                f'job_{job.id}_task_{image_task_id}.svg',
-                ContentFile(result.svg_text.encode('utf-8')),
-                save=False
-            )
-        
-        # Save chart_data and update status to SUCCESS
+        # Save chart_data and update status to SUCCESS first
         image_task.chart_data = result.chart_data
         image_task.trace_id = trace_id
         image_task.status = ImageTask.Status.SUCCESS
         image_task.progress = 100
-        image_task.save(update_fields=['chart_data', 'trace_id', 'status', 'progress', 'updated_at'])
+        image_task.save()
+
+        # Save artifacts using FileField (handles storage automatically)
+        # Do this after saving the model to ensure the instance exists
+        if result.png_bytes and image_task.output_format in ['png', 'both']:
+            image_task.artifact_png.save(
+                f'job_{job.id}_task_{image_task_id}.png',
+                ContentFile(result.png_bytes),
+                save=True  # Save the model after setting the file
+            )
+
+        if result.svg_text and image_task.output_format in ['svg', 'both']:
+            image_task.artifact_svg.save(
+                f'job_{job.id}_task_{image_task_id}.svg',
+                ContentFile(result.svg_text.encode('utf-8')),
+                save=True  # Save the model after setting the file
+            )
         
         # Emit DONE event
         format_text = ' y '.join(formats_to_save) if formats_to_save else 'archivos'
@@ -392,7 +393,8 @@ def generate_image_task(self, image_task_id: int):
         # The error is already logged and ImageTask marked as FAILED (if it exists)
 
 
-def run_job(job_id: int):
+@shared_task(bind=True, name='apps.jobs.tasks.run_job')
+def run_job(self, job_id: int):
     """
     Run job - creates ImageTasks and enqueues them as a group.
     

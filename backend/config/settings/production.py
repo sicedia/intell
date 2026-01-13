@@ -20,9 +20,18 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
 
 # Database configuration
 # Use DATABASE_URL environment variable (recommended for production)
+# Automatically uses retry-enabled backends for PostgreSQL
 DATABASE_URL = config('DATABASE_URL')
+db_config = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+
+# Replace PostgreSQL backend with retry-enabled version
+# dj_database_url uses 'django.db.backends.postgresql' or 'postgresql://' URLs
+engine = db_config.get('ENGINE', '')
+if 'postgresql' in engine or 'postgres' in engine:
+    db_config['ENGINE'] = 'apps.core.db.backends.postgresql'
+
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    'default': db_config
 }
 
 # Email configuration

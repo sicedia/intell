@@ -278,3 +278,18 @@ DATABASE_RETRY_CONFIG = {
     'JITTER_FACTOR': config('DB_RETRY_JITTER_FACTOR', default=0.1, cast=float),
 }
 
+# Database Startup Configuration
+# ===============================
+# Controls whether Django waits for database availability during server startup.
+# When enabled, the server will retry connecting to the database before starting,
+# preventing immediate failures when the database is temporarily unavailable.
+#
+# Environment Variables:
+#   DATABASE_WAIT_ON_STARTUP: Enable/disable startup wait (default: True)
+#   DATABASE_STARTUP_TIMEOUT: Maximum time to wait during startup in seconds (default: 30)
+#   DATABASE_STARTUP_CHECK_INTERVAL: Time between checks in seconds (default: 2)
+#
+DATABASE_WAIT_ON_STARTUP = config('DATABASE_WAIT_ON_STARTUP', default=True, cast=bool)
+DATABASE_STARTUP_TIMEOUT = config('DATABASE_STARTUP_TIMEOUT', default=30.0, cast=float)
+DATABASE_STARTUP_CHECK_INTERVAL = config('DATABASE_STARTUP_CHECK_INTERVAL', default=2.0, cast=float)
+

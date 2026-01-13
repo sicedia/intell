@@ -20,6 +20,7 @@ import { HttpError, ConnectionError } from "@/shared/lib/api-client";
  */
 export function useNotifications(params?: { is_read?: boolean; type?: string }) {
   const queryClient = useQueryClient();
+
   // Get only the specific functions we need from the store
   const setNotifications = useNotificationStore((state) => state.setNotifications);
   const setUnreadCount = useNotificationStore((state) => state.setUnreadCount);
