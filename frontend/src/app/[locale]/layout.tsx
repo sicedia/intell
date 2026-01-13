@@ -32,15 +32,21 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!hasLocale(routing.locales, locale)) {
-    // redirect or handle not found if needed, or rely on middleware
-    // but for now let's just use default if invalid to be safe, or just allow it
+  // Ensure locale is valid, fallback to default
+  const validLocale = hasLocale(routing.locales, locale) ? locale : routing.defaultLocale;
+
+  // Load messages with error handling
+  let messages;
+  try {
+    messages = await getMessages();
+  } catch (error) {
+    console.error('Failed to load messages:', error);
+    // Fallback to empty messages object to prevent crash
+    messages = {};
   }
 
-  const messages = await getMessages();
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={validLocale} suppressHydrationWarning>
       <body className={inter.variable}>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

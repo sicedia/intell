@@ -1,13 +1,16 @@
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { Wrench } from "lucide-react";
 
 export default function ReportsPage() {
+  const t = useTranslations('reports');
+
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Reports"
-        subtitle="Generate and manage analytics reports"
+        title={t('title')}
+        subtitle={t('description')}
       />
 
       <EmptyState

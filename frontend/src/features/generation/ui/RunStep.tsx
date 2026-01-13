@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useJobProgress } from "../hooks/useJobProgress";
 import { useJobCreation } from "../hooks/useJobCreation";
 import { useWizardStore } from "../stores/useWizardStore";
@@ -55,6 +56,8 @@ export const RunStep = ({ onReset }: RunStepProps) => {
     const setJobCompleted = useWizardStore((state) => state.setJobCompleted);
     const queryClient = useQueryClient();
     const [isRetryingAll, setIsRetryingAll] = useState(false);
+    const t = useTranslations('generate.run');
+    const tCommon = useTranslations('common');
     
     // Stable "finished" state - only true when job AND all tasks are finished
     const isFinished = useMemo(() => isJobTrulyFinished(job), [job]);
@@ -149,11 +152,11 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                 <div className={errorAlertPattern.containerClasses}>
                     <AlertCircle className={errorAlertPattern.iconClasses} />
                     <div className="flex-1 min-w-0">
-                        <h5 className={errorAlertPattern.titleClasses}>Error creating job</h5>
+                        <h5 className={errorAlertPattern.titleClasses}>{t('errorCreatingJob')}</h5>
                         <p className={errorAlertPattern.messageClasses}>{createError}</p>
                         <div className="mt-3">
                             <Button onClick={handleRetry} variant="outline" size="sm">
-                                Try Again
+                                {t('tryAgain')}
                             </Button>
                         </div>
                     </div>
@@ -167,9 +170,9 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                         <Loader2 className={loadingStatePattern.spinnerClasses} />
                     </div>
                     <div className="text-center">
-                        <p className={loadingStatePattern.titleClasses}>Starting Generation</p>
+                        <p className={loadingStatePattern.titleClasses}>{t('startingGeneration')}</p>
                         <p className={loadingStatePattern.descriptionClasses}>
-                            Uploading data and initializing job...
+                            {t('uploadingData')}
                         </p>
                     </div>
                 </div>
@@ -188,7 +191,7 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                             </div>
                             <div>
                                 <h2 className={statusHeaderPattern.titleClasses}>
-                                    {isFinished ? "Generation Complete" : "Generating Visualizations"}
+                                    {isFinished ? t('generationComplete') : t('generatingVisualizations')}
                                 </h2>
                                 <div className={statusHeaderPattern.badgeContainerClasses}>
                                     <Badge
@@ -206,13 +209,13 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                                     {!isFinished && connectionStatus === "connected" && (
                                         <Badge variant="outline" className="gap-1 text-green-600">
                                             <Wifi className="h-3 w-3" />
-                                            Live
+                                            {t('live')}
                                         </Badge>
                                     )}
                                     {!isFinished && connectionStatus === "failed" && (
                                         <Badge variant="outline" className="gap-1 text-amber-600">
                                             <WifiOff className="h-3 w-3" />
-                                            Polling
+                                            {t('polling')}
                                         </Badge>
                                     )}
                                 </div>
@@ -226,7 +229,7 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                                     size="sm" 
                                     onClick={handleRetryAllFailed}
                                     disabled={isRetryingAll || !canRetryFailed}
-                                    title={taskAnalysis.hasActiveTasks ? "Wait for running tasks to complete" : "Retry all failed tasks"}
+                                    title={taskAnalysis.hasActiveTasks ? t('waitForRunningTasks') : t('retryAllFailedTasks')}
                                     className="gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 disabled:opacity-50"
                                 >
                                     {isRetryingAll ? (
@@ -234,19 +237,19 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                                     ) : (
                                         <RotateCcw className="h-4 w-4" />
                                     )}
-                                    Retry Failed ({taskAnalysis.failedTasks.length})
+                                    {t('retryFailed', { count: taskAnalysis.failedTasks.length })}
                                 </Button>
                             )}
                             {/* Cancel button - only while job is truly running */}
                             {!isFinished && (
                                 <Button variant="destructive" size="sm" onClick={handleCancel}>
-                                    Cancel
+                                    {tCommon('cancel')}
                                 </Button>
                             )}
                             {/* Start New Generation - only when truly finished */}
                             {isFinished && (
                                 <Button onClick={onReset} size="sm">
-                                    Start New Generation
+                                    {t('startNewGeneration')}
                                 </Button>
                             )}
                         </div>
@@ -260,7 +263,7 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                         {/* Results - Show if job has any completed images */}
                         {job && (isFinished || taskAnalysis.hasSuccessTasks) && (
                             <div className="pt-6 border-t">
-                                <h2 className="text-lg font-bold mb-4">Generated Images</h2>
+                                <h2 className="text-lg font-bold mb-4">{t('generatedImages')}</h2>
                                 <JobResults job={job} />
                             </div>
                         )}

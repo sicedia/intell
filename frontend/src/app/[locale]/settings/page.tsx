@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Label } from "@/shared/components/ui/label";
@@ -15,6 +16,7 @@ export default function SettingsPage() {
   const { user, isLoading } = useAuth();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const t = useTranslations('settings');
 
   useEffect(() => {
     setMounted(true);
@@ -23,8 +25,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Settings"
-        subtitle="Manage your account and application preferences"
+        title={t('title')}
+        subtitle={t('description')}
       />
 
       <div className="grid gap-6 md:grid-cols-2">

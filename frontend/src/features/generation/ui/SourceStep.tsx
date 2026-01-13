@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useWizardStore } from "../stores/useWizardStore";
 import { useDropzone } from "react-dropzone";
 import * as XLSX from "xlsx";
@@ -18,6 +19,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
     const { setSourceFile, sourceFile, sourceType, setSourceType } = useWizardStore();
     const [previewData, setPreviewData] = useState<ExcelRow[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const t = useTranslations('generate.source');
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -25,7 +27,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
 
         // Validate file type
         if (!file.name.match(/\.(xlsx|xls)$/)) {
-            setError("Please upload a valid Excel file (.xlsx or .xls)");
+            setError(t('pleaseUploadValidExcel'));
             return;
         }
 
@@ -45,7 +47,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                 setPreviewData(allData.slice(0, 11));
             } catch (err) {
                 console.error("Error reading file", err);
-                setError("Failed to read Excel file. Please ensure it is a valid format.");
+                setError(t('failedToReadExcel'));
             }
         };
         reader.readAsBinaryString(file);
@@ -67,23 +69,23 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                     variant={sourceType === "espacenet_excel" ? "default" : "outline"}
                     onClick={() => setSourceType("espacenet_excel")}
                 >
-                    Espacenet Excel
+                    {t('espacenetExcel')}
                 </Button>
                 <Button
                     variant={sourceType === "lens_query" ? "default" : "outline"}
                     onClick={() => setSourceType("lens_query")}
                     disabled
-                    title="Not implemented yet"
+                    title={t('notImplementedYet')}
                 >
-                    Lens Query (Coming Soon)
+                    {t('lensQuery')}
                 </Button>
             </div>
 
             {sourceType === "espacenet_excel" && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Upload Patent Data</CardTitle>
-                        <CardDescription>Upload an Excel file exported from Espacenet.</CardDescription>
+                        <CardTitle>{t('uploadPatentData')}</CardTitle>
+                        <CardDescription>{t('uploadExcelDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div
@@ -94,10 +96,10 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                         >
                             <input {...getInputProps()} />
                             {sourceFile ? (
-                                <p className="text-sm font-medium">Selected: {sourceFile.name}</p>
+                                <p className="text-sm font-medium">{t('selected')}: {sourceFile.name}</p>
                             ) : (
                                 <p className="text-sm text-muted-foreground">
-                                    Drag & drop an Excel file here, or click to select one
+                                    {t('dragDropOrClick')}
                                 </p>
                             )}
                         </div>
@@ -133,7 +135,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                                     </tbody>
                                 </table>
                                 <p className="text-xs text-muted-foreground mt-2 p-2">
-                                    Showing first {previewData.length - 1} rows.
+                                    {t('showingFirstRows', { count: previewData.length - 1 })}
                                 </p>
                             </div>
                         )}
@@ -170,11 +172,11 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                             }
                         }}
                     >
-                        🧪 Load Test File
+                        {t('loadTestFile')}
                     </Button>
                 )}
                 <Button onClick={onNext} disabled={!sourceFile}>
-                    Next: Choose Visualizations
+                    {t('nextChooseVisualizations')}
                 </Button>
             </div>
         </div>

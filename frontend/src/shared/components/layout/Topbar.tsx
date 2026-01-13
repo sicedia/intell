@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Menu, Search, ChevronRight, Home } from 'lucide-react';
 import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
@@ -12,19 +13,20 @@ import { NotificationDropdown } from "@/features/notifications";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { cn } from "@/shared/lib/utils";
 
-// Map path segments to readable labels
-const pathLabels: Record<string, string> = {
-  dashboard: 'Dashboard',
-  generate: 'Generate',
-  images: 'Image Library',
-  themes: 'Themes & Styling',
-  settings: 'Settings',
-  reports: 'Reports',
-  diag: 'Diagnostics',
-};
-
 function Breadcrumbs() {
   const pathname = usePathname();
+  const t = useTranslations('breadcrumbs');
+  
+  // Map path segments to readable labels
+  const pathLabels: Record<string, string> = {
+    dashboard: t('dashboard'),
+    generate: t('generate'),
+    images: t('imageLibrary'),
+    themes: t('themesStyling'),
+    settings: t('settings'),
+    reports: t('reports'),
+    diag: t('diagnostics'),
+  };
   
   // Extract path segments, skipping locale
   const segments = pathname?.split('/').filter(Boolean) || [];
@@ -64,6 +66,7 @@ export function Topbar() {
     const [open, setOpen] = React.useState(false);
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
     const isAuthLoading = useAuthStore((state) => state.isLoading);
+    const t = useTranslations('common');
 
     return (
         <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-[40] flex items-center px-4 md:px-6">
@@ -73,12 +76,12 @@ export function Topbar() {
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon">
                             <Menu className="h-5 w-5" />
-                            <span className="sr-only">Toggle menu</span>
+                            <span className="sr-only">{t('toggleMenu')}</span>
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 w-[240px]">
                         <span className="sr-only" role="heading" aria-level={1}>
-                            Navigation Menu
+                            {t('navigationMenu')}
                         </span>
                         <Sidebar onClose={() => setOpen(false)} />
                     </SheetContent>
@@ -97,7 +100,7 @@ export function Topbar() {
                     <Search className="h-4 w-4 mr-2 shrink-0" />
                     <input
                         type="text"
-                        placeholder="Search resources..."
+                        placeholder={t('search') + '...'}
                         className="bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/70"
                     />
                 </div>

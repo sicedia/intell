@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useWizardStore } from "../stores/useWizardStore";
 import { SourceStep } from "./SourceStep";
 import { VisualizationStep } from "./VisualizationStep";
@@ -7,14 +8,15 @@ import { RunStep } from "./RunStep";
 import { Stepper } from "@/shared/ui/Stepper";
 import { cn } from "@/shared/lib/utils";
 
-const STEPS = [
-  { id: "source", label: "Data Source", description: "Upload your data" },
-  { id: "visualization", label: "Visualizations", description: "Choose algorithms" },
-  { id: "run", label: "Generate", description: "Run and monitor" },
-];
-
 export const GenerateWizard = () => {
+  const t = useTranslations('generate.wizard.steps');
   const { currentStep, setStep, reset, isJobCompleted } = useWizardStore();
+
+  const STEPS = [
+    { id: "source", label: t('source.label'), description: t('source.description') },
+    { id: "visualization", label: t('visualization.label'), description: t('visualization.description') },
+    { id: "run", label: t('run.label'), description: t('run.description') },
+  ];
 
   const handleNext = () => setStep(currentStep + 1);
   const handleBack = () => setStep(currentStep - 1);

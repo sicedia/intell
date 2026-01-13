@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +52,9 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
   const [activeTab, setActiveTab] = useState(initialTab);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const t = useTranslations('images');
+  const tCommon = useTranslations('common');
+  const tAI = useTranslations('aiDescription');
 
   // Update active tab when initialTab changes or dialog opens
   useEffect(() => {
@@ -128,7 +132,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Cargando imagen...</DialogTitle>
+            <DialogTitle>{t('loadingImage')}</DialogTitle>
           </DialogHeader>
           <div className="flex items-center justify-center py-12">
             <Spinner size="lg" />
@@ -148,7 +152,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
             size="icon"
             className="absolute right-4 top-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background border shadow-sm"
             onClick={() => onOpenChange(false)}
-            aria-label="Cerrar diálogo"
+            aria-label={t('closeDialog')}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -157,7 +161,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
           <div className="px-6 pt-6 pb-4 border-b">
             <DialogHeader>
               <DialogTitle>
-                {image.title || `Imagen ${image.id}`} - {image.algorithm_key}
+                {image.title || t('imageTitle', { id: image.id })} - {image.algorithm_key}
               </DialogTitle>
             </DialogHeader>
           </div>
@@ -166,9 +170,9 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
           <div className="flex-1 overflow-y-auto px-6 py-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="view">Vista</TabsTrigger>
-              <TabsTrigger value="edit">Editar Metadata</TabsTrigger>
-              <TabsTrigger value="ai">Descripción IA</TabsTrigger>
+              <TabsTrigger value="view">{t('view')}</TabsTrigger>
+              <TabsTrigger value="edit">{t('editMetadata')}</TabsTrigger>
+              <TabsTrigger value="ai">{t('aiDescription')}</TabsTrigger>
             </TabsList>
 
             {/* View Tab */}
@@ -184,22 +188,22 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full text-muted-foreground">
-                    Imagen no disponible
+                    {t('imageNotAvailable')}
                   </div>
                 )}
               </div>
 
               <div className="space-y-2">
                 <div>
-                  <Label className="text-muted-foreground">Título</Label>
-                  <p className="text-sm font-medium">{image.title || "Sin título"}</p>
+                  <Label className="text-muted-foreground">{t('title')}</Label>
+                  <p className="text-sm font-medium">{image.title || t('noTitle')}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Algoritmo</Label>
+                  <Label className="text-muted-foreground">{t('algorithm')}</Label>
                   <p className="text-sm">{image.algorithm_key} v{image.algorithm_version}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Generado por</Label>
+                  <Label className="text-muted-foreground">{t('generatedBy')}</Label>
                   <div className="mt-1">
                     <UserInfo
                       username={image.created_by_username}
@@ -212,27 +216,27 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                 </div>
                 {image.user_description && (
                   <div>
-                    <Label className="text-muted-foreground">Descripción</Label>
+                    <Label className="text-muted-foreground">{t('description')}</Label>
                     <p className="text-sm whitespace-pre-wrap">{image.user_description}</p>
                   </div>
                 )}
                 <div>
-                  <Label className="text-muted-foreground">Estado</Label>
+                  <Label className="text-muted-foreground">{tCommon('status')}</Label>
                   <div className="flex items-center gap-2">
                     <p className="text-sm">{image.status}</p>
                     <Badge variant={image.is_published ? "default" : "secondary"}>
-                      {image.is_published ? "Publicado" : "Borrador"}
+                      {image.is_published ? t('published') : t('draft')}
                     </Badge>
                   </div>
                 </div>
                 {image.is_published && image.published_at && (
                   <div>
-                    <Label className="text-muted-foreground">Publicado el</Label>
+                    <Label className="text-muted-foreground">{t('publishedOn')}</Label>
                     <p className="text-sm">{new Date(image.published_at).toLocaleString()}</p>
                   </div>
                 )}
                 <div>
-                  <Label className="text-muted-foreground">Creado</Label>
+                  <Label className="text-muted-foreground">{tCommon('created')}</Label>
                   <p className="text-sm">{new Date(image.created_at).toLocaleString()}</p>
                 </div>
                 {image.status === "SUCCESS" && (
@@ -253,41 +257,41 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                       disabled={publishImage.isPending}
                       className="w-full"
                     >
-                      {publishImage.isPending ? (
-                        <>
-                          <Spinner className="mr-2 h-4 w-4" />
-                          {image.is_published ? "Despublicando..." : "Publicando..."}
-                        </>
-                      ) : image.is_published ? (
-                        <>
-                          <BookmarkCheck className="mr-2 h-4 w-4" />
-                          Despublicar (convertir a borrador)
-                        </>
-                      ) : (
-                        <>
-                          <BookmarkPlus className="mr-2 h-4 w-4" />
-                          Publicar en librería
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => setShowDeleteConfirm(true)}
-                      disabled={deleteImage.isPending}
-                      className="w-full"
-                    >
-                      {deleteImage.isPending ? (
-                        <>
-                          <Spinner className="mr-2 h-4 w-4" />
-                          Eliminando...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Eliminar imagen
-                        </>
-                      )}
-                    </Button>
+                          {publishImage.isPending ? (
+                            <>
+                              <Spinner className="mr-2 h-4 w-4" />
+                              {image.is_published ? t('unpublishing') : t('publishing')}
+                            </>
+                          ) : image.is_published ? (
+                            <>
+                              <BookmarkCheck className="mr-2 h-4 w-4" />
+                              {t('unpublishToDraft')}
+                            </>
+                          ) : (
+                            <>
+                              <BookmarkPlus className="mr-2 h-4 w-4" />
+                              {t('publishToLibrary')}
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          disabled={deleteImage.isPending}
+                          className="w-full"
+                        >
+                          {deleteImage.isPending ? (
+                            <>
+                              <Spinner className="mr-2 h-4 w-4" />
+                              {t('deleting')}
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {t('deleteImage')}
+                            </>
+                          )}
+                        </Button>
                   </div>
                 )}
               </div>
@@ -302,37 +306,37 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       <Label className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        Descripción generada con IA
+                        {t('aiGeneratedDescription')}
                       </Label>
                     </div>
                     <p className="text-xs text-blue-700 dark:text-blue-300">
-                      Esta imagen ya tiene una descripción generada por inteligencia artificial. Puedes editarla o generar una nueva desde la pestaña "Descripción IA".
+                      {t('aiGeneratedDescriptionInfo')}
                     </p>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="title">Título</Label>
+                  <Label htmlFor="title">{t('title')}</Label>
                   <Input
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Título de la imagen"
+                    placeholder={t('titlePlaceholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descripción</Label>
+                  <Label htmlFor="description">{t('description')}</Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Descripción de la imagen"
+                    placeholder={t('descriptionPlaceholder')}
                     rows={4}
                   />
                   {image.user_description && (
                     <p className="text-xs text-muted-foreground">
-                      Puedes editar la descripción generada por IA o generar una nueva desde la pestaña "Descripción IA".
+                      {t('canEditDescription')}
                     </p>
                   )}
                 </div>
@@ -350,18 +354,18 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
 
               <div className="flex justify-end gap-2 pt-4 border-t">
                 <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancelar
+                  {tCommon('cancel')}
                 </Button>
                 <Button onClick={handleSave} disabled={!hasChanges || updateImage.isPending}>
                   {updateImage.isPending ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Guardando...
+                      {t('saving')}
                     </>
                   ) : (
                     <>
                       <Save className="mr-2 h-4 w-4" />
-                      Guardar cambios
+                      {t('saveChanges')}
                     </>
                   )}
                 </Button>
@@ -372,35 +376,34 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
             <TabsContent value="ai" className="space-y-4 mt-4">
               <div className="space-y-4">
                 <div className="rounded-lg border p-4 space-y-2">
-                  <h3 className="font-medium">Generar descripción con IA</h3>
+                  <h3 className="font-medium">{t('generateDescriptionWithAI')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Usa inteligencia artificial para generar una descripción detallada de esta
-                    imagen basada en los datos del gráfico y contexto que proporciones.
+                    {t('provideContext')}
                   </p>
                   <Button onClick={() => setIsAIDialogOpen(true)} className="w-full">
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Solicitar descripción con IA
+                    {t('requestAIDescription')}
                   </Button>
                 </div>
 
                 {/* Show AI Context if available */}
                 {image.ai_context && (
                   <div className="space-y-2">
-                    <Label>Contexto utilizado para la descripción IA</Label>
+                    <Label>{t('contextUsedForAIDescription')}</Label>
                     <div className="rounded-md border p-3 bg-blue-50 dark:bg-blue-950/20">
                       <p className="text-sm whitespace-pre-wrap text-blue-900 dark:text-blue-100">
                         {image.ai_context}
                       </p>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Este es el contexto que se utilizó para generar la descripción con IA. Se guarda como parte de los metadatos de la imagen.
+                      {t('contextUsedInfo')}
                     </p>
                   </div>
                 )}
 
                 {image.user_description && (
                   <div className="space-y-2">
-                    <Label>Descripción actual</Label>
+                    <Label>{t('currentDescription')}</Label>
                     <div className="rounded-md border p-3 bg-muted/50">
                       <p className="text-sm whitespace-pre-wrap">{image.user_description}</p>
                     </div>
@@ -432,13 +435,13 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteImageConfirm')}</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas eliminar "{image?.title || `Imagen ${image?.id}`}"? Esta acción no se puede deshacer.
+              {t('deleteImageConfirmDescription', { title: image?.title || t('imageTitle', { id: image?.id || 0 }) })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 if (!image) return;
@@ -452,7 +455,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Eliminar
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

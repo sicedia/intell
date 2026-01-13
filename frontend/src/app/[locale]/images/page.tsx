@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { GalleryGrid } from "@/shared/ui/GalleryGrid";
@@ -139,6 +140,8 @@ export default function ImagesPage() {
 
   const { data: images, isLoading, error, pagination } = useImages(filters, true);
   const deleteImage = useDeleteImage();
+  const t = useTranslations('images');
+  const tCommon = useTranslations('common');
 
   // Memoize handlers to avoid recreating them on each render
   const handleViewImage = useCallback((imageId: number) => {
@@ -196,9 +199,9 @@ export default function ImagesPage() {
   const handleDeleteClick = useCallback((image: ImageLibraryItem) => {
     setImageToDelete({
       id: image.id,
-      title: image.title || `Imagen ${image.id}`,
+      title: image.title || t('imageTitle', { id: image.id }),
     });
-  }, []);
+  }, [t]);
 
   const handleConfirmDelete = useCallback(async () => {
     if (!imageToDelete) return;
@@ -277,17 +280,17 @@ export default function ImagesPage() {
         <LoadingState variant="skeleton" />
       ) : error ? (
         <EmptyState
-          title="Error al cargar imágenes"
-          description={error instanceof Error ? error.message : "Ocurrió un error desconocido"}
+          title={t('errorLoadingImages')}
+          description={error instanceof Error ? error.message : t('unknownError')}
           icon={<ImageIcon className="h-12 w-12 text-muted-foreground" />}
         />
       ) : imagesList.length === 0 ? (
         <EmptyState
-          title="No hay imágenes en tu librería"
-          description="Genera visualizaciones desde tus datos para verlas aparecer aquí. Puedes organizar, buscar y descargar tus imágenes generadas."
+          title={t('noImagesInLibrary')}
+          description={t('generateFirstImageDescription')}
           icon={<ImageIcon className="h-12 w-12 text-muted-foreground" />}
           action={{
-            label: "Generar tu primera imagen",
+            label: t('generateFirstImage'),
             href: "/generate",
             variant: "default",
           }}
@@ -299,10 +302,10 @@ export default function ImagesPage() {
             <Card key={group.jobId}>
               <CardHeader>
                 <CardTitle className="text-lg">
-                  {group.dateTag?.name || `Lote generado el ${new Date(group.images[0]?.created_at || "").toLocaleDateString()}`}
+                  {group.dateTag?.name || t('batchGeneratedOn', { date: new Date(group.images[0]?.created_at || "").toLocaleDateString() })}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  {group.images.length} {group.images.length === 1 ? "imagen" : "imágenes"} de este lote
+                  {t('imagesFromThisBatch', { count: group.images.length })}
                 </p>
               </CardHeader>
               <CardContent>
@@ -310,7 +313,7 @@ export default function ImagesPage() {
                   {group.images.map((image) => (
                     <ImageCard
                       key={image.id}
-                      title={image.title || `Imagen ${image.id}`}
+                      title={image.title || t('imageTitle', { id: image.id })}
                       imageUrl={image.artifact_png_url}
                       svgUrl={image.artifact_svg_url}
                       status={image.status}
@@ -360,7 +363,7 @@ export default function ImagesPage() {
             {imagesList.map((image) => (
               <ImageCard
                 key={image.id}
-                title={image.title || `Imagen ${image.id}`}
+                title={image.title || t('imageTitle', { id: image.id })}
                 imageUrl={image.artifact_png_url}
                 svgUrl={image.artifact_svg_url}
                 status={image.status}
@@ -422,18 +425,18 @@ export default function ImagesPage() {
       <AlertDialog open={!!imageToDelete} onOpenChange={(open) => !open && setImageToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteImageConfirm')}</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas eliminar "{imageToDelete?.title}"? Esta acción no se puede deshacer.
+              {t('deleteImageConfirmDescription', { title: imageToDelete?.title || '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Eliminar
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

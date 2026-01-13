@@ -7,6 +7,7 @@
  * with user info and actions (logout, etc.).
  */
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -36,6 +37,7 @@ interface UserMenuProps {
 export function UserMenu({ showName = false, className }: UserMenuProps) {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout, isLoggingOut } = useAuth();
+  const t = useTranslations('auth');
 
   // Loading state
   if (isLoading) {
@@ -129,7 +131,7 @@ export function UserMenu({ showName = false, className }: UserMenuProps) {
             className="cursor-pointer"
           >
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>{t('settings')}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -139,7 +141,7 @@ export function UserMenu({ showName = false, className }: UserMenuProps) {
           className="text-destructive focus:text-destructive cursor-pointer"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{isLoggingOut ? "Signing out..." : "Sign out"}</span>
+          <span>{isLoggingOut ? t('signingOut') : t('signOut')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

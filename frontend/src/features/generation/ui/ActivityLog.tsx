@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { JobEvent } from "../constants/job";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -25,6 +26,7 @@ export const ActivityLog = ({
     const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [autoScroll, setAutoScroll] = useState(true);
+    const t = useTranslations('generate.activityLog');
 
     // Auto-scroll to bottom when new events arrive
     useEffect(() => {
@@ -105,7 +107,7 @@ export const ActivityLog = ({
                         <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     )}
                     <Terminal className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Activity Log</span>
+                    <span className="text-sm text-muted-foreground">{t('activityLog')}</span>
                     {events.length > 0 && (
                         <Badge variant="secondary" className="text-[10px] h-5 px-1.5">
                             {events.length}
@@ -119,12 +121,12 @@ export const ActivityLog = ({
                     )}
                     {hasWarnings && !hasErrors && (
                         <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-amber-600">
-                            Warnings
+                            {t('warnings')}
                         </Badge>
                     )}
                 </div>
                 <span className="text-xs text-muted-foreground">
-                    {isCollapsed ? "Click to expand" : "Click to collapse"}
+                    {isCollapsed ? t('clickToExpand') : t('clickToCollapse')}
                 </span>
             </button>
 
@@ -134,7 +136,7 @@ export const ActivityLog = ({
                     {events.length === 0 ? (
                         <div className="flex items-center justify-center p-6 text-muted-foreground bg-muted/20">
                             <Terminal className="h-5 w-5 mr-2 opacity-50" />
-                            <span className="text-sm">Waiting for events...</span>
+                            <span className="text-sm">{t('waitingForEvents')}</span>
                         </div>
                     ) : (
                         <div
@@ -196,7 +198,7 @@ export const ActivityLog = ({
                                         
                                         // Get task name from first START event
                                         const startEvent = sortedEvents.find((e) => e.event_type === "START");
-                                        const taskName = startEvent?.message?.split(":")[1]?.trim() || `Task ${taskId}`;
+                                        const taskName = startEvent?.message?.split(":")[1]?.trim() || t('task', { id: taskId });
 
                                         return (
                                             <div
@@ -288,7 +290,7 @@ export const ActivityLog = ({
                                         className="w-full text-xs text-slate-400 hover:text-slate-200"
                                     >
                                         <ChevronDown className="h-3 w-3 mr-1" />
-                                        Scroll to latest
+                                        {t('scrollToLatest')}
                                     </Button>
                                 </div>
                             )}

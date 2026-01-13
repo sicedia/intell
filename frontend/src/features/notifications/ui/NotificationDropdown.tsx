@@ -11,6 +11,7 @@
  * - Proper TypeScript types and error handling
  */
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Bell, Check, CheckCheck, Loader2, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -30,45 +31,45 @@ import type { Notification } from "../types";
 /**
  * Format notification time relative to now.
  */
-function formatNotificationTime(dateString: string): string {
+function formatNotificationTime(dateString: string, t: ReturnType<typeof useTranslations>): string {
   try {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
     if (diffInSeconds < 60) {
-      return "hace un momento";
+      return t('aMomentAgo');
     }
     
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-      return `hace ${diffInMinutes} ${diffInMinutes === 1 ? "minuto" : "minutos"}`;
+      return t('minutesAgo', { count: diffInMinutes });
     }
     
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) {
-      return `hace ${diffInHours} ${diffInHours === 1 ? "hora" : "horas"}`;
+      return t('hoursAgo', { count: diffInHours });
     }
     
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) {
-      return `hace ${diffInDays} ${diffInDays === 1 ? "día" : "días"}`;
+      return t('daysAgo', { count: diffInDays });
     }
     
     const diffInWeeks = Math.floor(diffInDays / 7);
     if (diffInWeeks < 4) {
-      return `hace ${diffInWeeks} ${diffInWeeks === 1 ? "semana" : "semanas"}`;
+      return t('weeksAgo', { count: diffInWeeks });
     }
     
     const diffInMonths = Math.floor(diffInDays / 30);
     if (diffInMonths < 12) {
-      return `hace ${diffInMonths} ${diffInMonths === 1 ? "mes" : "meses"}`;
+      return t('monthsAgo', { count: diffInMonths });
     }
     
     const diffInYears = Math.floor(diffInDays / 365);
-    return `hace ${diffInYears} ${diffInYears === 1 ? "año" : "años"}`;
+    return t('yearsAgo', { count: diffInYears });
   } catch {
-    return "hace un momento";
+    return t('aMomentAgo');
   }
 }
 
@@ -98,10 +99,12 @@ function NotificationItem({
   notification,
   onMarkAsRead,
   onNavigate,
+  t,
 }: {
   notification: Notification;
   onMarkAsRead: (id: number) => void;
   onNavigate: (url: string) => void;
+  t: ReturnType<typeof useTranslations>;
 }) {
   const handleClick = () => {
     if (!notification.is_read) {
@@ -163,6 +166,7 @@ function NotificationItem({
 export function NotificationDropdown() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const t = useTranslations('notifications');
   const {
     notifications,
     unreadCount,
@@ -204,7 +208,7 @@ export function NotificationDropdown() {
           variant="ghost"
           size="icon"
           className="text-muted-foreground hover:text-foreground relative"
-          aria-label="Notificaciones"
+          aria-label={t('notifications')}
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -216,12 +220,12 @@ export function NotificationDropdown() {
                 "min-w-[1.25rem] min-h-[1.25rem]",
                 "border-2 border-background"
               )}
-              aria-label={`${unreadCount} notificaciones no leídas`}
+              aria-label={t('unreadNotifications', { count: unreadCount })}
             >
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
-          <span className="sr-only">Notificaciones</span>
+          <span className="sr-only">{t('notifications')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -230,7 +234,7 @@ export function NotificationDropdown() {
       >
         <div className="flex items-center justify-between px-4 py-3 border-b bg-background sticky top-0 z-10">
           <DropdownMenuLabel className="text-base font-semibold">
-            Notificaciones
+            {t('notifications')}
           </DropdownMenuLabel>
           {unreadNotifications.length > 0 && (
             <button
@@ -242,7 +246,7 @@ export function NotificationDropdown() {
               }}
             >
               <CheckCheck className="h-3.5 w-3.5" />
-              Marcar todas como leídas
+              {t('markAllAsRead')}
             </button>
           )}
         </div>
@@ -251,31 +255,31 @@ export function NotificationDropdown() {
           <div className="flex flex-col items-center justify-center py-8 px-4">
             <AlertCircle className="h-8 w-8 text-destructive mb-2" />
             <p className="text-sm text-destructive text-center">
-              Error al cargar notificaciones
+              {t('errorLoadingNotifications')}
             </p>
             <button
               type="button"
               onClick={() => refetch()}
               className="text-xs text-primary hover:underline mt-2"
             >
-              Reintentar
+              {t('retry')}
             </button>
           </div>
         ) : isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             <span className="ml-2 text-sm text-muted-foreground">
-              Cargando notificaciones...
+              {t('loadingNotifications')}
             </span>
           </div>
         ) : !hasNotifications ? (
           <div className="flex flex-col items-center justify-center py-8 px-4">
             <Bell className="h-12 w-12 text-muted-foreground/50 mb-2" />
             <p className="text-sm text-muted-foreground text-center">
-              No hay notificaciones
+              {t('noNotifications')}
             </p>
             <p className="text-xs text-muted-foreground/70 text-center mt-1">
-              Te notificaremos cuando haya actualizaciones
+              {t('weWillNotifyYou')}
             </p>
           </div>
         ) : (
@@ -285,7 +289,7 @@ export function NotificationDropdown() {
               <>
                 <div className="px-4 py-2.5 bg-primary/5 border-b sticky top-0 z-10">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                    Nuevas ({unreadNotifications.length})
+                    {t('new', { count: unreadNotifications.length })}
                   </p>
                 </div>
                 {unreadNotifications.map((notification) => (
@@ -297,6 +301,7 @@ export function NotificationDropdown() {
                       setIsOpen(false);
                       router.push(url);
                     }}
+                    t={t}
                   />
                 ))}
                 {readNotifications.length > 0 && (
@@ -310,7 +315,7 @@ export function NotificationDropdown() {
               <>
                 <div className="px-4 py-2.5 bg-muted/30 border-b sticky top-0 z-10">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                    Anteriores ({readNotifications.length})
+                    {t('previous', { count: readNotifications.length })}
                   </p>
                 </div>
                 {readNotifications.map((notification) => (
@@ -322,6 +327,7 @@ export function NotificationDropdown() {
                       setIsOpen(false);
                       router.push(url);
                     }}
+                    t={t}
                   />
                 ))}
               </>
@@ -331,7 +337,7 @@ export function NotificationDropdown() {
             {hasNotifications && (
               <div className="px-4 py-2.5 border-t bg-muted/20 text-center">
                 <p className="text-xs text-muted-foreground">
-                  {notifications.length} {notifications.length === 1 ? 'notificación' : 'notificaciones'} en total
+                  {t('notificationCount', { count: notifications.length })}
                 </p>
               </div>
             )}

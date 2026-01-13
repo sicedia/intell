@@ -30083,3 +30083,7 @@ INFO 2026-01-13 15:12:07,489 views 10540 37452 Job 280 created successfully with
 WARNING 2026-01-13 15:15:41,818 runserver 10540 46484 [31;1mHTTP GET /api/auth/me/ 403 [0.04, 127.0.0.1:52629][0m
 INFO 2026-01-13 15:18:10,740 views 10540 31928 Job 281 created successfully with 8 image tasks
 WARNING 2026-01-13 15:21:17,478 runserver 10540 46484 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:61754][0m
+INFO 2026-01-13 16:36:28,978 apps 16356 12564 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 16:36:29,011 apps 16356 12564 Database connection established successfully
+INFO 2026-01-13 16:36:33,048 apps 29384 29444 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-13 16:36:33,090 apps 29384 29444 Database connection established successfully

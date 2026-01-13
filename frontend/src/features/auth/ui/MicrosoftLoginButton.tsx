@@ -7,6 +7,7 @@
  * The backend handles the redirect URL configuration via MICROSOFT_LOGIN_REDIRECT_URL.
  */
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/shared/components/ui/button";
 import { env } from "@/shared/lib/env";
 
@@ -22,6 +23,7 @@ export function MicrosoftLoginButton({
   disabled = false,
 }: MicrosoftLoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations('auth');
 
   const handleMicrosoftLogin = () => {
     setIsLoading(true);
@@ -43,11 +45,11 @@ export function MicrosoftLoginButton({
       className={className}
     >
       {isLoading ? (
-        "Redirecting..."
+        t('redirecting')
       ) : (
         <>
           <MicrosoftIcon className="mr-2 h-4 w-4" />
-          Sign in with Microsoft
+          {t('signInWithMicrosoft')}
         </>
       )}
     </Button>

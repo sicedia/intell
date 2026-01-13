@@ -95,7 +95,7 @@ export default function DashboardPage() {
           <Link href="/generate">
             <Button size="lg">
               <PlusCircle className="mr-2 h-4 w-4" />
-              New Generation
+              {t("newGeneration")}
             </Button>
           </Link>
         }
@@ -104,30 +104,30 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Total Images Generated"
+          title={t("totalImagesGenerated")}
           value={statsLoading ? "..." : stats?.total_images ?? 0}
-          description="Successfully generated images"
+          description={t("successfullyGeneratedImages")}
           icon={ImageIcon}
           variant="primary"
         />
         <StatsCard
-          title="Published Images"
+          title={t("publishedImages")}
           value={statsLoading ? "..." : stats?.total_published_images ?? 0}
-          description={`${stats?.published_this_month ?? 0} published this month`}
+          description={`${stats?.published_this_month ?? 0} ${t("publishedThisMonth")}`}
           icon={FileImage}
           variant="success"
         />
         <StatsCard
-          title="Active Users This Month"
+          title={t("activeUsersThisMonth")}
           value={statsLoading ? "..." : stats?.total_active_users_this_month ?? 0}
-          description="Users who created content this month"
+          description={t("usersWhoCreatedContent")}
           icon={Sparkles}
           variant="default"
         />
         <StatsCard
-          title="AI Described Images"
+          title={t("aiDescribedImages")}
           value={statsLoading ? "..." : stats?.total_ai_described_images ?? 0}
-          description={`${stats?.images_this_month ?? 0} images this month`}
+          description={`${stats?.images_this_month ?? 0} ${t("imagesThisMonth")}`}
           icon={TrendingUp}
           variant="primary"
         />
@@ -137,14 +137,14 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Latest Published Images</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{t("latestPublishedImages")}</h2>
             <p className="text-muted-foreground">
-              Recently published images from your library
+              {t("recentlyPublishedImages")}
             </p>
           </div>
           <Link href="/images">
             <Button variant="outline">
-              View All
+              {t("viewAll")}
             </Button>
           </Link>
         </div>
@@ -174,11 +174,11 @@ export default function DashboardPage() {
           </GalleryGrid>
         ) : (
           <EmptyState
-            title="No published images yet"
-            description="Publish images from your gallery to see them here."
+            title={t("noPublishedImagesYet")}
+            description={t("publishImagesFromGallery")}
             icon={<FileImage className="h-12 w-12 text-muted-foreground" />}
             action={{
-              label: "View Gallery",
+              label: t("viewGallery"),
               href: "/images",
               variant: "default",
             }}

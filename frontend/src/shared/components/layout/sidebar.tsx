@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { cn } from "@/shared/lib/utils";
 import {
     LayoutDashboard,
@@ -22,19 +23,20 @@ import {
 } from "@/shared/components/ui/tooltip";
 import { Button } from "@/shared/components/ui/button";
 
-const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/generate', label: 'Generate', icon: Sparkles },
-    { href: '/images', label: 'Images', icon: ImageIcon },
-    { href: '/themes', label: 'Themes', icon: Palette },
-    { href: '/reports', label: 'Reports', icon: FileText },
-    { href: '/settings', label: 'Settings', icon: Settings },
-];
-
 export function Sidebar({ className, onClose }: { className?: string, onClose?: () => void }) {
     const pathname = usePathname();
     const localeSegment = pathname?.split("/")[1] ?? "";
     const [collapsed, setCollapsed] = useState(false);
+    const t = useTranslations('common');
+
+    const navItems = [
+        { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
+        { href: '/generate', label: t('generate'), icon: Sparkles },
+        { href: '/images', label: t('images'), icon: ImageIcon },
+        { href: '/themes', label: t('themes'), icon: Palette },
+        { href: '/reports', label: t('reports'), icon: FileText },
+        { href: '/settings', label: t('settings'), icon: Settings },
+    ];
 
     return (
         <div 
@@ -83,7 +85,7 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent side="right">
-                        <p>{collapsed ? "Expand sidebar" : "Collapse sidebar"}</p>
+                        <p>{collapsed ? t('expandSidebar') : t('collapseSidebar')}</p>
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
@@ -153,8 +155,8 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                                 </TooltipTrigger>
                                 <TooltipContent side="right">
                                     <div>
-                                        <p className="font-medium">User Profile</p>
-                                        <p className="text-xs text-muted-foreground">Admin</p>
+                                        <p className="font-medium">{t('userProfile')}</p>
+                                        <p className="text-xs text-muted-foreground">{t('admin')}</p>
                                     </div>
                                 </TooltipContent>
                             </Tooltip>
@@ -163,8 +165,8 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                         <>
                             <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs">U</div>
                             <div className="text-sm">
-                                <p className="font-medium">User Profile</p>
-                                <p className="text-xs text-muted-foreground">Admin</p>
+                                <p className="font-medium">{t('userProfile')}</p>
+                                <p className="text-xs text-muted-foreground">{t('admin')}</p>
                             </div>
                         </>
                     )}

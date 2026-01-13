@@ -6,6 +6,7 @@
  * Microsoft OAuth2 login only.
  */
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { MicrosoftLoginButton } from "./MicrosoftLoginButton";
 import {
   Card,
@@ -17,20 +18,21 @@ import {
 
 export function LoginForm() {
   const searchParams = useSearchParams();
+  const t = useTranslations('auth');
 
   // Check for OAuth error in URL params (from Microsoft callback)
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
   const serverError = error
-    ? errorDescription || `Authentication failed: ${error}`
+    ? errorDescription || `${t('authenticationFailed')}: ${error}`
     : null;
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('welcome')}</CardTitle>
         <CardDescription>
-          Sign in to continue to your account
+          {t('signIn')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -43,7 +45,7 @@ export function LoginForm() {
         <MicrosoftLoginButton className="w-full" />
 
         <p className="text-xs text-center text-muted-foreground">
-          By signing in, you agree to our terms of service and privacy policy.
+          {t('termsOfService')}
         </p>
       </CardContent>
     </Card>

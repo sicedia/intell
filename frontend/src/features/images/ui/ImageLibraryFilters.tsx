@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/shared/components/ui/input";
 import {
   Select,
@@ -40,6 +41,8 @@ export function ImageLibraryFilters({
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const { data: tags = [], isLoading: tagsLoading } = useTags();
   const { data: groups = [], isLoading: groupsLoading } = useGroups();
+  const t = useTranslations('images');
+  const tCommon = useTranslations('common');
   
   // Use external libraryViewMode if provided (from parent), otherwise use hook
   const { viewMode: internalLibraryViewMode, setViewMode: setInternalLibraryViewMode } = useImageLibraryViewMode();
@@ -115,20 +118,20 @@ export function ImageLibraryFilters({
                 handleFilterChange("status", value === "all" ? undefined : (value as ImageTaskStatus))
               }
             >
-              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por estado">
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label={t('filterByStatus')}>
                 <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
-                <SelectValue placeholder="Estado" />
+                <SelectValue placeholder={tCommon('status')} />
                 {filters.status && (
                   <span className="ml-2 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
                 )}
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="SUCCESS">Exitoso</SelectItem>
-                <SelectItem value="PENDING">Pendiente</SelectItem>
-                <SelectItem value="RUNNING">En ejecución</SelectItem>
-                <SelectItem value="FAILED">Fallido</SelectItem>
-                <SelectItem value="CANCELLED">Cancelado</SelectItem>
+                <SelectItem value="all">{t('allStatuses')}</SelectItem>
+                <SelectItem value="SUCCESS">{t('successful')}</SelectItem>
+                <SelectItem value="PENDING">{t('pending')}</SelectItem>
+                <SelectItem value="RUNNING">{t('running')}</SelectItem>
+                <SelectItem value="FAILED">{t('failed')}</SelectItem>
+                <SelectItem value="CANCELLED">{t('cancelled')}</SelectItem>
               </SelectContent>
             </Select>
             <div className="flex gap-2 flex-shrink-0">
@@ -165,7 +168,7 @@ export function ImageLibraryFilters({
                     size="icon"
                     onClick={() => onViewModeChange("grid")}
                     className="h-8 w-8"
-                    aria-label="Vista de cuadrícula"
+                    aria-label={t('gridView')}
                     aria-pressed={viewMode === "grid"}
                   >
                     <Grid className="h-4 w-4" aria-hidden="true" />
@@ -175,7 +178,7 @@ export function ImageLibraryFilters({
                     size="icon"
                     onClick={() => onViewModeChange("list")}
                     className="h-8 w-8"
-                    aria-label="Vista de lista"
+                    aria-label={t('listView')}
                     aria-pressed={viewMode === "list"}
                   >
                     <List className="h-4 w-4" aria-hidden="true" />
@@ -215,14 +218,14 @@ export function ImageLibraryFilters({
                 handleFilterChange("tags", value === "all" ? undefined : [parseInt(value)])
               }
             >
-              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por tag">
-                <SelectValue placeholder="Tag" />
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label={t('filterByTag')}>
+                <SelectValue placeholder={t('tag')} />
                 {filters.tags && filters.tags.length > 0 && (
                   <span className="ml-2 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
                 )}
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los tags</SelectItem>
+                <SelectItem value="all">{t('allTags')}</SelectItem>
                 {!tagsLoading && tags.map((tag) => (
                   <SelectItem key={tag.id} value={tag.id.toString()}>
                     {tag.name}
@@ -236,10 +239,10 @@ export function ImageLibraryFilters({
                 variant="outline" 
                 onClick={clearFilters} 
                 className="sm:ml-auto w-full sm:w-auto"
-                aria-label={`Limpiar ${activeFilterCount} filtro${activeFilterCount > 1 ? 's' : ''} activo${activeFilterCount > 1 ? 's' : ''}`}
+                aria-label={t('clearFiltersWithCount', { count: activeFilterCount })}
               >
                 <X className="h-4 w-4 mr-2" aria-hidden="true" />
-                Limpiar filtros
+                {t('clearFilters')}
                 {activeFilterCount > 0 && (
                   <span className="ml-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
                     {activeFilterCount}

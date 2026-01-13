@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Job, JobStatus } from "../constants/job";
 import { Badge } from "@/shared/components/ui/badge";
 import { Progress } from "@/shared/components/ui/progress";
@@ -33,6 +34,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
     const [retryingTaskIds, setRetryingTaskIds] = useState<Set<number>>(new Set());
     const queryClient = useQueryClient();
     const imageTasks = job?.images ?? [];
+    const t = useTranslations('generate.run');
 
     // Calculate overall progress - prefer backend progress_total for finalized jobs
     const calculateOverallProgress = () => {
@@ -126,7 +128,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                                 <div className="flex items-center gap-3">
                                     {getStatusIcon(job.status)}
                                     <div>
-                                        <h3 className="font-semibold">Overall Progress</h3>
+                                        <h3 className="font-semibold">{t('overallProgress')}</h3>
                                         <p className="text-sm text-muted-foreground capitalize">
                                             {job.status.toLowerCase().replace("_", " ")}
                                         </p>
@@ -142,27 +144,27 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                                 {completedTasks > 0 && (
                                     <Badge variant="default" className="gap-1">
                                         <CheckCircle2 className="h-3 w-3" />
-                                        {completedTasks} completed
+                                        {t('completedCount', { count: completedTasks })}
                                     </Badge>
                                 )}
                                 {pendingTasks > 0 && (
                                     <Badge variant="secondary" className="gap-1">
                                         <Loader2 className="h-3 w-3 animate-spin" />
-                                        {pendingTasks} in progress
+                                        {t('inProgressCount', { count: pendingTasks })}
                                     </Badge>
                                 )}
                                 {failedTasks > 0 && (
                                     <div className="flex items-center gap-2">
                                         <Badge variant="destructive" className="gap-1">
                                             <XCircle className="h-3 w-3" />
-                                            {failedTasks} failed
+                                            {t('failedCount', { count: failedTasks })}
                                         </Badge>
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             onClick={handleRetryAllFailed}
                                             disabled={isRetryingAll || hasActiveTasks}
-                                            title={hasActiveTasks ? "Wait for running tasks to complete" : "Retry all failed tasks"}
+                                            title={hasActiveTasks ? t('waitForRunningTasks') : t('retryAllFailedTasks')}
                                             className="h-6 text-xs gap-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 disabled:opacity-50"
                                         >
                                             {isRetryingAll ? (
@@ -170,7 +172,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                                             ) : (
                                                 <RotateCcw className="h-3 w-3" />
                                             )}
-                                            Retry All
+                                            {t('retryAll')}
                                         </Button>
                                     </div>
                                 )}
@@ -186,7 +188,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                     <div className="flex items-center gap-2">
                         <ImageIcon className="h-4 w-4 text-muted-foreground" />
                         <h3 className="font-medium text-sm text-muted-foreground">
-                            Image Tasks ({imageTasks.length})
+                            {t('imageTasks', { count: imageTasks.length })}
                         </h3>
                     </div>
                     <div className="grid gap-2">
@@ -223,7 +225,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                                                         size="sm"
                                                         onClick={() => handleRetryTask(task.id)}
                                                         disabled={isRetrying || !canRetryNow}
-                                                        title={hasActiveTasks ? "Wait for running tasks" : "Retry this task"}
+                                                        title={hasActiveTasks ? t('waitForRunning') : t('retryThisTask')}
                                                         className="h-5 px-2 text-[10px] text-red-600 hover:text-red-700 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 disabled:opacity-50"
                                                     >
                                                         {isRetrying ? (
@@ -231,7 +233,7 @@ export const JobProgress = ({ job, onRetryAllFailed }: JobProgressProps) => {
                                                         ) : (
                                                             <RotateCcw className="h-3 w-3" />
                                                         )}
-                                                        <span className="ml-1">Retry</span>
+                                                        <span className="ml-1">{t('retry')}</span>
                                                     </Button>
                                                 )}
                                                 <span className="text-xs text-muted-foreground tabular-nums">

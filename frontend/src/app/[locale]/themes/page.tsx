@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 export default function ThemesPage() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const t = useTranslations('themes');
 
   useEffect(() => {
     setMounted(true);
@@ -30,8 +32,8 @@ export default function ThemesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Themes & Styling"
-        subtitle="Customize the appearance of your application"
+        title={t('title')}
+        subtitle={t('description')}
       />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

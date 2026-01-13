@@ -1,5 +1,6 @@
 import { useState } from "react";
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Job, ImageTask, JobStatus } from "../constants/job";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
@@ -56,6 +57,8 @@ export const JobResults = ({ job }: { job: Job }) => {
     const [isDownloading, setIsDownloading] = useState(false);
     const [autoDescribeAndPublish, setAutoDescribeAndPublish] = useState(false);
     const queryClient = useQueryClient();
+    const t = useTranslations('generate.results');
+    const tCommon = useTranslations('common');
     
     // Check if all images are complete but job is still RUNNING or PENDING
     // This can happen if finalize_job didn't run or was delayed
@@ -110,9 +113,9 @@ export const JobResults = ({ job }: { job: Job }) => {
     if (!job.images || job.images.length === 0) {
         return (
             <div className="text-center text-muted-foreground p-8 border rounded-lg">
-                <p>No images generated.</p>
+                <p>{t('noImagesGenerated')}</p>
                 {job.status === JobStatus.RUNNING && (
-                    <p className="text-sm mt-2">Images are still being generated...</p>
+                    <p className="text-sm mt-2">{t('imagesStillBeingGenerated')}</p>
                 )}
             </div>
         );
@@ -129,7 +132,7 @@ export const JobResults = ({ job }: { job: Job }) => {
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-medium">
-                            Generated Images ({successfulImages.length})
+                            {t('generatedImagesCount', { count: successfulImages.length })}
                         </h3>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
@@ -139,7 +142,7 @@ export const JobResults = ({ job }: { job: Job }) => {
                                     onCheckedChange={setAutoDescribeAndPublish}
                                 />
                                 <Label htmlFor="auto-describe" className="text-sm cursor-pointer">
-                                    Auto-describir y publicar
+                                    {t('autoDescribeAndPublish')}
                                 </Label>
                             </div>
                             <DropdownMenu>
@@ -150,19 +153,19 @@ export const JobResults = ({ job }: { job: Job }) => {
                                     ) : (
                                         <Download className="h-4 w-4 mr-2" />
                                     )}
-                                    Download All
+                                    {t('downloadAll')}
                                     <ChevronDown className="h-4 w-4 ml-1" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => handleDownloadAll("both")}>
-                                    All Formats (PNG + SVG)
+                                    {t('allFormats')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleDownloadAll("png")}>
-                                    PNG Only
+                                    {t('pngOnly')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleDownloadAll("svg")}>
-                                    SVG Only
+                                    {t('svgOnly')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -185,7 +188,7 @@ export const JobResults = ({ job }: { job: Job }) => {
             {pendingImages.length > 0 && (
                 <div>
                     <h3 className="text-lg font-medium mb-4">
-                        In Progress ({pendingImages.length})
+                        {t('inProgressCount', { count: pendingImages.length })}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {pendingImages.map((task) => (
@@ -211,7 +214,7 @@ export const JobResults = ({ job }: { job: Job }) => {
             {cancelledImages.length > 0 && (
                 <div>
                     <h3 className="text-lg font-medium mb-4 text-muted-foreground">
-                        Cancelled ({cancelledImages.length})
+                        {t('cancelledCount', { count: cancelledImages.length })}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {cancelledImages.map((task) => (
@@ -429,7 +432,7 @@ const TaskResultCard = ({
                         {isAutoProcessing && (
                             <div className="absolute top-2 left-2 z-20 bg-primary/90 text-primary-foreground px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 shadow-lg">
                                 <Sparkles className="h-3 w-3 animate-pulse" />
-                                Generando descripción...
+                                {t('generatingDescription')}
                             </div>
                         )}
                         {descriptionTask && descriptionTask.status === "RUNNING" && (
@@ -461,26 +464,26 @@ const TaskResultCard = ({
                 ) : task.status === JobStatus.RUNNING || task.status === JobStatus.PENDING ? (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p>Generating image...</p>
-                        <p className="text-xs">Progress: {task.progress}%</p>
+                        <p>{t('generatingImage')}</p>
+                        <p className="text-xs">{t('progress')}: {task.progress}%</p>
                         {(task.progress === 0 && canRetry) && (
                             <p className="text-xs text-amber-500 mt-2">
-                                Task may be stuck. You can retry or cancel.
+                                {t('taskMayBeStuck')}
                             </p>
                         )}
                     </div>
                 ) : task.status === JobStatus.CANCELLED ? (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
-                        <p className="font-medium">Generation Cancelled</p>
+                        <p className="font-medium">{t('generationCancelled')}</p>
                         {canRetry && (
                             <p className="text-xs text-muted-foreground">
-                                You can retry this task if needed.
+                                {t('canRetryTask')}
                             </p>
                         )}
                     </div>
                 ) : (
                     <div className="h-[300px] flex items-center justify-center p-6 text-center text-muted-foreground flex-col gap-2">
-                        <p className="font-medium">Generation Failed</p>
+                        <p className="font-medium">{t('generationFailed')}</p>
                         {task.error_message && (
                             <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950/20 p-2 rounded max-w-md">
                                 {task.error_message}
@@ -491,7 +494,7 @@ const TaskResultCard = ({
             </CardContent>
             <CardFooter className="flex justify-between p-4 bg-muted/10">
                 <div className="text-xs text-muted-foreground">
-                    Task ID: {task.id}
+                    {t('taskId')}: {task.id}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                     {canPublish && (
@@ -501,20 +504,20 @@ const TaskResultCard = ({
                                 variant="outline"
                                 onClick={handleViewClick}
                                 className="gap-2"
-                                title="Ver imagen"
+                                title={t('viewImageTooltip')}
                             >
                                 <Eye className="h-3 w-3" />
-                                Ver
+                                {t('viewImage')}
                             </Button>
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={handleEditClick}
                                 className="gap-2"
-                                title="Editar metadata"
+                                title={t('editMetadataTooltip')}
                             >
                                 <Edit className="h-3 w-3" />
-                                Editar
+                                {t('editMetadata')}
                             </Button>
                             <Button
                                 size="sm"
@@ -522,10 +525,10 @@ const TaskResultCard = ({
                                 onClick={handleDescribeClick}
                                 disabled={isAutoProcessing}
                                 className="gap-2"
-                                title={hasAIDescription ? "Ver/Editar descripción IA" : "Describir con IA"}
+                                title={hasAIDescription ? t('editDescriptionTooltip') : t('describeWithAITooltip')}
                             >
                                 <Sparkles className="h-3 w-3" />
-                                {hasAIDescription ? "Editar descripción" : "Describir"}
+                                {hasAIDescription ? t('editDescription') : t('describeWithAI')}
                             </Button>
                             <Button
                                 size="sm"
@@ -533,22 +536,22 @@ const TaskResultCard = ({
                                 onClick={handlePublish}
                                 disabled={publishImage.isPending || isAutoProcessing}
                                 className="gap-2"
-                                title={isPublished ? "Imagen guardada en librería" : "Guardar en librería"}
+                                title={isPublished ? t('inLibraryTooltip') : t('saveToLibraryTooltip')}
                             >
                                 {publishImage.isPending ? (
                                     <>
                                         <Loader2 className="h-3 w-3 animate-spin" />
-                                        {isPublished ? "Despublicando..." : "Publicando..."}
+                                        {isPublished ? t('unpublishing') : t('publishing')}
                                     </>
                                 ) : isPublished ? (
                                     <>
                                         <BookmarkCheck className="h-3 w-3" />
-                                        En librería
+                                        {t('inLibrary')}
                                     </>
                                 ) : (
                                     <>
                                         <BookmarkPlus className="h-3 w-3" />
-                                        Guardar
+                                        {t('saveToLibrary')}
                                     </>
                                 )}
                             </Button>
@@ -565,12 +568,12 @@ const TaskResultCard = ({
                             {isCancelling ? (
                                 <>
                                     <Loader2 className="h-3 w-3 animate-spin" />
-                                    Cancelling...
+                                    {t('cancelling')}
                                 </>
                             ) : (
                                 <>
                                     <X className="h-3 w-3" />
-                                    Cancel
+                                    {tCommon('cancel')}
                                 </>
                             )}
                         </Button>
@@ -586,12 +589,12 @@ const TaskResultCard = ({
                             {isRetrying ? (
                                 <>
                                     <Loader2 className="h-3 w-3 animate-spin" />
-                                    Retrying...
+                                    {t('retrying')}
                                 </>
                             ) : (
                                 <>
                                     <RotateCcw className="h-3 w-3" />
-                                    Retry
+                                    {t('retry')}
                                 </>
                             )}
                         </Button>

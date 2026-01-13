@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -50,6 +51,8 @@ export function AIDescriptionDialog({
   const [isRefiningContext, setIsRefiningContext] = useState(false);
   const { generateDescription, descriptionTask, isGenerating, progress, reset: resetDescription } = useAIDescription();
   const updateImage = useImageUpdate();
+  const t = useTranslations('aiDescription');
+  const tCommon = useTranslations('common');
 
   // Reset when dialog opens/closes
   useEffect(() => {
@@ -169,11 +172,10 @@ export function AIDescriptionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            Generar descripción con IA
+            {t('generateDescriptionWithAI')}
           </DialogTitle>
           <DialogDescription>
-            Proporciona contexto sobre esta imagen para generar una descripción detallada usando
-            inteligencia artificial.
+            {t('provideContextDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -185,40 +187,40 @@ export function AIDescriptionDialog({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="context">
-                    {isRefiningContext ? "Refinar contexto" : "Contexto (opcional)"}
+                    {isRefiningContext ? t('refineContext') : t('contextOptional')}
                   </Label>
                   <span className="text-xs text-muted-foreground">
-                    {contextLength} caracteres
+                    {t('characters', { count: contextLength })}
                   </span>
                 </div>
                 <Textarea
                   id="context"
-                  placeholder="Describe el contexto de esta imagen. Por ejemplo: 'Este gráfico muestra las tendencias de patentes en inteligencia artificial durante los últimos 5 años. Los datos provienen de la base de datos de patentes de la EPO y representan publicaciones acumulativas por año...' (Opcional - puedes dejar vacío para usar contexto automático)"
+                  placeholder={t('contextPlaceholder')}
                   value={userContext}
                   onChange={(e) => setUserContext(e.target.value)}
                   rows={6}
                   className="resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
-                  El contexto es opcional. Si no proporcionas contexto, se usará información automática basada en el algoritmo y tipo de datos.
+                  {t('contextOptionalInfo')}
                 </p>
               </div>
 
               {/* Provider Selection */}
               <div className="space-y-2">
-                <Label htmlFor="provider">Proveedor de IA</Label>
+                <Label htmlFor="provider">{t('aiProvider')}</Label>
                 <Select
                   value={providerPreference || "auto"}
                   onValueChange={(value) => setProviderPreference(value === "auto" ? undefined : value as AIProvider)}
                 >
                   <SelectTrigger id="provider">
-                    <SelectValue placeholder="Automático (mejor disponible)" />
+                    <SelectValue placeholder={t('automaticBestAvailable')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="auto">Automático (mejor disponible)</SelectItem>
-                    <SelectItem value="openai">OpenAI (GPT-4)</SelectItem>
-                    <SelectItem value="anthropic">Anthropic (Claude)</SelectItem>
-                    <SelectItem value="mock">Mock (solo pruebas)</SelectItem>
+                    <SelectItem value="auto">{t('automaticBestAvailable')}</SelectItem>
+                    <SelectItem value="openai">{t('openaiGpt4')}</SelectItem>
+                    <SelectItem value="anthropic">{t('anthropicClaude')}</SelectItem>
+                    <SelectItem value="mock">{t('mockTestingOnly')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -235,12 +237,12 @@ export function AIDescriptionDialog({
                     {isGenerating ? (
                       <>
                         <Spinner className="mr-2 h-4 w-4" />
-                        Regenerando...
+                        {t('generatingDescription')}
                       </>
                     ) : (
                       <>
                         <Sparkles className="mr-2 h-4 w-4" />
-                        Regenerar con contexto refinado
+                        {t('regenerateWithRefinedContext')}
                       </>
                     )}
                   </Button>
@@ -254,7 +256,7 @@ export function AIDescriptionDialog({
                     }}
                     disabled={isGenerating}
                   >
-                    Cancelar
+                    {tCommon('cancel')}
                   </Button>
                 </div>
               ) : (
@@ -267,12 +269,12 @@ export function AIDescriptionDialog({
                   {isGenerating ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Generando descripción...
+                      {t('generatingDescription')}
                     </>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-4 w-4" />
-                      Generar descripción automática con IA
+                      {t('generateAutomaticDescription')}
                     </>
                   )}
                 </Button>
@@ -282,13 +284,13 @@ export function AIDescriptionDialog({
               {isGenerating && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Progreso</span>
+                    <span className="text-muted-foreground">{t('progress')}</span>
                     <span className="text-muted-foreground">{progress}%</span>
                   </div>
                   <Progress value={progress} />
                   {descriptionTask?.status === "RUNNING" && (
                     <p className="text-xs text-muted-foreground">
-                      Procesando con {descriptionTask.provider_used || "proveedor automático"}...
+                      {t('processingWithProvider', { provider: descriptionTask.provider_used || t('unknownProvider') })}
                     </p>
                   )}
                 </div>
@@ -297,8 +299,8 @@ export function AIDescriptionDialog({
               {/* Error Display */}
               {descriptionTask?.status === "FAILED" && (
                 <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                  <p className="font-medium">Error al generar descripción</p>
-                  <p className="mt-1">{descriptionTask.error_message || "Error desconocido"}</p>
+                  <p className="font-medium">{t('errorGeneratingDescription')}</p>
+                  <p className="mt-1">{descriptionTask.error_message || t('unknownError')}</p>
                 </div>
               )}
             </>
@@ -312,7 +314,7 @@ export function AIDescriptionDialog({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="description" className="text-base font-semibold">
-                        Descripción generada
+                        {t('generatedDescription')}
                       </Label>
                       <div className="flex gap-2">
                         <Button
@@ -322,7 +324,7 @@ export function AIDescriptionDialog({
                           disabled={isGenerating}
                         >
                           <Edit2 className="h-3 w-3 mr-1" />
-                          Refinar contexto
+                          {t('refineContext')}
                         </Button>
                         <Button
                           variant="outline"
@@ -331,7 +333,7 @@ export function AIDescriptionDialog({
                           disabled={isGenerating}
                         >
                           <RotateCcw className="h-3 w-3 mr-1" />
-                          Regenerar
+                          {t('regenerate')}
                         </Button>
                       </div>
                     </div>
@@ -345,10 +347,9 @@ export function AIDescriptionDialog({
                     />
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        Generado con {descriptionTask?.provider_used || "proveedor automático"} (
-                        {descriptionTask?.model_used || "modelo desconocido"})
+                        {t('generatedWith', { provider: descriptionTask?.provider_used || t('unknownProvider'), model: descriptionTask?.model_used || t('unknownModel') })}
                       </span>
-                      <span>{displayDescription.length} caracteres</span>
+                      <span>{t('characters', { count: displayDescription.length })}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -357,7 +358,7 @@ export function AIDescriptionDialog({
               {/* Show Original Context Info */}
               {originalContext && (
                 <div className="text-xs text-muted-foreground p-2 bg-muted rounded-md">
-                  <p className="font-medium mb-1">Contexto utilizado:</p>
+                  <p className="font-medium mb-1">{t('contextUsed')}</p>
                   <p className="line-clamp-2">{originalContext}</p>
                 </div>
               )}
@@ -370,7 +371,7 @@ export function AIDescriptionDialog({
                   className="flex-1"
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Ver/Editar contexto
+                  {t('viewEditContext')}
                 </Button>
                 <Button
                   onClick={handleSave}
@@ -380,12 +381,12 @@ export function AIDescriptionDialog({
                   {updateImage.isPending ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Guardando...
+                      {t('saving')}
                     </>
                   ) : (
                     <>
                       <Save className="mr-2 h-4 w-4" />
-                      Guardar descripción
+                      {t('saveDescription')}
                     </>
                   )}
                 </Button>
@@ -396,19 +397,19 @@ export function AIDescriptionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {hasDescription ? "Cerrar" : "Cancelar"}
+            {hasDescription ? tCommon('close') : tCommon('cancel')}
           </Button>
           {hasDescription && (
             <Button onClick={handleSave} disabled={updateImage.isPending || !displayDescription?.trim()}>
               {updateImage.isPending ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
-                  Guardando...
+                  {t('saving')}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  Guardar y cerrar
+                  {t('saveAndClose')}
                 </>
               )}
             </Button>

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useWizardStore } from "../stores/useWizardStore";
 import { ALGORITHMS, AlgorithmConfig } from "../constants/algorithms";
 import {
@@ -26,6 +27,8 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
         visualizationConfig,
         setVisualizationConfig,
     } = useWizardStore();
+    const t = useTranslations('generate.visualization');
+    const tCommon = useTranslations('common');
 
     const toggleAlgorithm = (algoKey: string) => {
         const exists = selectedAlgorithms.find((a) => a.algorithm_key === algoKey);
@@ -89,10 +92,10 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
             <div className="flex justify-between items-center">
                 <Button variant="outline" onClick={onBack}>
                     <ChevronLeft className="mr-2 h-4 w-4" />
-                    Back
+                    {tCommon('back')}
                 </Button>
                 <Button onClick={onNext} disabled={selectedAlgorithms.length === 0}>
-                    Next: Generate
+                    {t('nextGenerate')}
                     <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
@@ -102,8 +105,8 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle>Select Visualizations</CardTitle>
-                            <CardDescription>Choose the analyses you want to perform on the data.</CardDescription>
+                            <CardTitle>{t('selectVisualizations')}</CardTitle>
+                            <CardDescription>{t('chooseAnalyses')}</CardDescription>
                         </div>
                         <Button
                             variant="outline"
@@ -111,7 +114,7 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
                             onClick={handleSelectAll}
                             className="ml-4"
                         >
-                            {allSelected ? "Deselect All" : "Select All"}
+                            {allSelected ? t('deselectAll') : t('selectAll')}
                         </Button>
                     </div>
                 </CardHeader>
@@ -135,7 +138,7 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
                                     <div className="space-y-1 flex-1">
                                         <h4 className="font-medium leading-none">{algo.label}</h4>
                                         <p className="text-xs text-muted-foreground">
-                                            Generate {algo.label.toLowerCase()} chart
+                                            {t('generateChart', { algorithm: algo.label.toLowerCase() })}
                                         </p>
                                     </div>
                                 </CardContent>
@@ -148,15 +151,15 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
             {/* Visualization Options */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Chart Style</CardTitle>
+                    <CardTitle>{t('chartStyle')}</CardTitle>
                     <CardDescription>
-                        Customize the appearance of all generated charts.
+                        {t('customizeAppearance')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     {/* Color Palette */}
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium">Color Palette</Label>
+                        <Label className="text-sm font-medium">{t('colorPalette')}</Label>
                         <RadioGroup
                             value={visualizationConfig.color_palette}
                             onValueChange={handlePaletteChange}
@@ -198,7 +201,7 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
 
                     {/* Font Size */}
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium">Font Size</Label>
+                        <Label className="text-sm font-medium">{t('fontSize')}</Label>
                         <RadioGroup
                             value={visualizationConfig.font_size}
                             onValueChange={handleFontSizeChange}
@@ -235,10 +238,10 @@ export const VisualizationStep = ({ onNext, onBack }: VisualizationStepProps) =>
             <div className="flex justify-between">
                 <Button variant="outline" onClick={onBack}>
                     <ChevronLeft className="mr-2 h-4 w-4" />
-                    Back
+                    {tCommon('back')}
                 </Button>
                 <Button onClick={onNext} disabled={selectedAlgorithms.length === 0}>
-                    Next: Generate
+                    {t('nextGenerate')}
                     <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
