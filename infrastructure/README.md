@@ -192,8 +192,8 @@ For production, use `docker-compose.prod.yml` which includes all services:
 
 1. **Copy and configure environment files:**
    ```bash
-   cp env.example .env
-   cp backend.env.example backend.env
+   cp .docker.env.example .docker.env
+   cp .django.env.example .django.env
    # Edit both files with your production values
    ```
 

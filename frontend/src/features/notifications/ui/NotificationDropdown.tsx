@@ -150,7 +150,7 @@ function NotificationItem({
           )}
         </div>
         <p className="text-xs text-muted-foreground/70">
-          {formatNotificationTime(notification.created_at)}
+          {formatNotificationTime(notification.created_at, t)}
         </p>
       </div>
     </DropdownMenuItem>

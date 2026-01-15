@@ -140,22 +140,29 @@ npm run dev
 
 ### Environment Variables
 
-**Backend** (`backend/.env`):
-```env
-SECRET_KEY=your-secret-key
-DEBUG=True
-DATABASE_URL=postgresql://intell_user:patents2026$@localhost:5432/intell
-CELERY_BROKER_URL=redis://localhost:6379/0
-REDIS_URL=redis://localhost:6379/1
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+Para una guía completa de configuración de variables de entorno, consulta [ENV_SETUP.md](ENV_SETUP.md).
+
+**Backend** - Desarrollo:
+```bash
+cd backend
+cp env.development.example .env
+# Editar .env con tus valores
 ```
 
-**Frontend** (`frontend/.env.local`):
-```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
-NEXT_PUBLIC_WS_BASE_URL=ws://localhost:8000/ws
-NEXT_PUBLIC_APP_ENV=development
+**Frontend** - Desarrollo:
+```bash
+cd frontend
+cp env.development.example .env.local
+# Editar .env.local con tus valores
 ```
+
+**Archivos de ejemplo disponibles:**
+- `backend/env.development.example` - Variables para desarrollo local
+- `backend/env.production.example` - Variables para producción
+- `frontend/env.development.example` - Variables para desarrollo local
+- `frontend/env.production.example` - Variables para producción (referencia)
+- `infrastructure/.docker.env.example` - Variables para Docker Compose
+- `infrastructure/.django.env.example` - Variables para Django en Docker
 
 ---
 
@@ -171,15 +178,17 @@ All services run in Docker containers with Nginx as reverse proxy.
 cd infrastructure
 
 # Copy environment templates
-cp env.example .env
-cp backend.env.example backend.env
+cp .docker.env.example .docker.env
+cp .django.env.example .django.env
 
 # Edit with production values
-nano .env          # Database credentials, frontend URLs
-nano backend.env   # Django secret key, allowed hosts, etc.
+nano .docker.env   # Database credentials, frontend URLs
+nano .django.env   # Django secret key, allowed hosts, etc.
 ```
 
-**Important variables in `backend.env`:**
+**Nota:** Para una guía detallada de configuración, consulta [ENV_SETUP.md](ENV_SETUP.md).
+
+**Important variables in `.django.env`:**
 ```env
 SECRET_KEY=your-super-secret-production-key
 DEBUG=False
