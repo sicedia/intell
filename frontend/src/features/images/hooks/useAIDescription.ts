@@ -41,20 +41,27 @@ export function useAIDescription() {
   }, [queryClient]);
 
   // Poll description task status (fallback if WebSocket fails)
+  // Keep query enabled even after polling stops to maintain data
   const { data: descriptionTask } = useQuery({
     queryKey: ["description-task", pollingTaskId],
     queryFn: () => getDescriptionTask(pollingTaskId!),
-    enabled: !!pollingTaskId,
+    enabled: !!pollingTaskId, // Only fetch when we have a task ID
     refetchInterval: (query) => {
       const task = query.state.data as DescriptionTask | undefined;
       if (!task) return 2000; // Poll every 2 seconds if no data yet
       
-      // Stop polling if task is in final state, but do one final refetch to get updated data
+      // Stop polling if task is in final state
       if (task.status === "SUCCESS" || task.status === "FAILED" || task.status === "CANCELLED") {
-        // Invalidate query to force a final refetch with updated model_used
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
-        }, 500);
+        // For SUCCESS, do one more refetch to get model_used if not present
+        if (task.status === "SUCCESS" && !task.model_used) {
+          // Schedule a refetch after backend has time to save
+          setTimeout(() => {
+            queryClient.refetchQueries({ queryKey: ["description-task", pollingTaskId] });
+          }, 1500);
+          // Continue polling one more time to get the updated data
+          return 2000;
+        }
+        // For other final states or if we already have model_used, stop polling
         return false;
       }
       
@@ -62,6 +69,8 @@ export function useAIDescription() {
       return 2000; // Continue polling every 2 seconds as fallback
     },
     staleTime: 0, // Always refetch
+    // Keep data in cache even after query is disabled
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
   // WebSocket connection for real-time updates
@@ -194,18 +203,29 @@ export function useAIDescription() {
       if (currentStatus === "RUNNING") {
         toast.info("Generando descripción con IA...", { duration: 2000 });
       } else if (currentStatus === "SUCCESS") {
-        const provider = descriptionTask.provider_used || "proveedor automático";
-        const model = descriptionTask.model_used || "modelo desconocido";
-        toast.success(`Descripción generada exitosamente con ${provider} (${model})`);
-        // Invalidate description task query to get updated model_used
+        // Invalidate queries to get the latest data including model_used
         queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
-        // Invalidate image queries to refresh data
         queryClient.invalidateQueries({ queryKey: ["images"] });
         queryClient.invalidateQueries({ queryKey: ["image", descriptionTask.image_task] });
-        // Small delay before stopping polling to ensure we get the final data
+        
+        // Show toast with available info
+        const provider = descriptionTask.provider_used || "proveedor automático";
+        const model = descriptionTask.model_used;
+        if (model) {
+          toast.success(`Descripción generada exitosamente con ${provider} (${model})`);
+        } else {
+          // Model not yet available, show generic message
+          toast.success(`Descripción generada exitosamente con ${provider}`);
+          // Schedule another refetch after a delay to get model_used
+          setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
+          }, 1500);
+        }
+        
+        // Stop polling after ensuring we've had time to refetch
         setTimeout(() => {
-          setPollingTaskId(null); // Stop polling after getting final data
-        }, 1000);
+          setPollingTaskId(null);
+        }, 2500);
       } else if (currentStatus === "FAILED") {
         const errorMsg = descriptionTask.error_message || "Error al generar la descripción";
         // Check if it's a provider fallback scenario

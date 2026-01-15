@@ -30228,3 +30228,6 @@ INFO 2026-01-15 12:29:25,941 apps 26244 47364 Waiting for database connection (t
 INFO 2026-01-15 12:29:25,983 apps 26244 47364 Database connection established successfully
 INFO 2026-01-15 12:30:14,778 apps 22292 14828 Waiting for database connection (timeout: 30.0s)...
 INFO 2026-01-15 12:30:14,812 apps 22292 14828 Database connection established successfully
+INFO 2026-01-15 13:03:56,240 tasks 26748 51488 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
+INFO 2026-01-15 13:37:29,440 tasks 26748 51488 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
+INFO 2026-01-15 13:38:41,606 tasks 26748 51488 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)

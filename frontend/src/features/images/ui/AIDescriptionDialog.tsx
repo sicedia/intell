@@ -513,25 +513,30 @@ export function AIDescriptionDialog({
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
                         {(() => {
-                          // Debug: log descriptionTask to see what we have
-                          if (descriptionTask?.status === "SUCCESS") {
-                            console.log("DescriptionTask on SUCCESS:", {
-                              model_used: descriptionTask.model_used,
-                              provider_used: descriptionTask.provider_used,
-                              status: descriptionTask.status
-                            });
-                          }
+                          // Use the most recent descriptionTask data
+                          // If model_used is available, show it; otherwise show unknown
+                          const task = descriptionTask;
                           
-                          if (descriptionTask?.model_used) {
+                          if (task?.model_used && task.model_used.trim()) {
                             return t('generatedWith', { 
-                              provider: descriptionTask.provider_used || 'litellm', 
-                              model: descriptionTask.model_used 
+                              provider: task.provider_used || 'litellm', 
+                              model: task.model_used 
                             });
-                          } else if (descriptionTask?.provider_used) {
-                            return t('generatedWith', { 
-                              provider: descriptionTask.provider_used, 
-                              model: t('unknownModel') 
-                            });
+                          } else if (task?.provider_used) {
+                            // If we have provider but no model yet, it might still be loading
+                            // Show provider but indicate model is loading
+                            if (task.status === "SUCCESS" && !task.model_used) {
+                              // Task is complete but model_used is missing - might be a backend issue
+                              return t('generatedWith', { 
+                                provider: task.provider_used, 
+                                model: t('unknownModel') 
+                              });
+                            } else {
+                              return t('generatedWith', { 
+                                provider: task.provider_used, 
+                                model: t('unknownModel') 
+                              });
+                            }
                           } else {
                             return t('generatedWith', { 
                               provider: t('unknownProvider'), 
