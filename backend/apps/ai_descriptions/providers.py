@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 import time
 import logging
+from decouple import config
 
 logger = logging.getLogger(__name__)
 
@@ -172,17 +173,18 @@ class AIProvider(ABC):
 class LiteLLMProvider(AIProvider):
     """LiteLLM provider using ChatOpenAI with custom base_url for CEDIA API."""
     
-    def __init__(self, api_key: str = "sk-iAriFxLhR71i7NTlUKXw6Q", base_url: str = "https://api.cedia.org.ec/v1", model: str = "openai/gpt-5.2-chat-latest"):
+    def __init__(self, api_key: Optional[str] = None, base_url: str = "https://api.cedia.org.ec/v1", model: str = "openai/gpt-5.2-chat-latest"):
         """
         Initialize LiteLLM provider.
         
         Args:
-            api_key: API key for LiteLLM
-            base_url: Base URL for LiteLLM API
+            api_key: API key for LiteLLM (if None, will be loaded from LITELLM_API_KEY env var)
+            base_url: Base URL for LiteLLM API (if None, will be loaded from LITELLM_BASE_URL env var)
             model: Model name to use
         """
-        self.api_key = api_key
-        self.base_url = base_url
+        # Load from environment variables if not provided
+        self.api_key = api_key if api_key is not None else config('LITELLM_API_KEY', default='')
+        self.base_url = base_url if base_url is not None else config('LITELLM_BASE_URL', default='https://api.cedia.org.ec/v1')
         self.model = model
         self._client = None
     

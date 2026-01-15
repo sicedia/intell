@@ -184,6 +184,7 @@
       "publishing": "Publishing...",
       "unpublishing": "Unpublishing...",
       "cancelling": "Cancelling...",
+      "retry": "Retry",
       "retrying": "Retrying...",
       "cancel": "Cancel"
     },

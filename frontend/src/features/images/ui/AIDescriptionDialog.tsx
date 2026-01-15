@@ -51,7 +51,7 @@ export function AIDescriptionDialog({
 }: AIDescriptionDialogProps) {
   const [userContext, setUserContext] = useState("");
   const [originalContext, setOriginalContext] = useState(""); // Store original context for regeneration
-  const [modelPreference, setModelPreference] = useState<string | undefined>(undefined); // Specific model or "auto"
+  const [modelPreference, setModelPreference] = useState<string | undefined>("openai/gpt-4.1-mini-2025-04-14"); // Default to GPT4.1 Mini
   const [editableDescription, setEditableDescription] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("input");
   const [isRefiningContext, setIsRefiningContext] = useState(false);
@@ -100,12 +100,33 @@ export function AIDescriptionDialog({
     return estimateCost(modelPreference, 2000, 500);
   }, [modelPreference, modelsData]);
 
+  // Set default model when models are loaded
+  useEffect(() => {
+    if (modelsData?.models && !modelPreference) {
+      // Find GPT4.1 Mini model
+      const gpt41Mini = modelsData.models.find(
+        (m) => m.id === "openai/gpt-4.1-mini-2025-04-14"
+      );
+      if (gpt41Mini) {
+        setModelPreference("openai/gpt-4.1-mini-2025-04-14");
+      }
+    }
+  }, [modelsData, modelPreference]);
+
   // Reset when dialog opens/closes
   useEffect(() => {
     if (open) {
       setUserContext("");
       setOriginalContext("");
-      setModelPreference(undefined); // Auto by default
+      // Set default to GPT4.1 Mini if available, otherwise keep current or undefined
+      if (modelsData?.models) {
+        const gpt41Mini = modelsData.models.find(
+          (m) => m.id === "openai/gpt-4.1-mini-2025-04-14"
+        );
+        setModelPreference(gpt41Mini ? "openai/gpt-4.1-mini-2025-04-14" : undefined);
+      } else {
+        setModelPreference("openai/gpt-4.1-mini-2025-04-14"); // Set default even if models not loaded yet
+      }
       setEditableDescription("");
       setViewMode("input");
       setIsRefiningContext(false);
@@ -114,12 +135,20 @@ export function AIDescriptionDialog({
       // Reset when closing
       setUserContext("");
       setOriginalContext("");
-      setModelPreference(undefined);
+      // Keep default model preference when closing
+      if (modelsData?.models) {
+        const gpt41Mini = modelsData.models.find(
+          (m) => m.id === "openai/gpt-4.1-mini-2025-04-14"
+        );
+        setModelPreference(gpt41Mini ? "openai/gpt-4.1-mini-2025-04-14" : undefined);
+      } else {
+        setModelPreference("openai/gpt-4.1-mini-2025-04-14");
+      }
       setEditableDescription("");
       setViewMode("input");
       setIsRefiningContext(false);
     }
-  }, [open, resetDescription]);
+  }, [open, resetDescription, modelsData]);
 
   // Update editable description when task completes
   useEffect(() => {

@@ -977,8 +977,24 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
         from apps.audit.helpers import emit_event
         from rest_framework.exceptions import PermissionDenied
         
-        # Check permissions: only the user who created the image can delete it
-        if instance.created_by != self.request.user:
+        # Check permissions: only the user who created the image (or the job) can delete it
+        # Handle cases where created_by might be None (fallback to job.created_by)
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied('Authentication required to delete images')
+        
+        # Check ownership: either through image_task.created_by or job.created_by
+        is_owner = False
+        if instance.created_by_id is not None:
+            # Direct ownership through image_task.created_by
+            is_owner = (instance.created_by_id == user.id)
+        else:
+            # Fallback: check if user owns the job
+            # Access job.created_by_id - Django will fetch if not already loaded
+            if instance.job.created_by_id is not None:
+                is_owner = (instance.job.created_by_id == user.id)
+        
+        if not is_owner:
             raise PermissionDenied('You can only delete your own images')
         
         # Store image info for audit event (before deletion)
@@ -1288,14 +1304,22 @@ class ImageGroupViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         """Ensure user owns the group."""
         instance = self.get_object()
-        if instance.created_by != self.request.user:
+        user = self.request.user
+        if not user.is_authenticated:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Authentication required to update groups')
+        if instance.created_by_id != user.id:
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('You can only update your own groups')
         serializer.save()
     
     def perform_destroy(self, instance):
         """Ensure user owns the group."""
-        if instance.created_by != self.request.user:
+        user = self.request.user
+        if not user.is_authenticated:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Authentication required to delete groups')
+        if instance.created_by_id != user.id:
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('You can only delete your own groups')
         instance.delete()
