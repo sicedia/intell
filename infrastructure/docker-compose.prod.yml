@@ -74,9 +74,7 @@ services:
   # Django Backend (ASGI with Daphne)
   # ==========================================================================
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile.prod
+    image: sicedia/intell-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file:
       - ./.django.env
@@ -121,9 +119,7 @@ services:
   # Celery Worker (Image Generation)
   # ==========================================================================
   celery-worker:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile.prod
+    image: sicedia/intell-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     command: celery -A config worker --loglevel=info --pool=prefork --concurrency=4 -Q ingestion_io,charts_cpu,ai
     env_file:
@@ -182,13 +178,7 @@ services:
   # Next.js Frontend
   # ==========================================================================
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile.prod
-      args:
-        - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api}
-        - NEXT_PUBLIC_WS_BASE_URL=${NEXT_PUBLIC_WS_BASE_URL:-ws://localhost:8000/ws}
-        - NEXT_PUBLIC_APP_ENV=production
+    image: sicedia/intell-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
       - NODE_ENV=production

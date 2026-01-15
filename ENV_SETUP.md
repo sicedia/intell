@@ -99,10 +99,10 @@ cp .django.env.example .django.env
 | Variable | Valor Producción | Descripción |
 |----------|------------------|-------------|
 | `DEBUG` | `False` | **CRÍTICO:** Siempre False en producción |
-| `ALLOWED_HOSTS` | `openintell.cedia.org.ec` | Tu dominio |
+| `ALLOWED_HOSTS` | `openintell.cedia.edu.ec` | Tu dominio |
 | `SECRET_KEY` | `[generar nuevo]` | Clave secreta única y fuerte |
 | `SECURE_SSL_REDIRECT` | `True` | Redirigir HTTP a HTTPS |
-| `CORS_ALLOWED_ORIGINS` | `https://openintell.cedia.org.ec` | Origen del frontend |
+| `CORS_ALLOWED_ORIGINS` | `https://openintell.cedia.edu.ec` | Origen del frontend |
 
 ### Frontend - Desarrollo
 
@@ -116,8 +116,8 @@ cp .django.env.example .django.env
 
 | Variable | Valor Producción | Descripción |
 |----------|------------------|-------------|
-| `NEXT_PUBLIC_API_BASE_URL` | `https://openintell.cedia.org.ec/api` | API en producción |
-| `NEXT_PUBLIC_WS_BASE_URL` | `wss://openintell.cedia.org.ec/ws` | WebSocket seguro |
+| `NEXT_PUBLIC_API_BASE_URL` | `https://openintell.cedia.edu.ec/api` | API en producción |
+| `NEXT_PUBLIC_WS_BASE_URL` | `wss://openintell.cedia.edu.ec/ws` | WebSocket seguro |
 | `NEXT_PUBLIC_APP_ENV` | `production` | Entorno de la app |
 
 ### Infrastructure - Docker Compose

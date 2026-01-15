@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-DOMAIN="openintell.cedia.org.ec"
+DOMAIN="openintell.cedia.edu.ec"
 SSL_DIR="nginx/ssl"
 
 echo -e "${GREEN}========================================${NC}"
@@ -74,7 +74,7 @@ case $choice in
         sudo certbot certonly --webroot \
             -w "$SCRIPT_DIR/nginx/ssl/.well-known/acme-challenge" \
             -d "$DOMAIN" \
-            --email admin@cedia.org.ec \
+            --email admin@cedia.edu.ec \
             --agree-tos \
             --non-interactive || {
             echo -e "${RED}Failed to obtain certificate${NC}"
@@ -108,7 +108,7 @@ case $choice in
         echo -e "${BLUE}Setting up custom certificates...${NC}"
         echo ""
         echo "You can provide:"
-        echo "  - Wildcard certificate (*.cedia.org.ec)"
+        echo "  - Wildcard certificate (*.cedia.edu.ec)"
         echo "  - Standard certificate for $DOMAIN"
         echo ""
         echo "Certificate files needed:"

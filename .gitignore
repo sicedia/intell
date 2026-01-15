@@ -301,3 +301,4 @@ $RECYCLE.BIN/
 backend/logs/django.log
 backend/logs/django.log
 backend/logs/django.log
+infrastructure/.build.env

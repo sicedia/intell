@@ -35,7 +35,7 @@ Esta guía proporciona instrucciones paso a paso para desplegar Intelli en un se
 
 - Dominio configurado: `openintell.cedia.edu.ec`
 - Registros DNS A/AAAA apuntando al servidor
-- Certificado SSL (wildcard `*.cedia.org.ec` o específico)
+- Certificado SSL (wildcard `*.cedia.edu.ec` o específico)
 
 ---
 
@@ -124,8 +124,8 @@ nano .django.env
 POSTGRES_DB=intell
 POSTGRES_USER=intell_user
 POSTGRES_PASSWORD=<contraseña-fuerte-generada>
-NEXT_PUBLIC_API_BASE_URL=https://openintell.cedia.org.ec/api
-NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.org.ec/ws
+NEXT_PUBLIC_API_BASE_URL=https://openintell.cedia.edu.ec/api
+NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.edu.ec/ws
 ```
 
 **Configuración mínima en `.django.env`**:
@@ -133,9 +133,9 @@ NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.org.ec/ws
 ```env
 SECRET_KEY=<generar-nueva-clave-secreta>
 DEBUG=False
-ALLOWED_HOSTS=openintell.cedia.org.ec
-CORS_ALLOWED_ORIGINS=https://openintell.cedia.org.ec
-CSRF_TRUSTED_ORIGINS=https://openintell.cedia.org.ec
+ALLOWED_HOSTS=openintell.cedia.edu.ec
+CORS_ALLOWED_ORIGINS=https://openintell.cedia.edu.ec
+CSRF_TRUSTED_ORIGINS=https://openintell.cedia.edu.ec
 SECURE_SSL_REDIRECT=True
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
@@ -158,9 +158,9 @@ Si usas autenticación con Microsoft, actualiza en `.django.env`:
 MICROSOFT_CLIENT_ID=<tu-client-id>
 MICROSOFT_CLIENT_SECRET=<tu-client-secret>
 MICROSOFT_TENANT_ID=<tu-tenant-id>
-MICROSOFT_REDIRECT_URI=https://openintell.cedia.org.ec/api/auth/microsoft/callback/
-MICROSOFT_LOGIN_REDIRECT_URL=https://openintell.cedia.org.ec/en/dashboard
-MICROSOFT_LOGIN_ERROR_URL=https://openintell.cedia.org.ec/en/login
+MICROSOFT_REDIRECT_URI=https://openintell.cedia.edu.ec/api/auth/microsoft/callback/
+MICROSOFT_LOGIN_REDIRECT_URL=https://openintell.cedia.edu.ec/en/dashboard
+MICROSOFT_LOGIN_ERROR_URL=https://openintell.cedia.edu.ec/en/login
 ```
 
 **Importante**: Configura estos mismos URLs en Azure Portal > App Registrations > Redirect URIs.
@@ -171,7 +171,7 @@ MICROSOFT_LOGIN_ERROR_URL=https://openintell.cedia.org.ec/en/login
 
 ### Opción 1: Certificado Wildcard Existente
 
-Si ya tienes un certificado wildcard `*.cedia.org.ec`:
+Si ya tienes un certificado wildcard `*.cedia.edu.ec`:
 
 ```bash
 cd /opt/intell/infrastructure
@@ -221,7 +221,129 @@ cd /opt/intell/infrastructure
 
 ## Deployment
 
-### Método 1: Script Automatizado (Recomendado)
+### Método 1: Despliegue con Imágenes Pre-construidas (Recomendado)
+
+Este método utiliza imágenes Docker pre-construidas y subidas a Docker Hub, evitando builds en el servidor.
+
+#### Paso 1: Construir y Subir Imágenes Localmente
+
+En tu máquina de desarrollo:
+
+```bash
+cd infrastructure
+
+# Copiar archivo de configuración de build
+cp .build.env.example .build.env
+
+# Editar .build.env con tus valores de producción
+nano .build.env
+```
+
+**Configuración mínima en `.build.env`**:
+```env
+NEXT_PUBLIC_API_BASE_URL=https://openintell.cedia.edu.ec/api
+NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.edu.ec/ws
+NEXT_PUBLIC_APP_ENV=production
+```
+
+**Construir y subir imágenes**:
+
+```bash
+# Linux/macOS
+./build-and-push.sh v1.0.1
+
+# Windows PowerShell
+.\build-and-push.ps1 v1.0.1
+```
+
+El script:
+1. Construye las imágenes backend y frontend
+2. Las etiqueta con la versión especificada (ej: `v1.0.1`) y `latest`
+3. Las sube a Docker Hub (`sicedia/intell-backend` y `sicedia/intell-frontend`)
+
+**Nota**: Asegúrate de estar logueado en Docker Hub:
+```bash
+docker login
+```
+
+#### Paso 2: Configurar el Servidor
+
+En el servidor de producción:
+
+```bash
+cd /opt/intell/infrastructure
+
+# Copiar archivos de ejemplo
+cp .docker.env.example .docker.env
+cp .django.env.example .django.env
+
+# Editar .docker.env
+nano .docker.env
+```
+
+**Agregar en `.docker.env`**:
+```env
+# Docker Image Configuration
+IMAGE_TAG=v1.0.1  # o la versión que subiste
+```
+
+#### Paso 3: Desplegar en el Servidor
+
+```bash
+cd /opt/intell/infrastructure
+
+# Descargar imágenes desde Docker Hub
+docker compose -f docker-compose.prod.yml pull
+
+# Iniciar servicios
+docker compose -f docker-compose.prod.yml up -d
+
+# Esperar a que los servicios estén listos
+sleep 15
+
+# Ejecutar migraciones
+docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+
+# Recopilar archivos estáticos
+docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
+
+# Crear superusuario (si no existe)
+docker compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
+```
+
+#### Actualizar a Nueva Versión
+
+Cuando tengas una nueva versión:
+
+```bash
+# 1. En desarrollo: construir y subir nueva versión
+./build-and-push.sh v1.0.2
+
+# 2. En servidor: actualizar .docker.env
+# Cambiar IMAGE_TAG=v1.0.2
+
+# 3. En servidor: descargar y reiniciar
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+
+# 4. Ejecutar migraciones si hay cambios en la BD
+docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+```
+
+#### Rollback a Versión Anterior
+
+Si necesitas volver a una versión anterior:
+
+```bash
+# Cambiar IMAGE_TAG en .docker.env a la versión anterior
+# Ejemplo: IMAGE_TAG=v1.0.1
+
+# Descargar y reiniciar
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+```
+
+### Método 2: Script Automatizado (Build en Servidor)
 
 ```bash
 cd /opt/intell/infrastructure
@@ -242,12 +364,14 @@ El script realizará:
 6. Recopilación de archivos estáticos
 7. Creación de superusuario (si no existe)
 
-### Método 2: Manual
+### Método 3: Manual (Build en Servidor)
+
+**Nota**: Este método requiere construir las imágenes en el servidor, lo cual consume más recursos y tiempo.
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Construir imágenes
+# Construir imágenes (requiere modificar docker-compose.prod.yml para usar build:)
 docker compose -f docker-compose.prod.yml build
 
 # Iniciar servicios
@@ -295,18 +419,18 @@ docker compose -f docker-compose.prod.yml logs -f nginx
 
 ```bash
 # Health check
-curl https://openintell.cedia.org.ec/api/health/
+curl https://openintell.cedia.edu.ec/api/health/
 
 # Verificar HTTPS
-curl -I https://openintell.cedia.org.ec
+curl -I https://openintell.cedia.edu.ec
 
 # Verificar redirección HTTP → HTTPS
-curl -I http://openintell.cedia.org.ec
+curl -I http://openintell.cedia.edu.ec
 ```
 
 ### 4. Verificar en Navegador
 
-1. Abrir `https://openintell.cedia.org.ec`
+1. Abrir `https://openintell.cedia.edu.ec`
 2. Verificar que el certificado SSL es válido
 3. Probar login y funcionalidades principales
 
