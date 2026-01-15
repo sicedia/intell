@@ -292,10 +292,17 @@ export function useAIDescription() {
     [generateMutation]
   );
 
+  // Calculate isGenerating: true only if actively generating (not failed or cancelled)
+  const isGenerating = generateMutation.isPending || 
+    (pollingTaskId !== null && 
+     descriptionTask?.status !== "SUCCESS" && 
+     descriptionTask?.status !== "FAILED" && 
+     descriptionTask?.status !== "CANCELLED");
+
   return {
     generateDescription,
     descriptionTask,
-    isGenerating: generateMutation.isPending || (pollingTaskId !== null && descriptionTask?.status !== "SUCCESS" && descriptionTask?.status !== "FAILED"),
+    isGenerating,
     progress: descriptionTask?.progress ?? 0,
     error: generateMutation.error,
     reset,

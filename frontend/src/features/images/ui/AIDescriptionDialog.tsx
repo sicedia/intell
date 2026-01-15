@@ -185,6 +185,11 @@ export function AIDescriptionDialog({
     if (originalContext && userContext !== originalContext) {
       setUserContext(originalContext);
     }
+    // Reset description state and switch to input mode if we're in error state
+    if (descriptionTask?.status === "FAILED") {
+      setViewMode("input");
+      setIsRefiningContext(false);
+    }
     resetDescription();
     handleGenerate();
   };
@@ -238,6 +243,7 @@ export function AIDescriptionDialog({
   const hasDescription = (descriptionTask?.status === "SUCCESS" && descriptionTask.result_text) || 
                          (editableDescription && editableDescription.trim().length > 0);
   const canRegenerate = hasDescription && !isGenerating;
+  const hasFailed = descriptionTask?.status === "FAILED";
   
   // Use result_text directly if available, otherwise use editableDescription
   const displayDescription = descriptionTask?.result_text || editableDescription;
@@ -256,6 +262,64 @@ export function AIDescriptionDialog({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          {/* Error Display with Model Failure Details - Show even in input mode if failed */}
+          {descriptionTask?.status === "FAILED" && (viewMode === "input" || isRefiningContext) && (
+            <Card className="border-destructive">
+              <CardContent className="pt-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <p className="font-medium">{t('errorGeneratingDescription')}</p>
+                    </div>
+                    <p className="text-sm text-destructive">
+                      {descriptionTask.error_message || t('unknownError')}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('pleaseRetry')}
+                    </p>
+                    {modelAttempts.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-destructive/20">
+                        <p className="text-xs font-medium text-destructive mb-1">
+                          {t('modelsAttempted')}:
+                        </p>
+                        <div className="space-y-1">
+                          {modelAttempts.map((attempt, index) => (
+                            <div key={`failed-${attempt.model}-${index}`} className="text-xs text-muted-foreground">
+                              • {attempt.model} {attempt.status === "failed" && attempt.error && `(${attempt.error.substring(0, 50)}...)`}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {/* Retry Button in Input Mode */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={handleRegenerate}
+                      disabled={isGenerating}
+                      variant="default"
+                      className="flex-1"
+                      size="lg"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Spinner className="mr-2 h-4 w-4" />
+                          {t('generatingDescription')}
+                        </>
+                      ) : (
+                        <>
+                          <RotateCcw className="mr-2 h-4 w-4" />
+                          {t('retryDescription')}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Input Mode: Context and Provider Selection */}
           {(viewMode === "input" || isRefiningContext) && (
             <>
@@ -471,28 +535,66 @@ export function AIDescriptionDialog({
               {descriptionTask?.status === "FAILED" && (
                 <Card className="border-destructive">
                   <CardContent className="pt-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <p className="font-medium">{t('errorGeneratingDescription')}</p>
-                      </div>
-                      <p className="text-sm text-destructive">
-                        {descriptionTask.error_message || t('unknownError')}
-                      </p>
-                      {modelAttempts.length > 0 && (
-                        <div className="mt-2 pt-2 border-t border-destructive/20">
-                          <p className="text-xs font-medium text-destructive mb-1">
-                            {t('modelsAttempted')}:
-                          </p>
-                          <div className="space-y-1">
-                            {modelAttempts.map((attempt, index) => (
-                              <div key={`failed-${attempt.model}-${index}`} className="text-xs text-muted-foreground">
-                                • {attempt.model} {attempt.status === "failed" && attempt.error && `(${attempt.error.substring(0, 50)}...)`}
-                              </div>
-                            ))}
-                          </div>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-destructive">
+                          <AlertCircle className="h-4 w-4" />
+                          <p className="font-medium">{t('errorGeneratingDescription')}</p>
                         </div>
-                      )}
+                        <p className="text-sm text-destructive">
+                          {descriptionTask.error_message || t('unknownError')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('pleaseRetry')}
+                        </p>
+                        {modelAttempts.length > 0 && (
+                          <div className="mt-2 pt-2 border-t border-destructive/20">
+                            <p className="text-xs font-medium text-destructive mb-1">
+                              {t('modelsAttempted')}:
+                            </p>
+                            <div className="space-y-1">
+                              {modelAttempts.map((attempt, index) => (
+                                <div key={`failed-${attempt.model}-${index}`} className="text-xs text-muted-foreground">
+                                  • {attempt.model} {attempt.status === "failed" && attempt.error && `(${attempt.error.substring(0, 50)}...)`}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {/* Retry Button */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          onClick={handleRegenerate}
+                          disabled={isGenerating}
+                          variant="default"
+                          className="flex-1"
+                          size="lg"
+                        >
+                          {isGenerating ? (
+                            <>
+                              <Spinner className="mr-2 h-4 w-4" />
+                              {t('generatingDescription')}
+                            </>
+                          ) : (
+                            <>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              {t('retryDescription')}
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            resetDescription();
+                            setViewMode("input");
+                            setIsRefiningContext(false);
+                          }}
+                          disabled={isGenerating}
+                        >
+                          {tCommon('cancel')}
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

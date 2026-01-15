@@ -374,6 +374,10 @@
     "modelSuccess": "{model} exitoso",
     "modelsAttempted": "Modelos intentados",
     "fallbackToModel": "Cambiando a {model}...",
+    "retryDescription": "Reintentar descripción",
+    "retryWithSameContext": "Reintentar con el mismo contexto",
+    "errorOccurred": "Ocurrió un error al generar la descripción",
+    "pleaseRetry": "Por favor, intenta de nuevo o ajusta el contexto y vuelve a intentar.",
     "modelCategories": {
       "gpt": "GPT",
       "gemini": "Gemini",
