@@ -362,6 +362,26 @@
     "saveAndClose": "Save and close",
     "generatedWith": "Generated with {provider} ({model})",
     "unknownModel": "unknown model",
-    "unknownProvider": "automatic provider"
+    "unknownProvider": "automatic provider",
+    "selectModel": "Select model",
+    "estimatedCost": "Estimated cost",
+    "loadingModels": "Loading models...",
+    "processingWithModel": "Processing with {model}...",
+    "modelAttempts": "Model attempts",
+    "attemptingModel": "Attempting {model}...",
+    "modelFailed": "{model} failed",
+    "modelSuccess": "{model} succeeded",
+    "modelsAttempted": "Models attempted",
+    "fallbackToModel": "Falling back to {model}...",
+    "modelCategories": {
+      "gpt": "GPT",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "oss": "Open Source"
+    },
+    "costPer1kTokens": "per 1K tokens",
+    "inputTokens": "input",
+    "outputTokens": "output"
   }
 }

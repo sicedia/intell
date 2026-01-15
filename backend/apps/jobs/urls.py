@@ -8,6 +8,7 @@ from .views import (
     TagViewSet, ImageGroupViewSet, serve_test_excel,
     dashboard_stats, latest_published_images
 )
+from apps.ai_descriptions.views import get_available_models
 
 router = DefaultRouter()
 router.register(r'jobs', JobViewSet, basename='job')
@@ -24,5 +25,7 @@ urlpatterns = [
     # Dashboard endpoints
     path('dashboard/stats/', dashboard_stats, name='dashboard-stats'),
     path('dashboard/latest-images/', latest_published_images, name='dashboard-latest-images'),
+    # AI endpoints
+    path('ai/models/', get_available_models, name='ai-models'),
 ]
 

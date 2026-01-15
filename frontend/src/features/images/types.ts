@@ -4,7 +4,7 @@
 
 export type ImageTaskStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
 export type DescriptionTaskStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
-export type AIProvider = 'openai' | 'anthropic' | 'mock';
+export type AIProvider = 'litellm' | 'openai' | 'anthropic' | 'mock';
 
 export interface Tag {
   id: number;
@@ -99,10 +99,26 @@ export interface DescriptionTask {
   updated_at: string;
 }
 
+export interface ModelInfo {
+  id: string;
+  name: string;
+  provider: string;
+  category: string;
+  cost_per_1k_input: number;
+  cost_per_1k_output: number;
+  fallback_order: number;
+  description: string;
+}
+
+export interface AvailableModelsResponse {
+  models: ModelInfo[];
+}
+
 export interface AIDescriptionRequest {
   image_task_id: number;
   user_context: string;
   provider_preference?: AIProvider;
+  model_preference?: string; // Specific model ID (e.g., 'openai/gpt-5.2-chat-latest')
 }
 
 export interface AIDescriptionResponse {
@@ -110,6 +126,29 @@ export interface AIDescriptionResponse {
   status: DescriptionTaskStatus;
   message: string;
   provider_preference?: AIProvider;
+  model_preference?: string;
+  job_id: number; // Job ID for WebSocket connection
+}
+
+export interface DescriptionTaskEvent {
+  job_id?: number;
+  entity_type?: string;
+  entity_id?: number | string;
+  event_type: 'START' | 'PROGRESS' | 'MODEL_ATTEMPT' | 'MODEL_FAILED' | 'MODEL_SUCCESS' | 'FALLBACK' | 'DONE' | 'ERROR' | 'AI_PROVIDER_ERROR';
+  level: 'INFO' | 'WARNING' | 'ERROR';
+  message: string;
+  progress?: number;
+  payload?: {
+    model?: string;
+    from_model?: string;
+    to_model?: string;
+    error?: string;
+    failed_models?: string;
+    description_task_id?: number;
+    [key: string]: unknown;
+  };
+  trace_id?: string;
+  created_at?: string;
 }
 
 export interface ImageFilters {

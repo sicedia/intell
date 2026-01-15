@@ -457,7 +457,7 @@ class JobCreateSerializer(serializers.Serializer):
 class AIDescribeRequestSerializer(serializers.Serializer):
     """Serializer for AI describe request."""
     image_task_id = serializers.IntegerField(
-        help_text='ID de la tarea de imagen para la cual generar la descripci?n'
+        help_text='ID de la tarea de imagen para la cual generar la descripción'
     )
     user_context = serializers.CharField(
         required=True,
@@ -465,10 +465,25 @@ class AIDescribeRequestSerializer(serializers.Serializer):
         help_text='Contexto adicional proporcionado por el usuario para mejorar la descripción'
     )
     provider_preference = serializers.ChoiceField(
-        choices=['openai', 'anthropic', 'mock'],
+        choices=['litellm', 'openai', 'anthropic', 'mock'],
         required=False,
-        help_text='Proveedor de IA preferido: openai, anthropic, o mock (para pruebas)'
+        help_text='Proveedor de IA preferido: litellm, openai, anthropic, o mock (para pruebas). Si se especifica model_preference, este campo se ignora.'
     )
+    model_preference = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        help_text='Modelo específico de LiteLLM a usar (ej: openai/gpt-5.2-chat-latest, gemini/gemini-3-flash-preview). Si se especifica, tiene prioridad sobre provider_preference.'
+    )
+    
+    def validate_model_preference(self, value):
+        """Validate that model_preference is a valid LiteLLM model."""
+        if value:
+            from apps.ai_descriptions.providers import LITELLM_MODELS
+            if value not in LITELLM_MODELS:
+                raise serializers.ValidationError(
+                    f"Model '{value}' is not available. Available models: {', '.join(LITELLM_MODELS[:5])}..."
+                )
+        return value
 
 
 # Response serializers for API documentation

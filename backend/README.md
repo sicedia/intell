@@ -83,7 +83,7 @@ backend/
 
 3. **Set up environment variables:**
    ```bash
-   cp env.example .env
+   cp env.development.example .env
    # The DATABASE_URL is already configured in env.example
    ```
 
@@ -122,7 +122,7 @@ If you prefer to set up manually:
 
 3. **Set up environment variables:**
    ```bash
-   cp env.example .env
+   cp env.development.example .env
    ```
    
    **Required variables for development:**

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -22,11 +23,16 @@ import {
 } from "@/shared/components/ui/select";
 import { Progress } from "@/shared/components/ui/progress";
 import { Spinner } from "@/shared/components/ui/spinner";
+import { Input } from "@/shared/components/ui/input";
+import { Badge } from "@/shared/components/ui/badge";
 import { useAIDescription } from "../hooks/useAIDescription";
 import { useImageUpdate } from "../hooks/useImages";
-import { ImageTask, AIProvider } from "../types";
-import { Sparkles, Save, RotateCcw, Edit2, Eye } from "lucide-react";
+import { ImageTask, AIProvider, ModelInfo } from "../types";
+import { getAvailableModels } from "../api/descriptions";
+import { estimateCost, formatCost, getCategoryName } from "../constants/models";
+import { Sparkles, Save, RotateCcw, Edit2, Eye, AlertCircle, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
 
 interface AIDescriptionDialogProps {
   image: ImageTask;
@@ -45,21 +51,61 @@ export function AIDescriptionDialog({
 }: AIDescriptionDialogProps) {
   const [userContext, setUserContext] = useState("");
   const [originalContext, setOriginalContext] = useState(""); // Store original context for regeneration
-  const [providerPreference, setProviderPreference] = useState<AIProvider | undefined>("mock"); // Default to mock for testing
+  const [modelPreference, setModelPreference] = useState<string | undefined>(undefined); // Specific model or "auto"
   const [editableDescription, setEditableDescription] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("input");
   const [isRefiningContext, setIsRefiningContext] = useState(false);
-  const { generateDescription, descriptionTask, isGenerating, progress, reset: resetDescription } = useAIDescription();
+  const { 
+    generateDescription, 
+    descriptionTask, 
+    isGenerating, 
+    progress, 
+    reset: resetDescription,
+    realTimeEvents,
+    currentModel,
+    modelAttempts,
+  } = useAIDescription();
   const updateImage = useImageUpdate();
   const t = useTranslations('aiDescription');
   const tCommon = useTranslations('common');
+
+  // Fetch available models
+  const { data: modelsData, isLoading: modelsLoading } = useQuery({
+    queryKey: ["ai-models"],
+    queryFn: getAvailableModels,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Group models by category
+  const groupedModels = useMemo(() => {
+    if (!modelsData?.models) return {};
+
+    const grouped: Record<string, ModelInfo[]> = {};
+    modelsData.models.forEach((model) => {
+      if (!grouped[model.category]) {
+        grouped[model.category] = [];
+      }
+      grouped[model.category].push(model);
+    });
+
+    return grouped;
+  }, [modelsData]);
+
+  // Estimate cost for selected model
+  const estimatedCost = useMemo(() => {
+    if (!modelPreference || modelPreference === "auto" || !modelsData?.models) return null;
+    const model = modelsData.models.find((m) => m.id === modelPreference);
+    if (!model) return null;
+    // Estimate: ~2000 input tokens (prompt + dataset sample), ~500 output tokens
+    return estimateCost(modelPreference, 2000, 500);
+  }, [modelPreference, modelsData]);
 
   // Reset when dialog opens/closes
   useEffect(() => {
     if (open) {
       setUserContext("");
       setOriginalContext("");
-      setProviderPreference("mock"); // Default to mock for testing
+      setModelPreference(undefined); // Auto by default
       setEditableDescription("");
       setViewMode("input");
       setIsRefiningContext(false);
@@ -68,7 +114,7 @@ export function AIDescriptionDialog({
       // Reset when closing
       setUserContext("");
       setOriginalContext("");
-      setProviderPreference("mock");
+      setModelPreference(undefined);
       setEditableDescription("");
       setViewMode("input");
       setIsRefiningContext(false);
@@ -100,7 +146,8 @@ export function AIDescriptionDialog({
     generateDescription({
       image_task_id: image.id,
       user_context: userContext.trim() || "",
-      provider_preference: providerPreference,
+      model_preference: modelPreference && modelPreference !== "auto" ? modelPreference : undefined,
+      provider_preference: modelPreference === "auto" || !modelPreference ? "litellm" : undefined,
     });
   };
 
@@ -206,23 +253,66 @@ export function AIDescriptionDialog({
                 </p>
               </div>
 
-              {/* Provider Selection */}
+              {/* Model Selection */}
               <div className="space-y-2">
-                <Label htmlFor="provider">{t('aiProvider')}</Label>
-                <Select
-                  value={providerPreference || "auto"}
-                  onValueChange={(value) => setProviderPreference(value === "auto" ? undefined : value as AIProvider)}
-                >
-                  <SelectTrigger id="provider">
-                    <SelectValue placeholder={t('automaticBestAvailable')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="auto">{t('automaticBestAvailable')}</SelectItem>
-                    <SelectItem value="openai">{t('openaiGpt4')}</SelectItem>
-                    <SelectItem value="anthropic">{t('anthropicClaude')}</SelectItem>
-                    <SelectItem value="mock">{t('mockTestingOnly')}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="model">{t('selectModel')}</Label>
+                  {estimatedCost && (
+                    <span className="text-xs text-muted-foreground">
+                      {t('estimatedCost')}: ~${estimatedCost.toFixed(4)}
+                    </span>
+                  )}
+                </div>
+                
+                {modelsLoading ? (
+                  <div className="flex items-center justify-center p-4">
+                    <Spinner className="h-4 w-4 mr-2" />
+                    <span className="text-sm text-muted-foreground">{t('loadingModels')}</span>
+                  </div>
+                ) : (
+                  <>
+                    <Select
+                      value={modelPreference || "auto"}
+                      onValueChange={(value) => setModelPreference(value === "auto" ? undefined : value)}
+                    >
+                      <SelectTrigger id="model" className="w-full">
+                        <SelectValue placeholder={t('automaticBestAvailable')} />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[400px]">
+                        <SelectItem value="auto">{t('automaticBestAvailable')}</SelectItem>
+                        <Separator className="my-1" />
+                        {Object.entries(groupedModels).map(([category, models]) => (
+                          <div key={category}>
+                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                              {getCategoryName(category)}
+                            </div>
+                            {models.map((model) => {
+                              const inputCost = formatCost(model.cost_per_1k_input);
+                              const outputCost = formatCost(model.cost_per_1k_output);
+                              return (
+                                <SelectItem key={model.id} value={model.id}>
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{model.name}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {inputCost} / {outputCost}
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    {/* Search for models (optional, can be added later) */}
+                    {modelPreference && modelPreference !== "auto" && (
+                      <p className="text-xs text-muted-foreground">
+                        {modelsData?.models.find((m) => m.id === modelPreference)?.description}
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
 
               {/* Generate/Refine Button */}
@@ -280,28 +370,103 @@ export function AIDescriptionDialog({
                 </Button>
               )}
 
-              {/* Progress Indicator */}
+              {/* Progress Indicator with Real-time Feedback */}
               {isGenerating && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{t('progress')}</span>
-                    <span className="text-muted-foreground">{progress}%</span>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">{t('progress')}</span>
+                      <span className="text-muted-foreground">{progress}%</span>
+                    </div>
+                    <Progress value={progress} />
+                    {currentModel && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        {t('processingWithModel', { model: currentModel })}
+                      </p>
+                    )}
                   </div>
-                  <Progress value={progress} />
-                  {descriptionTask?.status === "RUNNING" && (
-                    <p className="text-xs text-muted-foreground">
-                      {t('processingWithProvider', { provider: descriptionTask.provider_used || t('unknownProvider') })}
-                    </p>
+
+                  {/* Real-time Model Attempts Timeline */}
+                  {modelAttempts.length > 0 && (
+                    <Card>
+                      <CardContent className="pt-4">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold">{t('modelAttempts')}</Label>
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {modelAttempts.map((attempt, index) => (
+                              <div
+                                key={`${attempt.model}-${index}`}
+                                className="flex items-center gap-2 text-xs"
+                              >
+                                {attempt.status === "attempting" && (
+                                  <>
+                                    <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                                    <span className="text-muted-foreground">
+                                      {t('attemptingModel', { model: attempt.model })}
+                                    </span>
+                                  </>
+                                )}
+                                {attempt.status === "failed" && (
+                                  <>
+                                    <XCircle className="h-3 w-3 text-destructive" />
+                                    <span className="text-destructive">
+                                      {t('modelFailed', { model: attempt.model })}
+                                    </span>
+                                    {attempt.error && (
+                                      <Badge variant="outline" className="text-xs">
+                                        {attempt.error.substring(0, 30)}...
+                                      </Badge>
+                                    )}
+                                  </>
+                                )}
+                                {attempt.status === "success" && (
+                                  <>
+                                    <CheckCircle2 className="h-3 w-3 text-green-500" />
+                                    <span className="text-green-600">
+                                      {t('modelSuccess', { model: attempt.model })}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
                 </div>
               )}
 
-              {/* Error Display */}
+              {/* Error Display with Model Failure Details */}
               {descriptionTask?.status === "FAILED" && (
-                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                  <p className="font-medium">{t('errorGeneratingDescription')}</p>
-                  <p className="mt-1">{descriptionTask.error_message || t('unknownError')}</p>
-                </div>
+                <Card className="border-destructive">
+                  <CardContent className="pt-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <p className="font-medium">{t('errorGeneratingDescription')}</p>
+                      </div>
+                      <p className="text-sm text-destructive">
+                        {descriptionTask.error_message || t('unknownError')}
+                      </p>
+                      {modelAttempts.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-destructive/20">
+                          <p className="text-xs font-medium text-destructive mb-1">
+                            {t('modelsAttempted')}:
+                          </p>
+                          <div className="space-y-1">
+                            {modelAttempts.map((attempt, index) => (
+                              <div key={`failed-${attempt.model}-${index}`} className="text-xs text-muted-foreground">
+                                • {attempt.model} {attempt.status === "failed" && attempt.error && `(${attempt.error.substring(0, 50)}...)`}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
               )}
             </>
           )}
@@ -347,7 +512,33 @@ export function AIDescriptionDialog({
                     />
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        {t('generatedWith', { provider: descriptionTask?.provider_used || t('unknownProvider'), model: descriptionTask?.model_used || t('unknownModel') })}
+                        {(() => {
+                          // Debug: log descriptionTask to see what we have
+                          if (descriptionTask?.status === "SUCCESS") {
+                            console.log("DescriptionTask on SUCCESS:", {
+                              model_used: descriptionTask.model_used,
+                              provider_used: descriptionTask.provider_used,
+                              status: descriptionTask.status
+                            });
+                          }
+                          
+                          if (descriptionTask?.model_used) {
+                            return t('generatedWith', { 
+                              provider: descriptionTask.provider_used || 'litellm', 
+                              model: descriptionTask.model_used 
+                            });
+                          } else if (descriptionTask?.provider_used) {
+                            return t('generatedWith', { 
+                              provider: descriptionTask.provider_used, 
+                              model: t('unknownModel') 
+                            });
+                          } else {
+                            return t('generatedWith', { 
+                              provider: t('unknownProvider'), 
+                              model: t('unknownModel') 
+                            });
+                          }
+                        })()}
                       </span>
                       <span>{t('characters', { count: displayDescription.length })}</span>
                     </div>

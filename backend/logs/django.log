@@ -30109,3 +30109,122 @@ INFO 2026-01-15 08:30:42,342 apps 14628 37788 Waiting for database connection (t
 WARNING 2026-01-15 08:31:29,673 apps 14628 37788 Database not available after 30.0s. Server will start but database operations may fail.
 INFO 2026-01-15 08:50:50,179 apps 4452 50552 Waiting for database connection (timeout: 30.0s)...
 INFO 2026-01-15 08:50:50,234 apps 4452 50552 Database connection established successfully
+INFO 2026-01-15 11:43:28,801 apps 45804 42184 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 11:43:28,873 apps 45804 42184 Database connection established successfully
+INFO 2026-01-15 11:43:34,005 apps 22096 7292 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 11:43:34,058 apps 22096 7292 Database connection established successfully
+INFO 2026-01-15 11:44:14,638 apps 35024 47284 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 11:44:14,695 apps 35024 47284 Database connection established successfully
+INFO 2026-01-15 12:01:28,308 apps 37296 25432 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:01:28,350 apps 37296 25432 Database connection established successfully
+INFO 2026-01-15 12:01:45,885 apps 15632 55916 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:01:45,920 apps 15632 55916 Database connection established successfully
+INFO 2026-01-15 12:02:00,749 apps 46184 16196 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:02:00,785 apps 46184 16196 Database connection established successfully
+INFO 2026-01-15 12:02:13,335 apps 30756 18996 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:02:13,370 apps 30756 18996 Database connection established successfully
+INFO 2026-01-15 12:02:29,590 apps 51076 28768 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:02:29,625 apps 51076 28768 Database connection established successfully
+INFO 2026-01-15 12:02:43,652 apps 38204 55360 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:02:43,689 apps 38204 55360 Database connection established successfully
+INFO 2026-01-15 12:02:58,224 apps 26956 22372 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:02:58,264 apps 26956 22372 Database connection established successfully
+INFO 2026-01-15 12:03:42,500 apps 17000 29844 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:03:42,544 apps 17000 29844 Database connection established successfully
+INFO 2026-01-15 12:08:46,675 apps 14768 44292 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:08:46,717 apps 14768 44292 Database connection established successfully
+INFO 2026-01-15 12:09:04,001 apps 15296 55636 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:09:04,038 apps 15296 55636 Database connection established successfully
+WARNING 2026-01-15 12:09:18,654 apps 1724 41312 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-15 12:09:38,753 apps 37904 8760 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:09:38,794 apps 37904 8760 Database connection established successfully
+INFO 2026-01-15 12:09:54,903 apps 2320 36232 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:09:54,943 apps 2320 36232 Database connection established successfully
+INFO 2026-01-15 12:13:16,647 apps 44456 9800 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:13:16,707 apps 44456 9800 Database connection established successfully
+WARNING 2026-01-15 12:14:39,057 providers 35024 39480 Provider preference 'litellm' not available, using default order
+ERROR 2026-01-15 12:14:39,061 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:39,061 providers 35024 39480 Provider openai attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:14:40,062 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:40,063 providers 35024 39480 Provider openai attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:14:42,064 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:42,064 providers 35024 39480 Provider openai attempt 3 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:14:42,065 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:42,065 providers 35024 39480 Provider anthropic attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:14:43,066 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:43,067 providers 35024 39480 Provider anthropic attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:14:45,067 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:14:45,068 providers 35024 39480 Provider anthropic attempt 3 failed: No module named 'langchain.prompts'
+INFO 2026-01-15 12:16:40,327 apps 31324 18888 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:16:40,362 apps 31324 18888 Database connection established successfully
+INFO 2026-01-15 12:17:02,610 apps 37580 20464 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:17:02,650 apps 37580 20464 Database connection established successfully
+INFO 2026-01-15 12:17:18,150 apps 37016 40584 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:17:18,191 apps 37016 40584 Database connection established successfully
+WARNING 2026-01-15 12:18:43,902 providers 35024 39480 Provider preference 'litellm' not available, using default order
+ERROR 2026-01-15 12:18:43,903 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:43,903 providers 35024 39480 Provider openai attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:18:44,904 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:44,905 providers 35024 39480 Provider openai attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:18:46,906 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:46,907 providers 35024 39480 Provider openai attempt 3 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:18:46,907 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:46,908 providers 35024 39480 Provider anthropic attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:18:47,909 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:47,910 providers 35024 39480 Provider anthropic attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:18:49,912 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:18:49,913 providers 35024 39480 Provider anthropic attempt 3 failed: No module named 'langchain.prompts'
+INFO 2026-01-15 12:20:35,531 apps 35408 21508 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:20:35,565 apps 35408 21508 Database connection established successfully
+INFO 2026-01-15 12:21:10,271 apps 28664 34864 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:21:10,311 apps 28664 34864 Database connection established successfully
+INFO 2026-01-15 12:21:32,217 apps 4884 20876 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:21:32,254 apps 4884 20876 Database connection established successfully
+WARNING 2026-01-15 12:23:22,353 providers 35024 39480 Provider preference 'litellm' not available, using default order
+ERROR 2026-01-15 12:23:22,355 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:22,355 providers 35024 39480 Provider openai attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:23:23,357 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:23,359 providers 35024 39480 Provider openai attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:23:25,360 providers 35024 39480 OpenAI provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:25,360 providers 35024 39480 Provider openai attempt 3 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:23:25,360 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:25,361 providers 35024 39480 Provider anthropic attempt 1 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:23:26,361 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:26,362 providers 35024 39480 Provider anthropic attempt 2 failed: No module named 'langchain.prompts'
+ERROR 2026-01-15 12:23:28,363 providers 35024 39480 Anthropic provider error: No module named 'langchain.prompts'
+WARNING 2026-01-15 12:23:28,363 providers 35024 39480 Provider anthropic attempt 3 failed: No module named 'langchain.prompts'
+INFO 2026-01-15 12:23:59,347 views 4884 56556 User logged out: felipe.mendieta
+WARNING 2026-01-15 12:23:59,399 runserver 4884 19504 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:59675][0m
+WARNING 2026-01-15 12:24:15,055 runserver 4884 19504 [31;1mHTTP GET /api/auth/me/ 403 [0.01, 127.0.0.1:59675][0m
+INFO 2026-01-15 12:24:17,419 views_microsoft 4884 55464 Microsoft OAuth2: initiating login flow
+INFO 2026-01-15 12:24:21,151 microsoft 4884 45136 Microsoft login: existing user felipe.mendieta@cedia.org.ec
+INFO 2026-01-15 12:24:21,169 views_microsoft 4884 45136 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-15 12:25:04,759 apps 39372 23124 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:25:04,805 apps 39372 23124 Database connection established successfully
+INFO 2026-01-15 12:25:18,297 apps 13204 18736 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:25:18,380 apps 13204 18736 Database connection established successfully
+INFO 2026-01-15 12:25:24,075 apps 29748 55616 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:25:24,110 apps 29748 55616 Database connection established successfully
+INFO 2026-01-15 12:25:53,216 tasks 39372 31760 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
+ERROR 2026-01-15 12:25:59,915 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:25:59,915 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 1 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+ERROR 2026-01-15 12:26:00,918 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:26:00,918 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 2 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+ERROR 2026-01-15 12:26:02,922 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:26:02,922 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 3 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+INFO 2026-01-15 12:27:02,415 apps 26672 53048 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:27:02,476 apps 26672 53048 Database connection established successfully
+INFO 2026-01-15 12:27:09,844 tasks 39372 31760 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
+ERROR 2026-01-15 12:27:09,971 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:27:09,971 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 1 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+ERROR 2026-01-15 12:27:10,973 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:27:10,974 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 2 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+ERROR 2026-01-15 12:27:12,976 providers 39372 31760 LiteLLM provider error (model: openai/gpt-4.1-mini-2025-04-14): 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+WARNING 2026-01-15 12:27:12,976 providers 39372 31760 Provider openai/gpt-4.1-mini-2025-04-14 attempt 3 failed: 'Input to ChatPromptTemplate is missing variables {"\'year\'", \'\\n    "Earliest publication date (family)"\'}.  Expected: [\'\\n    "Earliest publication date (family)"\', "\'year\'"] Received: []\nNote: if you intended {\'year\'} to be part of the string and not a variable, please escape it with double curly braces like: \'{{\'year\'}}\'.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/INVALID_PROMPT_INPUT '
+INFO 2026-01-15 12:27:45,829 apps 26748 20736 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:27:45,870 apps 26748 20736 Database connection established successfully
+INFO 2026-01-15 12:27:56,717 tasks 26748 51488 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
+INFO 2026-01-15 12:29:25,941 apps 26244 47364 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:29:25,983 apps 26244 47364 Database connection established successfully
+INFO 2026-01-15 12:30:14,778 apps 22292 14828 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-15 12:30:14,812 apps 22292 14828 Database connection established successfully

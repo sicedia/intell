@@ -1,43 +1,187 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { generateAIDescription, getDescriptionTask } from "../api/descriptions";
-import { AIDescriptionRequest, DescriptionTask, DescriptionTaskStatus } from "../types";
+import { getImage } from "../api/images";
+import { AIDescriptionRequest, DescriptionTask, DescriptionTaskStatus, DescriptionTaskEvent } from "../types";
 import { toast } from "sonner";
 import { HttpError, ConnectionError } from "@/shared/lib/api-client";
+import { WSClient } from "@/shared/lib/ws";
 
 /**
- * Hook to generate AI description with polling and error handling
+ * Hook to generate AI description with WebSocket real-time updates and polling fallback
  */
 export function useAIDescription() {
   const queryClient = useQueryClient();
   const [pollingTaskId, setPollingTaskId] = useState<number | null>(null);
   const [lastStatus, setLastStatus] = useState<DescriptionTaskStatus | null>(null);
+  const [jobId, setJobId] = useState<number | null>(null);
+  const [realTimeEvents, setRealTimeEvents] = useState<DescriptionTaskEvent[]>([]);
+  const [currentModel, setCurrentModel] = useState<string | null>(null);
+  const [modelAttempts, setModelAttempts] = useState<Array<{ model: string; status: 'attempting' | 'failed' | 'success'; error?: string }>>([]);
+  const wsRef = useRef<WSClient | null>(null);
+  const connectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset function to clear current task and allow new generation
   const reset = useCallback(() => {
     setPollingTaskId(null);
     setLastStatus(null);
+    setJobId(null);
+    setRealTimeEvents([]);
+    setCurrentModel(null);
+    setModelAttempts([]);
+    if (wsRef.current) {
+      wsRef.current.disconnect();
+      wsRef.current = null;
+    }
+    if (connectionTimeoutRef.current) {
+      clearTimeout(connectionTimeoutRef.current);
+      connectionTimeoutRef.current = null;
+    }
     queryClient.removeQueries({ queryKey: ["description-task"] });
   }, [queryClient]);
 
-  // Poll description task status
+  // Poll description task status (fallback if WebSocket fails)
   const { data: descriptionTask } = useQuery({
     queryKey: ["description-task", pollingTaskId],
     queryFn: () => getDescriptionTask(pollingTaskId!),
     enabled: !!pollingTaskId,
     refetchInterval: (query) => {
       const task = query.state.data as DescriptionTask | undefined;
-      if (!task) return 1000; // Poll every 1 second if no data yet
+      if (!task) return 2000; // Poll every 2 seconds if no data yet
       
-      // Stop polling if task is in final state
+      // Stop polling if task is in final state, but do one final refetch to get updated data
       if (task.status === "SUCCESS" || task.status === "FAILED" || task.status === "CANCELLED") {
+        // Invalidate query to force a final refetch with updated model_used
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
+        }, 500);
         return false;
       }
       
-      return 1000; // Continue polling every 1 second
+      // Poll less frequently if WebSocket is connected (fallback only)
+      return 2000; // Continue polling every 2 seconds as fallback
     },
     staleTime: 0, // Always refetch
   });
+
+  // WebSocket connection for real-time updates
+  useEffect(() => {
+    if (!jobId || !pollingTaskId) {
+      if (wsRef.current) {
+        wsRef.current.disconnect();
+        wsRef.current = null;
+      }
+      return;
+    }
+
+    // Small delay to prevent double-connect
+    connectionTimeoutRef.current = setTimeout(() => {
+      const ws = new WSClient(`jobs/${jobId}/`, {
+        onOpen: () => {
+          // WebSocket connected
+        },
+        onMessage: (data: unknown) => {
+          if (!data || typeof data !== "object" || !("event_type" in data)) {
+            return;
+          }
+
+          const event = data as any; // Event from WebSocket
+          
+          // Only process events related to this description task
+          // Events have entity_type and entity_id, or description_task_id in payload
+          const isDescriptionTaskEvent = 
+            event.entity_type === 'description_task' && 
+            event.entity_id === pollingTaskId;
+          
+          const eventDescriptionTaskId = (event.payload as any)?.description_task_id;
+          const matchesDescriptionTask = eventDescriptionTaskId === pollingTaskId;
+          
+          // Also check if job_id matches (all events from the job are sent, but we filter by description_task)
+          if (!isDescriptionTaskEvent && !matchesDescriptionTask) {
+            // Not for this description task - skip
+            return;
+          }
+
+          // Add event to real-time events list
+          setRealTimeEvents((prev) => {
+            // Avoid duplicates based on trace_id and created_at
+            const exists = prev.some(
+              (e) => e.payload?.trace_id === event.payload?.trace_id &&
+                     e.created_at === event.created_at
+            );
+            if (exists) return prev;
+            return [...prev, event];
+          });
+
+          // Process specific event types for UI feedback
+          if (event.event_type === "MODEL_ATTEMPT" && event.payload?.model) {
+            const model = event.payload.model as string;
+            setCurrentModel(model);
+            setModelAttempts((prev) => {
+              // Remove any existing "attempting" status for this model
+              const filtered = prev.filter((m) => !(m.model === model && m.status === "attempting"));
+              return [...filtered, { model, status: "attempting" as const }];
+            });
+            toast.info(`Intentando modelo: ${model}`, { duration: 2000 });
+          } else if (event.event_type === "MODEL_FAILED" && event.payload?.model) {
+            const model = event.payload.model as string;
+            const error = event.payload.error as string || "Error desconocido";
+            setModelAttempts((prev) => {
+              const filtered = prev.filter((m) => m.model !== model || m.status !== "attempting");
+              return [...filtered, { model, status: "failed" as const, error }];
+            });
+            toast.warning(`Modelo ${model} falló: ${error}`, { duration: 3000 });
+          } else if (event.event_type === "MODEL_SUCCESS" && event.payload?.model) {
+            const model = event.payload.model as string;
+            setCurrentModel(model);
+            setModelAttempts((prev) => {
+              const filtered = prev.filter((m) => m.model !== model);
+              return [...filtered, { model, status: "success" as const }];
+            });
+          } else if (event.event_type === "FALLBACK" && event.payload?.from_model && event.payload?.to_model) {
+            const fromModel = event.payload.from_model as string;
+            const toModel = event.payload.to_model as string;
+            toast.info(`Cambiando de ${fromModel} a ${toModel}`, { duration: 2000 });
+          } else if (event.event_type === "PROGRESS" && event.payload?.model) {
+            setCurrentModel(event.payload.model as string);
+          } else if (event.event_type === "DONE") {
+            setCurrentModel(null);
+            // Extract model from event payload if available
+            const modelFromEvent = event.payload?.model as string | undefined;
+            if (modelFromEvent) {
+              console.log("DONE event received with model:", modelFromEvent);
+            }
+            // Invalidate queries to get latest data with model_used
+            queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
+            queryClient.invalidateQueries({ queryKey: ["images"] });
+          } else if (event.event_type === "AI_PROVIDER_ERROR" || event.event_type === "ERROR") {
+            const errorMsg = event.message || "Error al generar la descripción";
+            toast.error(errorMsg);
+          }
+        },
+        onError: (err) => {
+          console.error("WebSocket error for description task:", err);
+          // Fallback to polling - it's already enabled
+        },
+        onClose: () => {
+          // WebSocket closed - polling will continue as fallback
+        },
+      });
+
+      wsRef.current = ws;
+      ws.connect();
+    }, 100);
+
+    return () => {
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+      }
+      if (wsRef.current) {
+        wsRef.current.disconnect();
+        wsRef.current = null;
+      }
+    };
+  }, [jobId, pollingTaskId, queryClient]);
 
   // Track status changes and show toasts
   useEffect(() => {
@@ -51,11 +195,17 @@ export function useAIDescription() {
         toast.info("Generando descripción con IA...", { duration: 2000 });
       } else if (currentStatus === "SUCCESS") {
         const provider = descriptionTask.provider_used || "proveedor automático";
-        toast.success(`Descripción generada exitosamente con ${provider}`);
-        setPollingTaskId(null); // Stop polling
+        const model = descriptionTask.model_used || "modelo desconocido";
+        toast.success(`Descripción generada exitosamente con ${provider} (${model})`);
+        // Invalidate description task query to get updated model_used
+        queryClient.invalidateQueries({ queryKey: ["description-task", pollingTaskId] });
         // Invalidate image queries to refresh data
         queryClient.invalidateQueries({ queryKey: ["images"] });
         queryClient.invalidateQueries({ queryKey: ["image", descriptionTask.image_task] });
+        // Small delay before stopping polling to ensure we get the final data
+        setTimeout(() => {
+          setPollingTaskId(null); // Stop polling after getting final data
+        }, 1000);
       } else if (currentStatus === "FAILED") {
         const errorMsg = descriptionTask.error_message || "Error al generar la descripción";
         // Check if it's a provider fallback scenario
@@ -73,11 +223,23 @@ export function useAIDescription() {
 
   // Mutation to generate description
   const generateMutation = useMutation({
-    mutationFn: (data: AIDescriptionRequest) => generateAIDescription(data),
+    mutationFn: async (data: AIDescriptionRequest) => {
+      const response = await generateAIDescription(data);
+      // If job_id is not in response, get it from image (fallback)
+      if (!response.job_id) {
+        const image = await getImage(data.image_task_id);
+        return { ...response, job_id: image.job };
+      }
+      return response;
+    },
     onSuccess: (response) => {
       // Start polling the description task
       setPollingTaskId(response.description_task_id);
+      setJobId(response.job_id);
       setLastStatus("PENDING");
+      setRealTimeEvents([]);
+      setCurrentModel(null);
+      setModelAttempts([]);
       toast.info("Solicitud de descripción creada", { duration: 2000 });
     },
     onError: (error) => {
@@ -117,5 +279,9 @@ export function useAIDescription() {
     progress: descriptionTask?.progress ?? 0,
     error: generateMutation.error,
     reset,
+    // Real-time feedback
+    realTimeEvents,
+    currentModel,
+    modelAttempts,
   };
 }

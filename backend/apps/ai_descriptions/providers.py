@@ -1,6 +1,6 @@
 """
 AI provider implementations for chart descriptions.
-Supports OpenAI, Anthropic, and Mock (for MVP).
+Supports LiteLLM (via CEDIA), OpenAI, Anthropic, and Mock (for MVP).
 Includes router with fallback and retry logic.
 """
 from abc import ABC, abstractmethod
@@ -9,6 +9,24 @@ import time
 import logging
 
 logger = logging.getLogger(__name__)
+
+# List of available LiteLLM models with fallback order
+LITELLM_MODELS = [
+    'openai/gpt-5.2-chat-latest',
+    'openai/gpt-5-mini',
+    'openai/gpt-4.1',
+    'openai/gpt-4.1-mini-2025-04-14',
+    'gemini/gemini-3-flash-preview',
+    'gemini/gemini-3-pro-preview',
+    'gemini/gemini-2.5-flash',
+    'gemini/gemini-2.5-pro',
+    'deepseek-v3.2',
+    'qwen3-next-80b-thinking',
+    'qwen3-next-80b-instruct',
+    'qwen3-coder',
+    'gpt-oss-120b',
+    'gpt-oss-20b',
+]
 
 
 class AIProvider(ABC):
@@ -22,7 +40,8 @@ class AIProvider(ABC):
         timeout: int = 30,
         algorithm_key: Optional[str] = None,
         source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
+        visualization_type: Optional[str] = None,
+        dataset_content: Optional[str] = None
     ) -> str:
         """
         Generate description for chart.
@@ -43,7 +62,8 @@ class AIProvider(ABC):
         user_context: Optional[str],
         algorithm_key: Optional[str] = None,
         source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
+        visualization_type: Optional[str] = None,
+        dataset_content: Optional[str] = None
     ) -> str:
         """
         Build prompt from chart_data and user_context with enriched context.
@@ -127,6 +147,16 @@ class AIProvider(ABC):
         if 'warnings' in chart_data and chart_data['warnings']:
             prompt += f"\nNotes/Warnings: {', '.join(chart_data['warnings'])}\n"
         
+        # Dataset content (raw data context)
+        if dataset_content:
+            # Truncate if too large (limit to ~5000 chars to avoid token limits)
+            max_dataset_length = 5000
+            if len(dataset_content) > max_dataset_length:
+                prompt += f"\nDataset Content (first {max_dataset_length} characters):\n{dataset_content[:max_dataset_length]}...\n"
+                prompt += f"\nNote: Dataset was truncated. Total length: {len(dataset_content)} characters.\n"
+            else:
+                prompt += f"\nDataset Content (raw data):\n{dataset_content}\n"
+        
         # User context (required, minimum 200 chars already validated)
         if user_context:
             prompt += f"\nUser Context (important background information):\n{user_context}\n"
@@ -136,34 +166,39 @@ class AIProvider(ABC):
         return prompt
 
 
-class OpenAIProvider(AIProvider):
-    """OpenAI provider using LangChain."""
+# Legacy providers (OpenAI and Anthropic) removed - using LiteLLM only
+# These providers are no longer used as we rely on LiteLLM for all AI operations
+
+class LiteLLMProvider(AIProvider):
+    """LiteLLM provider using ChatOpenAI with custom base_url for CEDIA API."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4"):
+    def __init__(self, api_key: str = "sk-iAriFxLhR71i7NTlUKXw6Q", base_url: str = "https://api.cedia.org.ec/v1", model: str = "openai/gpt-5.2-chat-latest"):
         """
-        Initialize OpenAI provider.
+        Initialize LiteLLM provider.
         
         Args:
-            api_key: OpenAI API key (from settings if not provided)
-            model: Model name
+            api_key: API key for LiteLLM
+            base_url: Base URL for LiteLLM API
+            model: Model name to use
         """
         self.api_key = api_key
+        self.base_url = base_url
         self.model = model
         self._client = None
     
     def _get_client(self):
-        """Get OpenAI client (lazy initialization)."""
+        """Get LiteLLM client (lazy initialization)."""
         if self._client is None:
             try:
                 from langchain_openai import ChatOpenAI
-                from django.conf import settings
-                api_key = self.api_key or getattr(settings, 'OPENAI_API_KEY', None)
-                if not api_key:
-                    raise ValueError("OpenAI API key not configured")
                 self._client = ChatOpenAI(
-                    model_name=self.model,
-                    openai_api_key=api_key,
-                    temperature=0.7
+                    model=self.model,
+                    temperature=0,
+                    max_tokens=None,
+                    timeout=None,
+                    max_retries=2,
+                    base_url=self.base_url,
+                    api_key=self.api_key,
                 )
             except ImportError:
                 raise ImportError("langchain-openai not installed")
@@ -176,105 +211,35 @@ class OpenAIProvider(AIProvider):
         timeout: int = 30,
         algorithm_key: Optional[str] = None,
         source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
+        visualization_type: Optional[str] = None,
+        dataset_content: Optional[str] = None
     ) -> str:
-        """Generate description using OpenAI."""
+        """Generate description using LiteLLM."""
         try:
-            from langchain.prompts import ChatPromptTemplate
-            
-            # Build prompt
-            prompt_template = ChatPromptTemplate.from_messages([
-                ("system", "You are a data visualization expert. Describe charts clearly and concisely."),
-                ("human", self._build_prompt(
-                    chart_data, user_context, algorithm_key, source_type, visualization_type
-                ))
-            ])
-            
+            # Use direct messages instead of ChatPromptTemplate to avoid issues with
+            # curly braces in dataset content being interpreted as template variables
+            prompt_text = self._build_prompt(
+                chart_data, user_context, algorithm_key, source_type, visualization_type, dataset_content
+            )
             client = self._get_client()
-            chain = prompt_template | client
             
-            # Execute with timeout
+            # Use direct messages format - this avoids ChatPromptTemplate interpreting
+            # JSON content with curly braces as template variables
+            messages = [
+                ("system", "You are a data visualization expert. Describe charts clearly and concisely."),
+                ("human", prompt_text)
+            ]
+            
             start_time = time.time()
-            result = chain.invoke({})
+            result = client.invoke(messages)
+            elapsed_time = time.time() - start_time
             
-            if time.time() - start_time > timeout:
-                raise TimeoutError("OpenAI request timed out")
+            if elapsed_time > timeout:
+                raise TimeoutError(f"LiteLLM request timed out after {elapsed_time:.2f}s")
             
             return result.content if hasattr(result, 'content') else str(result)
-            
         except Exception as e:
-            logger.error(f"OpenAI provider error: {e}")
-            raise
-
-
-class AnthropicProvider(AIProvider):
-    """Anthropic provider using LangChain."""
-    
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-opus-20240229"):
-        """
-        Initialize Anthropic provider.
-        
-        Args:
-            api_key: Anthropic API key (from settings if not provided)
-            model: Model name
-        """
-        self.api_key = api_key
-        self.model = model
-        self._client = None
-    
-    def _get_client(self):
-        """Get Anthropic client (lazy initialization)."""
-        if self._client is None:
-            try:
-                from langchain_anthropic import ChatAnthropic
-                from django.conf import settings
-                api_key = self.api_key or getattr(settings, 'ANTHROPIC_API_KEY', None)
-                if not api_key:
-                    raise ValueError("Anthropic API key not configured")
-                self._client = ChatAnthropic(
-                    model=self.model,
-                    anthropic_api_key=api_key,
-                    temperature=0.7
-                )
-            except ImportError:
-                raise ImportError("langchain-anthropic not installed")
-        return self._client
-    
-    def generate_description(
-        self, 
-        chart_data: Dict[str, Any], 
-        user_context: Optional[str] = None,
-        timeout: int = 30,
-        algorithm_key: Optional[str] = None,
-        source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
-    ) -> str:
-        """Generate description using Anthropic."""
-        try:
-            from langchain.prompts import ChatPromptTemplate
-            
-            # Build prompt
-            prompt_template = ChatPromptTemplate.from_messages([
-                ("system", "You are a data visualization expert. Describe charts clearly and concisely."),
-                ("human", self._build_prompt(
-                    chart_data, user_context, algorithm_key, source_type, visualization_type
-                ))
-            ])
-            
-            client = self._get_client()
-            chain = prompt_template | client
-            
-            # Execute with timeout
-            start_time = time.time()
-            result = chain.invoke({})
-            
-            if time.time() - start_time > timeout:
-                raise TimeoutError("Anthropic request timed out")
-            
-            return result.content if hasattr(result, 'content') else str(result)
-            
-        except Exception as e:
-            logger.error(f"Anthropic provider error: {e}")
+            logger.error(f"LiteLLM provider error (model: {self.model}): {e}")
             raise
 
 
@@ -288,7 +253,8 @@ class MockProvider(AIProvider):
         timeout: int = 30,
         algorithm_key: Optional[str] = None,
         source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
+        visualization_type: Optional[str] = None,
+        dataset_content: Optional[str] = None
     ) -> str:
         """Generate realistic mock description."""
         import time
@@ -348,24 +314,16 @@ class MockProvider(AIProvider):
 class AIProviderRouter:
     """
     Router for AI providers with fallback and retry logic.
-    Order: OpenAI → Anthropic → Mock
+    Order: LiteLLM (with model fallback) → Mock
     """
     
     def __init__(self):
         """Initialize router with providers."""
         self.providers = []
         
-        # Try to initialize OpenAI
-        try:
-            self.providers.append(('openai', OpenAIProvider()))
-        except Exception as e:
-            logger.warning(f"OpenAI provider not available: {e}")
-        
-        # Try to initialize Anthropic
-        try:
-            self.providers.append(('anthropic', AnthropicProvider()))
-        except Exception as e:
-            logger.warning(f"Anthropic provider not available: {e}")
+        # Initialize LiteLLM providers for each model (will try in order)
+        # We'll create them lazily when needed to avoid initialization errors
+        self.litellm_models = LITELLM_MODELS.copy()
         
         # Always add Mock as fallback
         self.providers.append(('mock', MockProvider()))
@@ -377,9 +335,15 @@ class AIProviderRouter:
         timeout: int = 30,
         max_retries: int = 3,
         provider_preference: Optional[str] = None,
+        model_preference: Optional[str] = None,
         algorithm_key: Optional[str] = None,
         source_type: Optional[str] = None,
-        visualization_type: Optional[str] = None
+        visualization_type: Optional[str] = None,
+        dataset_content: Optional[str] = None,
+        on_model_attempt: Optional[callable] = None,
+        on_model_failed: Optional[callable] = None,
+        on_model_success: Optional[callable] = None,
+        on_fallback: Optional[callable] = None
     ) -> tuple[str, str]:
         """
         Generate description with fallback.
@@ -389,19 +353,55 @@ class AIProviderRouter:
             user_context: User-provided context
             timeout: Timeout per provider
             max_retries: Maximum retries per provider
-            provider_preference: Preferred provider name ('openai', 'anthropic', 'mock')
+            provider_preference: Preferred provider name ('litellm', 'openai', 'anthropic', 'mock')
                                 If provided, starts from that provider
+            model_preference: Specific model to use (e.g., 'openai/gpt-5.2-chat-latest')
             algorithm_key: Algorithm identifier
             source_type: Data source type
             visualization_type: Type of visualization
+            dataset_content: Raw dataset content as string
+            on_model_attempt: Callback(model_name) called when attempting a model
+            on_model_failed: Callback(model_name, error) called when a model fails
+            on_model_success: Callback(model_name) called when a model succeeds
+            on_fallback: Callback(from_model, to_model) called when falling back
             
         Returns:
-            Tuple of (description_text, provider_name)
+            Tuple of (description_text, model_name)
         """
-        # If provider_preference is specified, reorder providers to start with it
-        providers_to_try = self.providers.copy()
-        if provider_preference:
-            # Find preferred provider and move it to the front
+        # Build list of providers to try
+        # Start with LiteLLM models (try each model in order)
+        providers_to_try = []
+        
+        # If model_preference is specified, use only that model
+        if model_preference and model_preference in self.litellm_models:
+            try:
+                provider = LiteLLMProvider(model=model_preference)
+                providers_to_try.append((model_preference, provider))
+            except Exception as e:
+                logger.warning(f"Failed to initialize LiteLLM provider for model {model_preference}: {e}")
+                # Fall through to default behavior if preferred model fails to initialize
+                pass
+        
+        # Add LiteLLM models first (unless provider_preference is something else or model_preference was set)
+        if not providers_to_try and (not provider_preference or provider_preference == 'litellm'):
+            for model in self.litellm_models:
+                # Skip if this is the preferred model (already added)
+                if model_preference and model == model_preference:
+                    continue
+                try:
+                    provider = LiteLLMProvider(model=model)
+                    providers_to_try.append((model, provider))
+                except Exception as e:
+                    logger.warning(f"Failed to initialize LiteLLM provider for model {model}: {e}")
+                    continue
+        
+        # Add fallback providers (Mock)
+        providers_to_try.extend(self.providers)
+        
+        # If provider_preference is specified and not litellm, reorder
+        # Note: 'litellm' is handled above by adding LiteLLM models to providers_to_try
+        # So we only reorder if provider_preference is a specific provider name (e.g., 'mock')
+        if provider_preference and provider_preference != 'litellm':
             preferred_provider = None
             remaining_providers = []
             for provider_name, provider in providers_to_try:
@@ -413,29 +413,68 @@ class AIProviderRouter:
             if preferred_provider:
                 providers_to_try = [preferred_provider] + remaining_providers
             else:
-                logger.warning(f"Provider preference '{provider_preference}' not available, using default order")
+                # Only warn if it's not 'litellm' or 'auto' (which are handled specially)
+                if provider_preference not in ['litellm', 'auto']:
+                    logger.warning(f"Provider preference '{provider_preference}' not available, using default order")
+        
+        # Track which models failed for error reporting
+        failed_models = []
+        previous_model = None
         
         for provider_name, provider in providers_to_try:
+            # Emit fallback event if switching models
+            if previous_model and previous_model != provider_name:
+                if on_fallback:
+                    try:
+                        on_fallback(previous_model, provider_name)
+                    except Exception as e:
+                        logger.warning(f"Error in on_fallback callback: {e}")
+            
+            # Emit attempt event
+            if on_model_attempt:
+                try:
+                    on_model_attempt(provider_name)
+                except Exception as e:
+                    logger.warning(f"Error in on_model_attempt callback: {e}")
+            
             # Retry logic with exponential backoff
             for attempt in range(max_retries):
                 try:
                     description = provider.generate_description(
                         chart_data, user_context, timeout,
-                        algorithm_key, source_type, visualization_type
+                        algorithm_key, source_type, visualization_type, dataset_content
                     )
+                    # Success! Emit success event and return
+                    if on_model_success:
+                        try:
+                            on_model_success(provider_name)
+                        except Exception as e:
+                            logger.warning(f"Error in on_model_success callback: {e}")
                     return description, provider_name
                 except Exception as e:
+                    error_msg = str(e)
                     logger.warning(
-                        f"Provider {provider_name} attempt {attempt + 1} failed: {e}"
+                        f"Provider {provider_name} attempt {attempt + 1} failed: {error_msg}"
                     )
                     if attempt < max_retries - 1:
                         # Exponential backoff
                         wait_time = 2 ** attempt
                         time.sleep(wait_time)
                     else:
+                        # All retries exhausted for this provider
+                        failed_models.append(f"{provider_name} ({error_msg})")
+                        # Emit failed event
+                        if on_model_failed:
+                            try:
+                                on_model_failed(provider_name, error_msg)
+                            except Exception as e:
+                                logger.warning(f"Error in on_model_failed callback: {e}")
+                        previous_model = provider_name
                         # Move to next provider
                         break
         
-        # Should never reach here (Mock always succeeds)
-        raise Exception("All providers failed (including Mock)")
+        # All providers failed - raise exception with details
+        error_message = f"All providers failed. Failed models: {', '.join(failed_models)}"
+        logger.error(error_message)
+        raise Exception(error_message)
 

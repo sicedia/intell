@@ -81,7 +81,7 @@ frontend/
 
 2. **Set up environment variables:**
    ```bash
-   cp env.example .env.local
+   cp env.development.example .env.local
    ```
    
    Edit `.env.local` with your configuration:

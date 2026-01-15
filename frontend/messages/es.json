@@ -362,6 +362,26 @@
     "saveAndClose": "Guardar y cerrar",
     "generatedWith": "Generado con {provider} ({model})",
     "unknownModel": "modelo desconocido",
-    "unknownProvider": "proveedor automático"
+    "unknownProvider": "proveedor automático",
+    "selectModel": "Seleccionar modelo",
+    "estimatedCost": "Costo estimado",
+    "loadingModels": "Cargando modelos...",
+    "processingWithModel": "Procesando con {model}...",
+    "modelAttempts": "Intentos de modelos",
+    "attemptingModel": "Intentando {model}...",
+    "modelFailed": "{model} falló",
+    "modelSuccess": "{model} exitoso",
+    "modelsAttempted": "Modelos intentados",
+    "fallbackToModel": "Cambiando a {model}...",
+    "modelCategories": {
+      "gpt": "GPT",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "oss": "Código Abierto"
+    },
+    "costPer1kTokens": "por 1K tokens",
+    "inputTokens": "entrada",
+    "outputTokens": "salida"
   }
 }

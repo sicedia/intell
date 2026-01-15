@@ -1097,6 +1097,7 @@ class AIDescribeView(viewsets.ViewSet):
         data = serializer.validated_data
         image_task_id = data['image_task_id']
         user_context = data.get('user_context', '')
+        model_preference = data.get('model_preference')
         provider_preference = data.get('provider_preference')
         
         # Get ImageTask
@@ -1115,14 +1116,19 @@ class AIDescribeView(viewsets.ViewSet):
             status=DescriptionTask.Status.PENDING
         )
         
-        # Store provider_preference in task metadata for use in generate_description_task
-        # We'll pass it via the task's kwargs or store it temporarily
-        # For simplicity, we'll store it in the description_task's prompt_snapshot as metadata
-        if provider_preference:
-            description_task.prompt_snapshot = {'provider_preference': provider_preference}
+        # Store preferences in task metadata
+        # model_preference takes priority over provider_preference
+        prompt_snapshot = {}
+        if model_preference:
+            prompt_snapshot['model_preference'] = model_preference
+            # If model is specified, set provider to litellm
+            prompt_snapshot['provider_preference'] = 'litellm'
+        elif provider_preference:
+            prompt_snapshot['provider_preference'] = provider_preference
+        
+        if prompt_snapshot:
+            description_task.prompt_snapshot = prompt_snapshot
             description_task.save(update_fields=['prompt_snapshot'])
-            # Also store it as an attribute for easy access in the task
-            description_task._provider_preference = provider_preference
         
         # Enqueue task
         generate_description_task.delay(description_task.id)
@@ -1131,7 +1137,9 @@ class AIDescribeView(viewsets.ViewSet):
             'description_task_id': description_task.id,
             'status': description_task.status,
             'message': 'Description task created and enqueued',
-            'provider_preference': provider_preference
+            'model_preference': model_preference,
+            'provider_preference': prompt_snapshot.get('provider_preference') if prompt_snapshot else provider_preference,
+            'job_id': image_task.job_id  # Include job_id for WebSocket connection
         }, status=status.HTTP_201_CREATED)
 
 
