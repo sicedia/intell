@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from "@/shared/lib/utils";
@@ -139,36 +140,41 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                 </nav>
             </div>
 
-            {/* User Profile */}
+            {/* CEDIA Logo */}
             <div className="p-4 border-t">
                 <div className={cn(
-                    "flex items-center gap-3",
-                    collapsed ? "justify-center" : "px-2"
+                    "flex items-center justify-center",
+                    collapsed ? "px-2" : "px-2"
                 )}>
                     {collapsed ? (
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs cursor-pointer hover:bg-muted/80 transition-colors">
-                                        U
+                                    <div className="relative w-10 h-10 cursor-pointer hover:opacity-80 transition-opacity">
+                                        <Image
+                                            src="/cedia-logo.png"
+                                            alt="CEDIA"
+                                            fill
+                                            className="object-contain"
+                                            priority
+                                        />
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent side="right">
-                                    <div>
-                                        <p className="font-medium">{t('userProfile')}</p>
-                                        <p className="text-xs text-muted-foreground">{t('admin')}</p>
-                                    </div>
+                                    <p className="font-medium">CEDIA</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
                     ) : (
-                        <>
-                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs">U</div>
-                            <div className="text-sm">
-                                <p className="font-medium">{t('userProfile')}</p>
-                                <p className="text-xs text-muted-foreground">{t('admin')}</p>
-                            </div>
-                        </>
+                        <div className="relative w-full h-12">
+                            <Image
+                                src="/cedia-logo.png"
+                                alt="CEDIA"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
                     )}
                 </div>
             </div>
