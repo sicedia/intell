@@ -123,7 +123,7 @@ export function useAutoDescribeAndPublish(
         // Step 1: Save the description to the image's user_description field
         // Use API directly to avoid duplicate toast notifications
         await updateImageMetadata(task.id, {
-          user_description: descriptionTask.result_text,
+          user_description: descriptionTask.result_text ?? undefined,
         });
         
         // Step 2: Publish the image automatically

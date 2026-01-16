@@ -16,7 +16,11 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 
-export function LoginForm() {
+interface LoginFormProps {
+  onSuccess?: () => void;
+}
+
+export function LoginForm({ onSuccess }: LoginFormProps = {}) {
   const searchParams = useSearchParams();
   const t = useTranslations('auth');
 

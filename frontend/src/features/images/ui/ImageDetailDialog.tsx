@@ -168,7 +168,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="view">{t('view')}</TabsTrigger>
               <TabsTrigger value="edit">{t('editMetadata')}</TabsTrigger>

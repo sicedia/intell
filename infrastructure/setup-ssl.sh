@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-DOMAIN="openintell.cedia.edu.ec"
+DOMAIN="intell.cedia.org.ec"
 SSL_DIR="nginx/ssl"
 
 echo -e "${GREEN}========================================${NC}"

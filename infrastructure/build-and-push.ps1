@@ -178,14 +178,14 @@ Set-Location $BACKEND_DIR
 
 docker build `
     -f Dockerfile.prod `
-    -t "${DOCKER_REGISTRY}/intell-backend:${VERSION_TAG}" `
-    -t "${DOCKER_REGISTRY}/intell-backend:latest" `
+    -t "$DOCKER_REGISTRY/intell-backend:$VERSION_TAG" `
+    -t "$DOCKER_REGISTRY/intell-backend:latest" `
     .
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✓ Backend image built successfully" -ForegroundColor Green
+    Write-Host "[OK] Backend image built successfully" -ForegroundColor Green
 } else {
-    Write-Host "✗ Backend image build failed" -ForegroundColor Red
+    Write-Host "[FAIL] Backend image build failed" -ForegroundColor Red
     exit 1
 }
 
@@ -197,39 +197,53 @@ Set-Location $FRONTEND_DIR
 
 $NEXT_PUBLIC_APP_ENV = if ($env:NEXT_PUBLIC_APP_ENV) { $env:NEXT_PUBLIC_APP_ENV } else { "production" }
 
+Write-Host "Build arguments:" -ForegroundColor Cyan
+Write-Host "  NEXT_PUBLIC_API_BASE_URL: $env:NEXT_PUBLIC_API_BASE_URL" -ForegroundColor Gray
+Write-Host "  NEXT_PUBLIC_WS_BASE_URL: $env:NEXT_PUBLIC_WS_BASE_URL" -ForegroundColor Gray
+Write-Host "  NEXT_PUBLIC_APP_ENV: $NEXT_PUBLIC_APP_ENV" -ForegroundColor Gray
+Write-Host ""
+
 docker build `
     -f Dockerfile.prod `
     --build-arg NEXT_PUBLIC_API_BASE_URL="$env:NEXT_PUBLIC_API_BASE_URL" `
     --build-arg NEXT_PUBLIC_WS_BASE_URL="$env:NEXT_PUBLIC_WS_BASE_URL" `
     --build-arg NEXT_PUBLIC_APP_ENV="$NEXT_PUBLIC_APP_ENV" `
-    -t "${DOCKER_REGISTRY}/intell-frontend:${VERSION_TAG}" `
-    -t "${DOCKER_REGISTRY}/intell-frontend:latest" `
+    -t "$DOCKER_REGISTRY/intell-frontend:$VERSION_TAG" `
+    -t "$DOCKER_REGISTRY/intell-frontend:latest" `
     .
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "✓ Frontend image built successfully" -ForegroundColor Green
-} else {
-    Write-Host "✗ Frontend image build failed" -ForegroundColor Red
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Frontend image build failed with exit code: $LASTEXITCODE" -ForegroundColor Red
     exit 1
 }
+
+# Verify image was created
+$frontendImage = docker images "$DOCKER_REGISTRY/intell-frontend:$VERSION_TAG" --format '{{.Repository}}:{{.Tag}}'
+if (-not $frontendImage) {
+    Write-Host "Error: Frontend image was not created successfully" -ForegroundColor Red
+    Write-Host "Please check the build logs above for errors" -ForegroundColor Yellow
+    exit 1
+}
+
+Write-Host "Frontend image built successfully: $frontendImage" -ForegroundColor Green
 
 # Push Images to Docker Hub
 Write-Host ""
 Write-Host "Pushing images to Docker Hub..." -ForegroundColor Green
 
 # Push backend images
-Write-Host "Pushing backend:${VERSION_TAG}..." -ForegroundColor Cyan
-docker push "${DOCKER_REGISTRY}/intell-backend:${VERSION_TAG}"
+Write-Host "Pushing backend:$VERSION_TAG..." -ForegroundColor Cyan
+docker push "$DOCKER_REGISTRY/intell-backend:$VERSION_TAG"
 
 Write-Host "Pushing backend:latest..." -ForegroundColor Cyan
-docker push "${DOCKER_REGISTRY}/intell-backend:latest"
+docker push "$DOCKER_REGISTRY/intell-backend:latest"
 
 # Push frontend images
-Write-Host "Pushing frontend:${VERSION_TAG}..." -ForegroundColor Cyan
-docker push "${DOCKER_REGISTRY}/intell-frontend:${VERSION_TAG}"
+Write-Host "Pushing frontend:$VERSION_TAG..." -ForegroundColor Cyan
+docker push "$DOCKER_REGISTRY/intell-frontend:$VERSION_TAG"
 
 Write-Host "Pushing frontend:latest..." -ForegroundColor Cyan
-docker push "${DOCKER_REGISTRY}/intell-frontend:latest"
+docker push "$DOCKER_REGISTRY/intell-frontend:latest"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
@@ -237,13 +251,13 @@ Write-Host "Build and Push Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Images pushed to Docker Hub:"
-Write-Host "  - ${DOCKER_REGISTRY}/intell-backend:${VERSION_TAG}"
-Write-Host "  - ${DOCKER_REGISTRY}/intell-backend:latest"
-Write-Host "  - ${DOCKER_REGISTRY}/intell-frontend:${VERSION_TAG}"
-Write-Host "  - ${DOCKER_REGISTRY}/intell-frontend:latest"
+Write-Host "  - $DOCKER_REGISTRY/intell-backend:$VERSION_TAG"
+Write-Host "  - $DOCKER_REGISTRY/intell-backend:latest"
+Write-Host "  - $DOCKER_REGISTRY/intell-frontend:$VERSION_TAG"
+Write-Host "  - $DOCKER_REGISTRY/intell-frontend:latest"
 Write-Host ""
 Write-Host "To use these images on your server:"
-Write-Host "  1. Set IMAGE_TAG=${VERSION_TAG} in .docker.env"
-Write-Host "  2. Run: docker-compose -f docker-compose.prod.yml pull"
-Write-Host "  3. Run: docker-compose -f docker-compose.prod.yml up -d"
+Write-Host ('  1. Set IMAGE_TAG=' + $VERSION_TAG + ' in .docker.env')
+Write-Host '  2. Run: docker-compose -f docker-compose.prod.yml pull'
+Write-Host '  3. Run: docker-compose -f docker-compose.prod.yml up -d'
 Write-Host ""

@@ -110,7 +110,7 @@ export function useNotifications(params?: { is_read?: boolean; type?: string }) 
   const markAllAsRead = useCallback(() => {
     // Optimistically update
     markAllAsReadLocal();
-    markAsReadMutation.mutate();
+    markAsReadMutation.mutate(undefined);
   }, [markAllAsReadLocal, markAsReadMutation]);
 
   return {

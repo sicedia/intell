@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils";
 
 interface GalleryGridProps {
     isLoading?: boolean;
-    children: React.ReactNode;
+    children?: React.ReactNode; // Optional when isLoading is true
     className?: string;
     itemCount?: number; // for skeleton count
 }

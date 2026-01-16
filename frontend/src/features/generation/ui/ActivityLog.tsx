@@ -198,7 +198,7 @@ export const ActivityLog = ({
                                         
                                         // Get task name from first START event
                                         const startEvent = sortedEvents.find((e) => e.event_type === "START");
-                                        const taskName = startEvent?.message?.split(":")[1]?.trim() || t('task', { id: taskId });
+                                        const taskName = startEvent?.message?.split(":")[1]?.trim() || t('task', { id: taskId ?? 0 });
 
                                         return (
                                             <div

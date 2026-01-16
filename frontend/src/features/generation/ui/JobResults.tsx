@@ -2,6 +2,7 @@ import { useState } from "react";
 import React from "react";
 import { useTranslations } from "next-intl";
 import { Job, ImageTask, JobStatus } from "../constants/job";
+import { ImageTask as ImageTaskType } from "@/features/images/types";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
@@ -278,12 +279,13 @@ const TaskResultCard = ({
     const hasAIDescription = !!(task.user_description && task.user_description.trim());
     
     // Convert ImageTask to ImageTask format for AIDescriptionDialog
-    const imageTaskForDialog = canPublish ? {
+    const imageTaskForDialog: ImageTaskType | null = canPublish ? {
         id: task.id,
         job: jobId,
+        created_by: null,
         algorithm_key: task.algorithm_key,
         algorithm_version: "1.0",
-        params: {},
+        params: {} as Record<string, unknown>,
         output_format: "both" as const,
         status: "SUCCESS" as const,
         progress: 100,
@@ -295,13 +297,14 @@ const TaskResultCard = ({
         trace_id: null,
         title: task.title || null,
         user_description: task.user_description || null,
+        ai_context: null,
         group: null,
         tags: [],
         is_published: isPublished,
         published_at: task.published_at || null,
         created_at: task.created_at,
         updated_at: task.updated_at,
-    } : null;
+    } as ImageTaskType : null;
     
     // Handle describe button click - check if already has AI description
     const handleDescribeClick = () => {

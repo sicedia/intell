@@ -23,7 +23,7 @@ export function FormField({
   id,
   htmlFor,
 }: FormFieldProps) {
-  const fieldId = id || (typeof children === 'object' && children && 'props' in children && children.props?.id) || undefined;
+  const fieldId = id || (typeof children === 'object' && children && 'props' in children && (children.props as { id?: string })?.id) || undefined;
   const labelFor = htmlFor || fieldId;
 
   return (

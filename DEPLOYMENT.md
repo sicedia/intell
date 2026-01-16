@@ -33,7 +33,7 @@ Esta guía proporciona instrucciones paso a paso para desplegar Intelli en un se
 
 ### Dominio y DNS
 
-- Dominio configurado: `openintell.cedia.edu.ec`
+- Dominio configurado: `intell.cedia.org.ec`
 - Registros DNS A/AAAA apuntando al servidor
 - Certificado SSL (wildcard `*.cedia.edu.ec` o específico)
 
@@ -124,8 +124,8 @@ nano .django.env
 POSTGRES_DB=intell
 POSTGRES_USER=intell_user
 POSTGRES_PASSWORD=<contraseña-fuerte-generada>
-NEXT_PUBLIC_API_BASE_URL=https://openintell.cedia.edu.ec/api
-NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.edu.ec/ws
+NEXT_PUBLIC_API_BASE_URL=https://intell.cedia.org.ec/api
+NEXT_PUBLIC_WS_BASE_URL=wss://intell.cedia.org.ec/ws
 ```
 
 **Configuración mínima en `.django.env`**:
@@ -133,9 +133,9 @@ NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.edu.ec/ws
 ```env
 SECRET_KEY=<generar-nueva-clave-secreta>
 DEBUG=False
-ALLOWED_HOSTS=openintell.cedia.edu.ec
-CORS_ALLOWED_ORIGINS=https://openintell.cedia.edu.ec
-CSRF_TRUSTED_ORIGINS=https://openintell.cedia.edu.ec
+ALLOWED_HOSTS=intell.cedia.org.ec
+CORS_ALLOWED_ORIGINS=https://intell.cedia.org.ec
+CSRF_TRUSTED_ORIGINS=https://intell.cedia.org.ec
 SECURE_SSL_REDIRECT=True
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
@@ -158,9 +158,9 @@ Si usas autenticación con Microsoft, actualiza en `.django.env`:
 MICROSOFT_CLIENT_ID=<tu-client-id>
 MICROSOFT_CLIENT_SECRET=<tu-client-secret>
 MICROSOFT_TENANT_ID=<tu-tenant-id>
-MICROSOFT_REDIRECT_URI=https://openintell.cedia.edu.ec/api/auth/microsoft/callback/
-MICROSOFT_LOGIN_REDIRECT_URL=https://openintell.cedia.edu.ec/en/dashboard
-MICROSOFT_LOGIN_ERROR_URL=https://openintell.cedia.edu.ec/en/login
+MICROSOFT_REDIRECT_URI=https://intell.cedia.org.ec/api/auth/microsoft/callback/
+MICROSOFT_LOGIN_REDIRECT_URL=https://intell.cedia.org.ec/en/dashboard
+MICROSOFT_LOGIN_ERROR_URL=https://intell.cedia.org.ec/en/login
 ```
 
 **Importante**: Configura estos mismos URLs en Azure Portal > App Registrations > Redirect URIs.
@@ -241,8 +241,8 @@ nano .build.env
 
 **Configuración mínima en `.build.env`**:
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://openintell.cedia.edu.ec/api
-NEXT_PUBLIC_WS_BASE_URL=wss://openintell.cedia.edu.ec/ws
+NEXT_PUBLIC_API_BASE_URL=https://intell.cedia.org.ec/api
+NEXT_PUBLIC_WS_BASE_URL=wss://intell.cedia.org.ec/ws
 NEXT_PUBLIC_APP_ENV=production
 ```
 
@@ -419,18 +419,18 @@ docker compose -f docker-compose.prod.yml logs -f nginx
 
 ```bash
 # Health check
-curl https://openintell.cedia.edu.ec/api/health/
+curl https://intell.cedia.org.ec/api/health/
 
 # Verificar HTTPS
-curl -I https://openintell.cedia.edu.ec
+curl -I https://intell.cedia.org.ec
 
 # Verificar redirección HTTP → HTTPS
-curl -I http://openintell.cedia.edu.ec
+curl -I http://intell.cedia.org.ec
 ```
 
 ### 4. Verificar en Navegador
 
-1. Abrir `https://openintell.cedia.edu.ec`
+1. Abrir `https://intell.cedia.org.ec`
 2. Verificar que el certificado SSL es válido
 3. Probar login y funcionalidades principales
 

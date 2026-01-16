@@ -70,7 +70,7 @@ export function ImageLibraryFilters({
     return () => clearTimeout(timer);
   }, [searchValue, onFiltersChange]);
 
-  const handleFilterChange = useCallback((key: keyof ImageFilters, value: string | number[] | undefined) => {
+  const handleFilterChange = useCallback((key: keyof ImageFilters, value: string | number | number[] | undefined) => {
     onFiltersChange({ ...filtersRef.current, [key]: value });
   }, [onFiltersChange]);
 
