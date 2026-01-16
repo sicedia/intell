@@ -72,8 +72,18 @@ export function useJobWebSocket({
 
                 // Handle job-level events
                 if (transformedEvent.entity_type === ENTITY_TYPES.JOB) {
-                    // Update overall progress for any job event
+                    // Check if job is already in a final state - prevents events from 
+                    // description tasks and other post-completion events from corrupting job state
+                    const isFinalized = [
+                        JobStatus.SUCCESS,
+                        JobStatus.FAILED,
+                        JobStatus.CANCELLED,
+                        JobStatus.PARTIAL_SUCCESS,
+                    ].includes(updatedJob.status);
+
+                    // Update overall progress for any job event (only if not finalized)
                     if (
+                        !isFinalized &&
                         transformedEvent.progress !== undefined &&
                         transformedEvent.progress !== null
                     ) {
@@ -83,13 +93,6 @@ export function useJobWebSocket({
                     // Handle PROGRESS event - ensure job is marked as running
                     if (transformedEvent.event_type === JOB_EVENT_TYPES.PROGRESS) {
                         // Only update to RUNNING if not already in a final state
-                        const isFinalized = [
-                            JobStatus.SUCCESS,
-                            JobStatus.FAILED,
-                            JobStatus.CANCELLED,
-                            JobStatus.PARTIAL_SUCCESS,
-                        ].includes(updatedJob.status);
-                        
                         if (!isFinalized && updatedJob.status !== JobStatus.RUNNING) {
                             updatedJob.status = JobStatus.RUNNING;
                         }
@@ -131,7 +134,11 @@ export function useJobWebSocket({
                         updatedJob.status = JobStatus.FAILED;
                         shouldRefetch = true;
                     } else if (transformedEvent.event_type === JOB_EVENT_TYPES.START) {
-                        updatedJob.status = JobStatus.RUNNING;
+                        // Only set to RUNNING if not already in a final state
+                        // This prevents description task events from corrupting completed job state
+                        if (!isFinalized) {
+                            updatedJob.status = JobStatus.RUNNING;
+                        }
                     }
                 }
 

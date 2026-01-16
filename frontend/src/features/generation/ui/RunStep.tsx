@@ -53,14 +53,29 @@ function isJobTrulyFinished(job: { status: JobStatus; images?: { status: JobStat
 export const RunStep = ({ onReset }: RunStepProps) => {
     const { jobId, isCreating, createError, handleRetry, handleCancel } = useJobCreation();
     const { job, events, connectionStatus } = useJobProgress(jobId);
+    const isJobAlreadyCompleted = useWizardStore((state) => state.isJobCompleted);
     const setJobCompleted = useWizardStore((state) => state.setJobCompleted);
     const queryClient = useQueryClient();
     const [isRetryingAll, setIsRetryingAll] = useState(false);
     const t = useTranslations('generate.run');
     const tCommon = useTranslations('common');
     
-    // Stable "finished" state - only true when job AND all tasks are finished
-    const isFinished = useMemo(() => isJobTrulyFinished(job), [job]);
+    // Stable "finished" state that prevents UI flickering when navigating back to this page
+    // Uses both live job data AND the persisted store flag for consistency
+    const isFinished = useMemo(() => {
+        // If job data shows it's truly finished, use that (source of truth)
+        if (isJobTrulyFinished(job)) return true;
+        
+        // If job is actively running or pending, it's not finished
+        // This handles retry scenarios where job restarts
+        if (job?.status === JobStatus.RUNNING || job?.status === JobStatus.PENDING) return false;
+        
+        // If store says job was completed and job data is still loading/stale,
+        // trust the store to prevent UI flickering when returning to this page
+        if (isJobAlreadyCompleted) return true;
+        
+        return false;
+    }, [job, isJobAlreadyCompleted]);
 
     // Task analysis for UI decisions
     const taskAnalysis = useMemo(() => {
@@ -107,12 +122,19 @@ export const RunStep = ({ onReset }: RunStepProps) => {
         }
     };
 
-    // Update wizard store when job completes
+    // Update wizard store when job completes or restarts
     useEffect(() => {
         if (isFinished) {
             setJobCompleted(true);
         }
     }, [isFinished, setJobCompleted]);
+
+    // Reset completed flag if job goes back to running (e.g., after retry)
+    useEffect(() => {
+        if (job?.status === JobStatus.RUNNING && isJobAlreadyCompleted) {
+            setJobCompleted(false);
+        }
+    }, [job?.status, isJobAlreadyCompleted, setJobCompleted]);
 
     // Get status details for header - uses stable isFinished for consistency
     const statusInfo = useMemo(() => {

@@ -1,3 +1,43 @@
 INFO 2026-01-15 16:30:23,706 tasks 33304 26612 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_3ef8a9a5.json (1902 chars)
 INFO 2026-01-15 16:30:29,500 tasks 33304 26612 Description task 35 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
 INFO 2026-01-15 16:30:29,503 tasks 33304 26612 Description task 35 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm
+WARNING 2026-01-16 15:00:18,444 apps 34516 29708 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-16 15:00:30,725 apps 30384 26744 Waiting for database connection (timeout: 30.0s)...
+WARNING 2026-01-16 15:01:18,536 apps 30384 26744 Database not available after 30.0s. Server will start but database operations may fail.
+INFO 2026-01-16 15:29:04,630 apps 29388 32492 Waiting for database connection (timeout: 30.0s)...
+WARNING 2026-01-16 15:29:37,351 apps 29388 32492 Database not available after 30.0s. Server will start but database operations may fail.
+WARNING 2026-01-16 15:35:23,445 apps 29416 12388 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-16 15:35:25,271 apps 19036 33104 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:35:25,337 apps 19036 33104 Database connection established successfully
+INFO 2026-01-16 15:38:00,186 apps 27444 27452 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:38:00,221 apps 27444 27452 Database connection established successfully
+INFO 2026-01-16 15:38:03,732 apps 12548 25216 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:38:03,768 apps 12548 25216 Database connection established successfully
+INFO 2026-01-16 15:38:09,269 views_microsoft 12548 13580 Microsoft OAuth2: initiating login flow
+INFO 2026-01-16 15:38:13,563 microsoft 12548 25000 Microsoft login: created new user felipe.mendieta@cedia.org.ec
+INFO 2026-01-16 15:38:13,578 views_microsoft 12548 25000 Microsoft OAuth2: successful login for felipe.mendieta@cedia.org.ec
+INFO 2026-01-16 15:38:37,909 views 12548 29284 Job 1 created successfully with 8 image tasks
+INFO 2026-01-16 15:39:14,047 tasks 19036 7820 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_c5522fbf.json (10983 chars)
+INFO 2026-01-16 15:39:34,162 tasks 19036 7820 Description task 1 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
+INFO 2026-01-16 15:39:34,165 tasks 19036 7820 Description task 1 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm
+WARNING 2026-01-16 15:43:21,329 apps 31164 31792 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-16 15:43:59,629 apps 30244 27856 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:43:59,668 apps 30244 27856 Database connection established successfully
+INFO 2026-01-16 15:44:04,446 views 30244 15384 Job 2 created successfully with 8 image tasks
+INFO 2026-01-16 15:44:37,330 tasks 19036 7820 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_396178cb.json (25683 chars)
+INFO 2026-01-16 15:44:41,281 tasks 19036 7820 Description task 2 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
+INFO 2026-01-16 15:44:41,284 tasks 19036 7820 Description task 2 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm
+INFO 2026-01-16 15:45:32,006 views 30244 14756 Job 3 created successfully with 8 image tasks
+INFO 2026-01-16 15:46:59,608 tasks 19036 7820 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_a82225f7.json (25683 chars)
+INFO 2026-01-16 15:47:03,393 tasks 19036 7820 Description task 3 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
+INFO 2026-01-16 15:47:03,397 tasks 19036 7820 Description task 3 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm
+INFO 2026-01-16 15:50:57,477 apps 33696 34584 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:50:57,526 apps 33696 34584 Database connection established successfully
+INFO 2026-01-16 15:51:27,816 apps 31996 14384 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:51:27,859 apps 31996 14384 Database connection established successfully
+INFO 2026-01-16 15:51:29,900 apps 23152 32860 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:51:29,950 apps 23152 32860 Database connection established successfully
+INFO 2026-01-16 15:52:08,226 views 31996 30864 Job 4 created successfully with 2 image tasks
+INFO 2026-01-16 15:52:29,311 tasks 23152 19020 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_cbb4ab82.json (1902 chars)
+INFO 2026-01-16 15:52:37,688 tasks 23152 19020 Description task 4 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
+INFO 2026-01-16 15:52:37,692 tasks 23152 19020 Description task 4 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm

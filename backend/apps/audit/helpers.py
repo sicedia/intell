@@ -49,18 +49,21 @@ def emit_event(
         trace_id = str(uuid.uuid4())
     
     # Determine entity type and ID
+    # Order of precedence: most specific first (description_task > image_task > job)
+    # This ensures events are correctly attributed to the entity they're about,
+    # even when multiple IDs are provided for context
     entity_type = None
     entity_id = None
     
-    if job_id:
-        entity_type = 'job'
-        entity_id = job_id
+    if description_task_id:
+        entity_type = 'description_task'
+        entity_id = description_task_id
     elif image_task_id:
         entity_type = 'image_task'
         entity_id = image_task_id
-    elif description_task_id:
-        entity_type = 'description_task'
-        entity_id = description_task_id
+    elif job_id:
+        entity_type = 'job'
+        entity_id = job_id
     
     # Ensure payload exists and includes progress if provided
     log_payload = payload or {}
@@ -217,15 +220,35 @@ def _update_job_status(job, event_type: str, progress: Optional[int]):
     
     Note: For job_status_changed events, the status should already be set
     in finalize_job, so we just update progress if provided.
+    
+    IMPORTANT: Jobs in finalized states (SUCCESS, FAILED, PARTIAL_SUCCESS, CANCELLED)
+    should NOT have their status changed by events from child tasks like DescriptionTask.
+    This prevents corruption of the job status when generating AI descriptions after
+    the job has completed.
     """
+    # Check if job is already in a final state - don't change status from finalized jobs
+    # This prevents description tasks and other post-completion events from corrupting job state
+    is_finalized = job.status in [
+        Job.Status.SUCCESS, 
+        Job.Status.FAILED, 
+        Job.Status.PARTIAL_SUCCESS, 
+        Job.Status.CANCELLED
+    ]
+    
     if event_type == 'START':
-        job.status = Job.Status.RUNNING
-        if progress is not None:
-            job.progress_total = progress
+        # Only set to RUNNING if not already finalized
+        if not is_finalized:
+            job.status = Job.Status.RUNNING
+            if progress is not None:
+                job.progress_total = progress
+        # If finalized, don't update status or progress - job is done
     elif event_type == 'PROGRESS':
-        job.status = Job.Status.RUNNING
-        if progress is not None:
-            job.progress_total = progress
+        # Only set to RUNNING if not already finalized
+        if not is_finalized:
+            job.status = Job.Status.RUNNING
+            if progress is not None:
+                job.progress_total = progress
+        # If finalized, don't update status or progress - job is done
     elif event_type == 'job_status_changed':
         # Status should already be set by finalize_job, just update progress
         # But we'll recalculate from image tasks to ensure accuracy
@@ -238,16 +261,19 @@ def _update_job_status(job, event_type: str, progress: Optional[int]):
             job.progress_total = int(avg_progress)
     elif event_type == 'ERROR':
         # Don't automatically set to FAILED - let finalize_job handle it
-        if progress is not None:
+        if progress is not None and not is_finalized:
             job.progress_total = progress
     elif event_type == 'DONE':
         # Don't automatically set to SUCCESS - let finalize_job handle it
-        if progress is not None:
+        if progress is not None and not is_finalized:
             job.progress_total = progress
     elif event_type == 'VALIDATION_ERROR':
         job.status = Job.Status.FAILED
     
-    job.save(update_fields=['status', 'progress_total', 'updated_at'])
+    # Only save if there's something to update
+    # For finalized jobs with non-status-changing events, we skip the save entirely
+    if not is_finalized or event_type in ['job_status_changed', 'VALIDATION_ERROR']:
+        job.save(update_fields=['status', 'progress_total', 'updated_at'])
 
 
 def _update_image_task_status(image_task, event_type: str, progress: Optional[int]):
