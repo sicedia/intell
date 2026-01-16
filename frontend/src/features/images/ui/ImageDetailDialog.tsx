@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
@@ -133,6 +134,7 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>{t('loadingImage')}</DialogTitle>
+            <DialogDescription>{t('loadingImageDescription')}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-center py-12">
             <Spinner size="lg" />
@@ -163,6 +165,9 @@ export function ImageDetailDialog({ imageId, open, onOpenChange, initialTab = "v
               <DialogTitle>
                 {image.title || t('imageTitle', { id: image.id })} - {image.algorithm_key}
               </DialogTitle>
+              <DialogDescription className="sr-only">
+                {t('imageDetailDialogDescription')}
+              </DialogDescription>
             </DialogHeader>
           </div>
 

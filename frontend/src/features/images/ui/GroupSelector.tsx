@@ -10,7 +10,7 @@ import {
 } from "@/shared/components/ui/select";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog";
 import { useGroups, useCreateGroup } from "../hooks/useGroups";
 import { Plus } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -80,6 +80,9 @@ export function GroupSelector({ selectedGroup, onGroupChange, className }: Group
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Crear nuevo grupo</DialogTitle>
+              <DialogDescription>
+                Crea un nuevo grupo para organizar tus imágenes. Puedes agregar una descripción opcional.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <Input

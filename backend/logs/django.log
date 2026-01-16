@@ -41,3 +41,11 @@ INFO 2026-01-16 15:52:08,226 views 31996 30864 Job 4 created successfully with 2
 INFO 2026-01-16 15:52:29,311 tasks 23152 19020 Loaded dataset from C:\Projects\intell\backend\media\datasets\espacenet_excel_cbb4ab82.json (1902 chars)
 INFO 2026-01-16 15:52:37,688 tasks 23152 19020 Description task 4 completed successfully with model: openai/gpt-4.1-mini-2025-04-14, provider: litellm
 INFO 2026-01-16 15:52:37,692 tasks 23152 19020 Description task 4 after save - model_used: openai/gpt-4.1-mini-2025-04-14, provider_used: litellm
+INFO 2026-01-16 15:55:25,631 apps 33004 15120 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:55:25,682 apps 33004 15120 Database connection established successfully
+INFO 2026-01-16 15:55:29,312 apps 13548 29156 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:55:29,362 apps 13548 29156 Database connection established successfully
+WARNING 2026-01-16 15:55:46,439 runserver 13548 27600 [31;1mHTTP GET /api/auth/me/ 403 [0.02, 127.0.0.1:61146][0m
+WARNING 2026-01-16 15:55:49,324 runserver 13548 27600 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:61146][0m
+INFO 2026-01-16 15:55:53,032 apps 28992 29148 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-16 15:55:53,081 apps 28992 29148 Database connection established successfully

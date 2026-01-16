@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/components/ui/dialog";
 import { useTags, useCreateTag } from "../hooks/useTags";
 import { Tag } from "../types";
 import { Plus, X } from "lucide-react";
@@ -68,6 +68,9 @@ export function TagSelector({ selectedTags, onTagsChange, className }: TagSelect
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Crear nuevo tag</DialogTitle>
+                <DialogDescription>
+                  Crea un nuevo tag para categorizar tus imágenes. Los tags te ayudan a organizar y encontrar imágenes fácilmente.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <Input
