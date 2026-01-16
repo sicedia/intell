@@ -45,9 +45,9 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 
 # Check if database container is running
-if ! docker-compose -f docker-compose.prod.yml ps db | grep -q "Up"; then
+if ! docker compose -f docker-compose.prod.yml ps db | grep -q "Up"; then
     echo -e "${RED}Error: Database container is not running${NC}"
-    echo "Start it with: docker-compose -f docker-compose.prod.yml up -d db"
+    echo "Start it with: docker compose -f docker-compose.prod.yml up -d db"
     exit 1
 fi
 
@@ -58,7 +58,7 @@ echo "Backup file: $BACKUP_FILE_COMPRESSED"
 echo ""
 
 # Create backup
-docker-compose -f docker-compose.prod.yml exec -T db pg_dump \
+docker compose -f docker-compose.prod.yml exec -T db pg_dump \
     -U "$POSTGRES_USER" \
     -d "$POSTGRES_DB" \
     --clean \

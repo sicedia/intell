@@ -64,9 +64,9 @@ if [ "$confirm" != "yes" ]; then
 fi
 
 # Check if database container is running
-if ! docker-compose -f docker-compose.prod.yml ps db | grep -q "Up"; then
+if ! docker compose -f docker-compose.prod.yml ps db | grep -q "Up"; then
     echo -e "${RED}Error: Database container is not running${NC}"
-    echo "Start it with: docker-compose -f docker-compose.prod.yml up -d db"
+    echo "Start it with: docker compose -f docker-compose.prod.yml up -d db"
     exit 1
 fi
 
@@ -75,11 +75,11 @@ echo "Restoring database..."
 
 # Restore from compressed backup
 if [[ "$BACKUP_FILE" == *.gz ]]; then
-    gunzip -c "$BACKUP_FILE" | docker-compose -f docker-compose.prod.yml exec -T db psql \
+    gunzip -c "$BACKUP_FILE" | docker compose -f docker-compose.prod.yml exec -T db psql \
         -U "$POSTGRES_USER" \
         -d "$POSTGRES_DB"
 else
-    docker-compose -f docker-compose.prod.yml exec -T db psql \
+    docker compose -f docker-compose.prod.yml exec -T db psql \
         -U "$POSTGRES_USER" \
         -d "$POSTGRES_DB" \
         < "$BACKUP_FILE"

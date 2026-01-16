@@ -64,9 +64,9 @@ case $choice in
         fi
         
         # Check if nginx is running (needed for verification)
-        if ! docker-compose -f docker-compose.prod.yml ps nginx | grep -q "Up"; then
+        if ! docker compose -f docker-compose.prod.yml ps nginx | grep -q "Up"; then
             echo -e "${YELLOW}Starting nginx container for certificate verification...${NC}"
-            docker-compose -f docker-compose.prod.yml up -d nginx || true
+            docker compose -f docker-compose.prod.yml up -d nginx || true
         fi
         
         # Request certificate
@@ -99,7 +99,7 @@ case $choice in
         
         # Setup auto-renewal
         echo "Setting up auto-renewal..."
-        (crontab -l 2>/dev/null | grep -v "certbot renew" || true; echo "0 3 * * * certbot renew --quiet --deploy-hook 'docker-compose -f $SCRIPT_DIR/docker-compose.prod.yml restart nginx'") | crontab -
+        (crontab -l 2>/dev/null | grep -v "certbot renew" || true; echo "0 3 * * * certbot renew --quiet --deploy-hook 'docker compose -f $SCRIPT_DIR/docker-compose.prod.yml restart nginx'") | crontab -
         echo -e "${GREEN}Auto-renewal configured${NC}"
         ;;
         
@@ -171,6 +171,6 @@ echo "Certificate files:"
 ls -lh "$SSL_DIR"/*.pem
 echo ""
 echo "Next steps:"
-echo "  1. Restart nginx: docker-compose -f docker-compose.prod.yml restart nginx"
+echo "  1. Restart nginx: docker compose -f docker-compose.prod.yml restart nginx"
 echo "  2. Verify HTTPS: curl -I https://$DOMAIN"
 echo ""

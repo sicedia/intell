@@ -55,15 +55,15 @@ echo ""
 
 # Stop services
 echo -e "${BLUE}Stopping services...${NC}"
-docker-compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml down
 
 # Rebuild images
 echo -e "${BLUE}Rebuilding images...${NC}"
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml build --no-cache
 
 # Start services
 echo -e "${BLUE}Starting services...${NC}"
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Wait for services
 echo "Waiting for services to be healthy..."
@@ -71,11 +71,11 @@ sleep 10
 
 # Run migrations
 echo -e "${BLUE}Running database migrations...${NC}"
-docker-compose -f docker-compose.prod.yml exec -T backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml exec -T backend python manage.py migrate --noinput
 
 # Collect static files
 echo -e "${BLUE}Collecting static files...${NC}"
-docker-compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput
 
 # Show status
 echo ""
@@ -84,7 +84,7 @@ echo -e "${GREEN}Update Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "Service Status:"
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 echo ""
 echo "To view logs:"
-echo "  docker-compose -f docker-compose.prod.yml logs -f"
+echo "  docker compose -f docker-compose.prod.yml logs -f"

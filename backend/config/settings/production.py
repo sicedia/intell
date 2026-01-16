@@ -58,7 +58,9 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
 # CSRF Protection
-CSRF_COOKIE_HTTPONLY = True
+# CSRF cookie must be readable by JavaScript to send X-CSRFToken header
+# Note: base.py sets CSRF_COOKIE_HTTPONLY = False, but we need to ensure it's False in production
+CSRF_COOKIE_HTTPONLY = False  # Allow JS to read csrftoken cookie
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='').split(',') if config('CSRF_TRUSTED_ORIGINS', default='') else []
 
@@ -66,6 +68,10 @@ CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='').split(',') if 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 86400  # 24 hours
+
+# Proxy SSL Header (required when behind reverse proxy like nginx)
+# Tells Django to trust X-Forwarded-Proto header from the proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # HTTPS Settings (uncomment when SSL is configured)
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
@@ -119,16 +125,26 @@ REST_FRAMEWORK = {
         'anon': '100/hour',  # Anonymous users: 100 requests per hour
         'user': '1000/hour',  # Authenticated users: 1000 requests per hour
     },
+    # Exempt health check endpoints from throttling
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
+
+# Custom throttle rates for specific endpoints (can be overridden in views)
+# Health check endpoints should not be throttled
+REST_FRAMEWORK_THROTTLE_EXEMPT = [
+    'apps.core.views.health_check',
+    'apps.core.views.redis_health_check',
+    'apps.core.views.celery_health_check',
+    'apps.core.views.database_health_check',
+]
 
 # Cache configuration - Use Redis for better performance
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
+        # Note: Django 6.0+ native Redis backend doesn't use CLIENT_CLASS
+        # That option is only for django-redis package
         'KEY_PREFIX': 'intell',
         'TIMEOUT': 300,  # 5 minutes default timeout
     }

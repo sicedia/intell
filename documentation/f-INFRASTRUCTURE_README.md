@@ -21,28 +21,7 @@ Docker Compose configuration for Intelli project infrastructure services.
   - DB 1: Django Channels (WebSocket)
 - **Volume**: redis_data (persistent with AOF)
 
-## Quick Start (Automated Setup)
-
-### From Scratch Setup
-
-**Linux/macOS:**
-```bash
-cd infrastructure
-chmod +x setup.sh
-./setup.sh
-```
-
-**Windows (PowerShell):**
-```powershell
-cd infrastructure
-.\setup.ps1
-```
-
-This script will:
-1. Stop any existing containers
-2. Start infrastructure services
-3. Wait for PostgreSQL and Redis to be ready
-4. Verify database setup
+## Quick Start
 
 ### Manual Start
 
@@ -90,12 +69,6 @@ For development, run Django and Celery workers **locally** (not in Docker):
 1. **Start infrastructure services:**
    ```bash
    cd infrastructure
-   # Use automated setup script (recommended)
-   ./setup.sh  # Linux/macOS
-   # or
-   .\setup.ps1  # Windows PowerShell
-   
-   # Or manually:
    docker-compose up -d
    ```
 
@@ -186,9 +159,18 @@ If migrations fail because the database isn't ready:
 
 ## Production Deployment
 
-For production, use `docker-compose.prod.yml` which includes all services:
+**📘 For complete production deployment guide, see [b-DEPLOYMENT.md](../documentation/b-DEPLOYMENT.md)**
 
-### Quick Start
+This directory contains the following deployment scripts:
+
+- **`deploy.sh`** - Automated initial deployment script
+- **`setup-ssl.sh`** - SSL certificate configuration (Let's Encrypt or custom)
+- **`backup-db.sh`** - Database backup script
+- **`restore-db.sh`** - Database restore script
+- **`update.sh`** - Update script for code updates (git pull + rebuild)
+- **`build-and-push.sh`** / **`build-and-push.ps1`** - Build and push Docker images to Docker Hub
+
+### Quick Production Start
 
 1. **Copy and configure environment files:**
    ```bash
@@ -197,28 +179,29 @@ For production, use `docker-compose.prod.yml` which includes all services:
    # Edit both files with your production values
    ```
 
-2. **Configure Nginx SSL (optional but recommended):**
+2. **Configure SSL certificates:**
    ```bash
+   # Option 1: Use automated script
+   chmod +x setup-ssl.sh
+   ./setup-ssl.sh
+   
+   # Option 2: Manually copy certificates
    mkdir -p nginx/ssl
-   # Copy your SSL certificates:
-   # - nginx/ssl/fullchain.pem
-   # - nginx/ssl/privkey.pem
-   # Uncomment HTTPS server block in nginx/nginx.conf
+   cp /path/to/fullchain.pem nginx/ssl/
+   cp /path/to/privkey.pem nginx/ssl/
    ```
 
-3. **Build and start all services:**
+3. **Deploy:**
    ```bash
-   docker-compose -f docker-compose.prod.yml up -d --build
-   ```
-
-4. **Run database migrations:**
-   ```bash
-   docker-compose -f docker-compose.prod.yml exec backend python manage.py migrate
-   ```
-
-5. **Create superuser (optional):**
-   ```bash
-   docker-compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
+   # Option 1: Use automated script (recommended)
+   chmod +x deploy.sh
+   ./deploy.sh
+   
+   # Option 2: Manual deployment
+   docker compose -f docker-compose.prod.yml --env-file .docker.env pull
+   docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
+   docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
+   docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
    ```
 
 ### Production Services
@@ -237,33 +220,45 @@ For production, use `docker-compose.prod.yml` which includes all services:
 For high load, scale Celery workers:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up -d --scale celery-worker=4
+docker-compose -f docker-compose.prod.yml --env-file .docker.env up -d --scale celery-worker=4
 ```
 
 ### Monitoring
 
 ```bash
 # View all logs
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f docker-compose.prod.yml --env-file .docker.env logs -f
 
 # View specific service logs
-docker-compose -f docker-compose.prod.yml logs -f backend celery-worker
+docker-compose -f docker-compose.prod.yml --env-file .docker.env logs -f backend celery-worker
 
 # Check service status
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f docker-compose.prod.yml --env-file .docker.env ps
 ```
 
 ### Backup Database
 
 ```bash
-docker-compose -f docker-compose.prod.yml exec db pg_dump -U intell_user intell > backup.sql
+# Usar script automatizado (recomendado)
+./backup-db.sh
+
+# O manualmente
+docker-compose -f docker-compose.prod.yml --env-file .docker.env exec db pg_dump -U intell_user intell > backup.sql
 ```
 
 ### Restore Database
 
 ```bash
-docker-compose -f docker-compose.prod.yml exec -T db psql -U intell_user intell < backup.sql
+# Usar script automatizado (recomendado)
+./restore-db.sh backups/intell_backup_YYYYMMDD_HHMMSS.sql.gz
+
+# O manualmente
+docker-compose -f docker-compose.prod.yml --env-file .docker.env exec -T db psql -U intell_user intell < backup.sql
 ```
+
+## Scripts Disponibles
+
+Para información completa sobre los scripts de deployment, consulta [c-DEPLOYMENT_SCRIPTS.md](../documentation/c-DEPLOYMENT_SCRIPTS.md).
 
 ## Notes
 
@@ -272,3 +267,4 @@ docker-compose -f docker-compose.prod.yml exec -T db psql -U intell_user intell 
 - Volumes persist data between container restarts
 - Database is automatically created and initialized on first startup
 - For production, use `docker-compose.prod.yml` which includes all services
+- **Always use `--env-file .docker.env`** when running docker-compose commands in production

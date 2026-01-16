@@ -139,6 +139,8 @@ CSRF_TRUSTED_ORIGINS=https://intell.cedia.org.ec
 SECURE_SSL_REDIRECT=True
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
+# CSRF_COOKIE_HTTPONLY=False is required to allow JavaScript to read the CSRF token
+# This is already configured in production.py settings
 SECURE_HSTS_SECONDS=31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS=True
 SECURE_HSTS_PRELOAD=True
@@ -292,23 +294,30 @@ IMAGE_TAG=v1.0.1  # o la versión que subiste
 ```bash
 cd /opt/intell/infrastructure
 
+# Hacer ejecutable el script de deployment (opcional, si quieres usarlo)
+chmod +x deploy.sh
+
+# Opción A: Usar script de deployment automatizado
+./deploy.sh
+
+# Opción B: Deployment manual
 # Descargar imágenes desde Docker Hub
-docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 
 # Iniciar servicios
-docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
 # Esperar a que los servicios estén listos
 sleep 15
 
 # Ejecutar migraciones
-docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 
 # Recopilar archivos estáticos
-docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 
 # Crear superusuario (si no existe)
-docker compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py createsuperuser
 ```
 
 #### Actualizar a Nueva Versión
@@ -323,11 +332,11 @@ Cuando tengas una nueva versión:
 # Cambiar IMAGE_TAG=v1.0.2
 
 # 3. En servidor: descargar y reiniciar
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml --env-file .docker.env pull
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
 # 4. Ejecutar migraciones si hay cambios en la BD
-docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 ```
 
 #### Rollback a Versión Anterior
@@ -339,8 +348,8 @@ Si necesitas volver a una versión anterior:
 # Ejemplo: IMAGE_TAG=v1.0.1
 
 # Descargar y reiniciar
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml --env-file .docker.env pull
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 ```
 
 ### Método 2: Script Automatizado (Build en Servidor)
@@ -348,8 +357,8 @@ docker compose -f docker-compose.prod.yml up -d
 ```bash
 cd /opt/intell/infrastructure
 
-# Hacer ejecutables los scripts
-chmod +x deploy.sh setup-ssl.sh backup-db.sh update.sh restore-db.sh
+# Hacer ejecutables los scripts necesarios
+chmod +x deploy.sh setup-ssl.sh backup-db.sh restore-db.sh
 
 # Ejecutar deployment
 ./deploy.sh
@@ -372,10 +381,10 @@ El script realizará:
 cd /opt/intell/infrastructure
 
 # Construir imágenes (requiere modificar docker-compose.prod.yml para usar build:)
-docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml --env-file .docker.env build
 
 # Iniciar servicios
-docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
 # Esperar a que los servicios estén listos
 sleep 15
@@ -398,7 +407,7 @@ docker compose -f docker-compose.prod.yml exec backend python manage.py createsu
 
 ```bash
 cd /opt/intell/infrastructure
-docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml --env-file .docker.env ps
 ```
 
 Todos los servicios deben mostrar estado "Up" y "healthy".
@@ -407,12 +416,12 @@ Todos los servicios deben mostrar estado "Up" y "healthy".
 
 ```bash
 # Ver todos los logs
-docker compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f
 
 # Ver logs de un servicio específico
-docker compose -f docker-compose.prod.yml logs -f backend
-docker compose -f docker-compose.prod.yml logs -f frontend
-docker compose -f docker-compose.prod.yml logs -f nginx
+docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f backend
+docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f frontend
+docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f nginx
 ```
 
 ### 3. Probar Endpoints
@@ -440,18 +449,42 @@ curl -I http://intell.cedia.org.ec
 
 ### Actualizar la Aplicación
 
+**Método Recomendado (con imágenes Docker pre-construidas):**
+
 ```bash
 cd /opt/intell/infrastructure
 
-# Usar script automatizado
+# 1. En desarrollo: construir y subir nueva versión
+./build-and-push.sh v1.0.2
+
+# 2. En servidor: actualizar .docker.env con nueva IMAGE_TAG
+nano .docker.env  # Cambiar IMAGE_TAG=v1.0.2
+
+# 3. Descargar y reiniciar
+docker compose -f docker-compose.prod.yml --env-file .docker.env pull
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
+
+# 4. Ejecutar migraciones si hay cambios en la BD
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
+
+# 5. Recopilar archivos estáticos
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
+```
+
+**Método Alternativo (build en servidor - solo si es necesario):**
+
+```bash
+cd /opt/intell/infrastructure
+
+# Usar script automatizado (actualiza código desde git)
 ./update.sh
 
 # O manualmente:
 git pull
-docker compose -f docker-compose.prod.yml build --no-cache
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
-docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml --env-file .docker.env build --no-cache
+docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 ```
 
 ### Backup de Base de Datos
@@ -758,5 +791,11 @@ Para problemas o preguntas:
 - **Monitorea** los logs regularmente
 - **Mantén** el sistema y las imágenes Docker actualizadas
 - **Revisa** los backups periódicamente
+- **Usa `--env-file .docker.env`** en todos los comandos de `docker compose` para asegurar que las variables se carguen correctamente
+- **nginx.conf** es el archivo de configuración usado en producción (no `nginx.conf.local`)
+
+## Scripts Disponibles
+
+Para más información sobre los scripts de deployment, consulta [c-DEPLOYMENT_SCRIPTS.md](c-DEPLOYMENT_SCRIPTS.md).
 
 ¡Buena suerte con tu deployment!

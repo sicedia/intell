@@ -111,14 +111,14 @@ echo ""
 
 # Stop existing containers
 echo "Stopping existing containers..."
-docker-compose -f docker-compose.prod.yml down || true
+docker compose -f docker-compose.prod.yml down || true
 
 # Build and start services
 echo "Building and starting services..."
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml build --no-cache
 
 echo "Starting services..."
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # Wait for services to be healthy
 echo "Waiting for services to be healthy..."
@@ -130,7 +130,7 @@ MAX_RETRIES=30
 RETRY_COUNT=0
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if docker-compose -f docker-compose.prod.yml ps | grep -q "healthy"; then
+    if docker compose -f docker-compose.prod.yml ps | grep -q "healthy"; then
         echo -e "${GREEN}Services are healthy${NC}"
         break
     fi
@@ -142,15 +142,15 @@ done
 # Run database migrations
 echo ""
 echo "Running database migrations..."
-docker-compose -f docker-compose.prod.yml exec -T backend python manage.py migrate --noinput
+docker compose -f docker-compose.prod.yml exec -T backend python manage.py migrate --noinput
 
 # Collect static files
 echo "Collecting static files..."
-docker-compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput
 
 # Check if superuser exists
 echo "Checking for superuser..."
-SUPERUSER_EXISTS=$(docker-compose -f docker-compose.prod.yml exec -T backend python manage.py shell -c "
+SUPERUSER_EXISTS=$(docker compose -f docker-compose.prod.yml exec -T backend python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 print('True' if User.objects.filter(is_superuser=True).exists() else 'False')
@@ -159,7 +159,7 @@ print('True' if User.objects.filter(is_superuser=True).exists() else 'False')
 if [ "$SUPERUSER_EXISTS" != "True" ]; then
     echo -e "${YELLOW}No superuser found. Creating one...${NC}"
     echo "Please provide superuser credentials:"
-    docker-compose -f docker-compose.prod.yml exec -T backend python manage.py createsuperuser
+    docker compose -f docker-compose.prod.yml exec -T backend python manage.py createsuperuser
 else
     echo -e "${GREEN}Superuser already exists${NC}"
 fi
@@ -171,14 +171,14 @@ echo -e "${GREEN}Deployment Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "Service Status:"
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 echo ""
 echo "To view logs:"
-echo "  docker-compose -f docker-compose.prod.yml logs -f"
+echo "  docker compose -f docker-compose.prod.yml logs -f"
 echo ""
 echo "To stop services:"
-echo "  docker-compose -f docker-compose.prod.yml down"
+echo "  docker compose -f docker-compose.prod.yml down"
 echo ""
 echo "To restart services:"
-echo "  docker-compose -f docker-compose.prod.yml restart"
+echo "  docker compose -f docker-compose.prod.yml restart"
 echo ""
