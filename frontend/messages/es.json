@@ -77,6 +77,9 @@
     "title": "Generar Visualizaciones",
     "description": "Sube datos de patentes y elige algoritmos para generar visualizaciones.",
     "wizard": {
+      "title": "Generar Visualizaciones",
+      "reset": "Reiniciar",
+      "resetTooltip": "Reiniciar el proceso y comenzar desde el principio",
       "steps": {
         "source": {
           "label": "Fuente de Datos",
@@ -104,7 +107,12 @@
       "failedToReadExcel": "Error al leer el archivo Excel. Por favor asegúrate de que sea un formato válido.",
       "showingFirstRows": "Mostrando las primeras {count} filas.",
       "loadTestFile": "🧪 Cargar Archivo de Prueba",
-      "nextChooseVisualizations": "Siguiente: Elegir Visualizaciones"
+      "nextChooseVisualizations": "Siguiente: Elegir Visualizaciones",
+      "validatingExcel": "Validando archivo Excel...",
+      "excelValid": "✓ El archivo Excel es válido y tiene la estructura esperada de Espacenet.",
+      "excelValidationFailed": "El archivo Excel no tiene la estructura esperada de Espacenet.",
+      "excelValidationError": "Error al validar el archivo Excel. Por favor, inténtalo de nuevo.",
+      "clearAndTryAgain": "Limpiar e intentar de nuevo"
     },
     "visualization": {
       "selectVisualizations": "Seleccionar Visualizaciones",
@@ -147,7 +155,10 @@
       "imageTasks": "Tareas de Imagen ({count})",
       "retry": "Reintentar",
       "waitForRunning": "Espera a que las tareas en ejecución terminen",
-      "retryThisTask": "Reintentar esta tarea"
+      "retryThisTask": "Reintentar esta tarea",
+      "startOver": "Reiniciar",
+      "startOverTooltip": "Reiniciar y comenzar una nueva generación desde el principio",
+      "noActiveJob": "No hay un trabajo activo. Puedes comenzar una nueva generación."
     },
     "results": {
       "noImagesGenerated": "No se generaron imágenes.",

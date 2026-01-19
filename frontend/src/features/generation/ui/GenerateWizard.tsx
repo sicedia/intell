@@ -6,24 +6,51 @@ import { SourceStep } from "./SourceStep";
 import { VisualizationStep } from "./VisualizationStep";
 import { RunStep } from "./RunStep";
 import { Stepper } from "@/shared/ui/Stepper";
+import { Button } from "@/shared/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/shared/lib/utils";
 
 export const GenerateWizard = () => {
-  const t = useTranslations('generate.wizard.steps');
-  const { currentStep, setStep, reset, isJobCompleted } = useWizardStore();
+  const t = useTranslations('generate.wizard');
+  const tSteps = useTranslations('generate.wizard.steps');
+  const { currentStep, setStep, reset, isJobCompleted, jobId } = useWizardStore();
+  const queryClient = useQueryClient();
 
   const STEPS = [
-    { id: "source", label: t('source.label'), description: t('source.description') },
-    { id: "visualization", label: t('visualization.label'), description: t('visualization.description') },
-    { id: "run", label: t('run.label'), description: t('run.description') },
+    { id: "source", label: tSteps('source.label'), description: tSteps('source.description') },
+    { id: "visualization", label: tSteps('visualization.label'), description: tSteps('visualization.description') },
+    { id: "run", label: tSteps('run.label'), description: tSteps('run.description') },
   ];
 
   const handleNext = () => setStep(currentStep + 1);
   const handleBack = () => setStep(currentStep - 1);
-  const handleReset = () => reset();
+  const handleReset = () => {
+    // Clear job-related queries from cache
+    if (jobId) {
+      queryClient.removeQueries({ queryKey: ["job", jobId] });
+      queryClient.removeQueries({ queryKey: ["job", jobId, "events"] });
+    }
+    // Reset wizard state
+    reset();
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
+      {/* Header with Reset button */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
+        <Button 
+          onClick={handleReset} 
+          variant="outline" 
+          size="sm"
+          title={t('resetTooltip')}
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          {t('reset')}
+        </Button>
+      </div>
+
       {/* Stepper */}
       <div className="mb-8">
         <Stepper

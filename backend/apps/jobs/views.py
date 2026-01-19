@@ -4,13 +4,14 @@ API views for jobs app.
 import logging
 import json
 import traceback
+import shutil
 
 from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.shortcuts import get_object_or_404
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.http import FileResponse
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -32,7 +33,7 @@ from .serializers import (
     ImageLibrarySerializer
 )
 from apps.artifacts.services import create_images_zip
-from apps.datasets.normalizers import normalize, normalize_from_excel, get_sheet_for_algorithm
+from apps.datasets.normalizers import normalize, normalize_from_excel, get_sheet_for_algorithm, validate_espacenet_excel
 from apps.ingestion.connectors import LensConnector
 from apps.jobs.tasks import run_job
 from apps.ai_descriptions.tasks import generate_description_task
@@ -177,16 +178,109 @@ class JobViewSet(viewsets.ViewSet):
                 if source_type == 'espacenet_excel':
                     source_data = data['source_data']
                     
-                    # Save uploaded Excel file permanently (for multi-sheet access)
+                    # Save uploaded Excel file temporarily first for validation
                     import uuid
+                    temp_dir = Path(settings.MEDIA_ROOT) / 'temp'
+                    temp_dir.mkdir(parents=True, exist_ok=True)
+                    temp_filename = f"temp_{uuid.uuid4().hex[:8]}.xlsx"
+                    temp_path = temp_dir / temp_filename
+                    
+                    try:
+                        with open(temp_path, 'wb') as f:
+                            for chunk in source_data.chunks():
+                                f.write(chunk)
+                    except Exception as e:
+                        logger.error(f"Failed to save temporary Excel file: {e}")
+                        return Response(
+                            {'error': f'Error al guardar el archivo temporal: {str(e)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                        )
+                    
+                    # Validate Excel structure before processing
+                    try:
+                        is_valid, error_message, validation_details = validate_espacenet_excel(str(temp_path))
+                    except Exception as e:
+                        logger.error(f"Error during Excel validation: {e}")
+                        # Clean up temp file
+                        try:
+                            temp_path.unlink()
+                        except Exception:
+                            pass
+                        return Response(
+                            {'error': f'Error al validar el archivo Excel: {str(e)}'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    
+                    if not is_valid:
+                        # Clean up temp file
+                        try:
+                            temp_path.unlink()
+                        except Exception:
+                            pass
+                        return Response(
+                            {
+                                'error': error_message,
+                                'validation_details': validation_details
+                            },
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    
+                    # Move validated file to permanent location
+                    # Add a delay to ensure file is fully closed (Windows issue)
+                    import time
+                    import gc
+                    time.sleep(0.2)  # 200ms delay to ensure file handle is released
+                    gc.collect()  # Force garbage collection to release file handles
+                    
                     excel_filename = f"excel_{uuid.uuid4().hex[:8]}.xlsx"
                     excel_dir = Path(settings.MEDIA_ROOT) / 'uploads' / 'excel'
                     excel_dir.mkdir(parents=True, exist_ok=True)
                     excel_path = excel_dir / excel_filename
                     
-                    with open(excel_path, 'wb') as f:
-                        for chunk in source_data.chunks():
-                            f.write(chunk)
+                    # Move temp file to permanent location (use copy+delete for better error handling on Windows)
+                    max_retries = 5
+                    retry_delay = 0.3
+                    moved = False
+                    last_error = None
+                    
+                    for attempt in range(max_retries):
+                        try:
+                            # Try copy + delete instead of move (more reliable on Windows)
+                            shutil.copy2(str(temp_path), str(excel_path))
+                            # Small delay before deleting source
+                            time.sleep(0.1)
+                            temp_path.unlink()
+                            moved = True
+                            break
+                        except (OSError, PermissionError) as e:
+                            last_error = e
+                            if attempt < max_retries - 1:
+                                wait_time = retry_delay * (attempt + 1)
+                                logger.warning(f"Failed to move Excel file (attempt {attempt + 1}/{max_retries}), retrying in {wait_time}s: {e}")
+                                time.sleep(wait_time)  # Exponential backoff
+                                gc.collect()  # Force garbage collection between retries
+                            else:
+                                logger.error(f"Failed to move Excel file after {max_retries} attempts: {e}")
+                                # Clean up temp file
+                                try:
+                                    temp_path.unlink()
+                                except Exception:
+                                    pass
+                                return Response(
+                                    {'error': f'Error al mover el archivo Excel después de {max_retries} intentos: {str(last_error)}'},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                                )
+                    
+                    if not moved:
+                        # Clean up temp file
+                        try:
+                            temp_path.unlink()
+                        except Exception:
+                            pass
+                        return Response(
+                            {'error': f'Error al mover el archivo Excel: {str(last_error)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                        )
                     
                     # Get unique sheets needed by requested algorithms
                     requested_algorithms = [img['algorithm_key'] for img in data['images']]
@@ -288,6 +382,36 @@ class JobViewSet(viewsets.ViewSet):
                 {'error': 'Source file not found or could not be processed'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        except IntegrityError as e:
+            # Handle idempotency constraint violation
+            error_str = str(e)
+            if 'unique_job_idempotency_scoped' in error_str or 'idempotency' in error_str.lower():
+                # Try to find the existing job
+                if idempotency_key:
+                    if created_by:
+                        existing_job = Job.objects.filter(
+                            created_by=created_by,
+                            idempotency_key=idempotency_key
+                        ).first()
+                    else:
+                        existing_job = Job.objects.filter(
+                            created_by__isnull=True,
+                            idempotency_key=idempotency_key
+                        ).first()
+                    
+                    if existing_job:
+                        logger.info("Job already exists (caught IntegrityError) for idempotency_key=%s, returning existing job %d", idempotency_key, existing_job.id)
+                        return Response({
+                            'job_id': existing_job.id,
+                            'status': existing_job.status,
+                            'message': 'Job already exists (idempotency)'
+                        }, status=status.HTTP_200_OK)
+            
+            logger.warning("Integrity error during job creation: %s", e)
+            return Response(
+                {'error': 'A job with the same parameters already exists. Please try again with different parameters.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         except (ValidationError, DRFValidationError) as e:
             logger.warning("Validation error during job creation: %s", e)
             return Response(
@@ -295,9 +419,11 @@ class JobViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            logger.exception("Unexpected error during job creation")
+            logger.exception("Unexpected error during job creation: %s", str(e))
+            # Include error message in response for debugging (in development) or generic message (in production)
+            error_message = str(e) if settings.DEBUG else 'An unexpected error occurred while creating the job'
             return Response(
-                {'error': 'An unexpected error occurred while creating the job'},
+                {'error': error_message},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
@@ -1190,6 +1316,105 @@ def serve_test_excel(request):
         )
     except Exception as e:
         return Response({'error': f'Error serving file: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@extend_schema(
+    summary='Validar archivo Excel de Espacenet',
+    description='Valida que un archivo Excel tenga la estructura esperada de un export de Espacenet antes de procesarlo.',
+    tags=['Jobs'],
+    request={
+        'multipart/form-data': {
+            'type': 'object',
+            'properties': {
+                'file': {
+                    'type': 'string',
+                    'format': 'binary',
+                    'description': 'Archivo Excel a validar'
+                }
+            },
+            'required': ['file']
+        }
+    },
+    responses={
+        200: inline_serializer(
+            name='ExcelValidationResponse',
+            fields={
+                'is_valid': serializers.BooleanField(help_text='Si el archivo es válido'),
+                'message': serializers.CharField(help_text='Mensaje de validación'),
+                'details': serializers.DictField(help_text='Detalles de la validación', required=False),
+            }
+        ),
+        400: ErrorResponseSerializer,
+    },
+)
+@api_view(['POST'])
+def validate_excel(request):
+    """Validate that an uploaded Excel file has the expected Espacenet structure."""
+    if 'file' not in request.FILES:
+        return Response(
+            {'error': 'No se proporcionó ningún archivo. Por favor, suba un archivo Excel.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    excel_file = request.FILES['file']
+    
+    # Validate file extension
+    if not excel_file.name.endswith(('.xlsx', '.xls')):
+        return Response(
+            {'error': 'El archivo debe ser un archivo Excel (.xlsx o .xls)'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Save file temporarily for validation
+    import tempfile
+    import uuid
+    
+    temp_dir = Path(settings.MEDIA_ROOT) / 'temp'
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    temp_filename = f"validation_{uuid.uuid4().hex[:8]}.xlsx"
+    temp_path = temp_dir / temp_filename
+    
+    try:
+        # Save uploaded file
+        with open(temp_path, 'wb') as f:
+            for chunk in excel_file.chunks():
+                f.write(chunk)
+        
+        # Validate the file
+        is_valid, error_message, validation_details = validate_espacenet_excel(str(temp_path))
+        
+        # Clean up temp file
+        try:
+            temp_path.unlink()
+        except Exception:
+            pass  # Ignore cleanup errors
+        
+        if is_valid:
+            return Response({
+                'is_valid': True,
+                'message': 'El archivo Excel es válido y tiene la estructura esperada de Espacenet.',
+                'details': validation_details
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'is_valid': False,
+                'message': error_message,
+                'details': validation_details
+            }, status=status.HTTP_200_OK)  # 200 because validation completed, even if invalid
+            
+    except Exception as e:
+        # Clean up temp file on error
+        try:
+            if temp_path.exists():
+                temp_path.unlink()
+        except Exception:
+            pass
+        
+        logger.error(f"Error validating Excel file: {str(e)}", exc_info=True)
+        return Response(
+            {'error': f'Error al validar el archivo Excel: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @extend_schema_view(

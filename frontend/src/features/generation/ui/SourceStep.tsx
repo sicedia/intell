@@ -7,6 +7,8 @@ import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { FormField } from "@/shared/ui/FormField";
 import { env } from "@/shared/lib/env";
+import { getCsrfToken } from "@/shared/lib/csrf";
+import { Loader2 } from "lucide-react";
 
 interface SourceStepProps {
     onNext: () => void;
@@ -19,15 +21,76 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
     const { setSourceFile, sourceFile, sourceType, setSourceType } = useWizardStore();
     const [previewData, setPreviewData] = useState<ExcelRow[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [isValidating, setIsValidating] = useState(false);
+    const [isValid, setIsValid] = useState<boolean | null>(null);
     const t = useTranslations('generate.source');
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
+    const validateExcelFile = useCallback(async (file: File): Promise<boolean> => {
+        setIsValidating(true);
+        setError(null);
+        setIsValid(null);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const apiUrl = env.NEXT_PUBLIC_API_BASE_URL;
+            const csrfToken = getCsrfToken();
+            
+            const headers: HeadersInit = {};
+            if (csrfToken) {
+                headers['X-CSRFToken'] = csrfToken;
+            }
+
+            const response = await fetch(`${apiUrl}/validate-excel/`, {
+                method: 'POST',
+                headers,
+                credentials: 'include',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.is_valid) {
+                setIsValid(true);
+                setError(null);
+                return true;
+            } else {
+                setIsValid(false);
+                setError(data.message || t('excelValidationFailed'));
+                return false;
+            }
+        } catch (err) {
+            console.error("Error validating Excel file", err);
+            setIsValid(false);
+            const errorMessage = err instanceof Error 
+                ? err.message 
+                : t('excelValidationError');
+            setError(errorMessage);
+            return false;
+        } finally {
+            setIsValidating(false);
+        }
+    }, [t]);
+
+    const onDrop = useCallback(async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (!file) return;
 
         // Validate file type
         if (!file.name.match(/\.(xlsx|xls)$/)) {
             setError(t('pleaseUploadValidExcel'));
+            setIsValid(false);
+            return;
+        }
+
+        // Validate Excel structure before setting it
+        const isValid = await validateExcelFile(file);
+        
+        if (!isValid) {
+            // Don't set the file if validation fails
+            setSourceFile(null);
+            setPreviewData([]);
             return;
         }
 
@@ -51,7 +114,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
             }
         };
         reader.readAsBinaryString(file);
-    }, [setSourceFile]);
+    }, [setSourceFile, validateExcelFile, t]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -104,9 +167,35 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                             )}
                         </div>
 
+                        {isValidating && (
+                            <div className="p-3 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-md text-sm border border-blue-200 dark:border-blue-800 flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                {t('validatingExcel')}
+                            </div>
+                        )}
+
                         {error && (
                             <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm border border-destructive/20">
-                                {error}
+                                <div className="mb-2">{error}</div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSourceFile(null);
+                                        setError(null);
+                                        setIsValid(null);
+                                        setPreviewData([]);
+                                    }}
+                                    className="mt-2"
+                                >
+                                    {t('clearAndTryAgain')}
+                                </Button>
+                            </div>
+                        )}
+
+                        {isValid === true && !isValidating && (
+                            <div className="p-3 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 rounded-md text-sm border border-green-200 dark:border-green-800">
+                                {t('excelValid')}
                             </div>
                         )}
 
@@ -162,7 +251,7 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                                 const file = new File([blob], 'Filters_20250331_1141.xlsx', { 
                                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
                                 });
-                                onDrop([file]);
+                                await onDrop([file]);
                             } catch (err) {
                                 console.error('Error loading test file:', err);
                                 const errorMessage = err instanceof Error 
@@ -175,7 +264,10 @@ export const SourceStep = ({ onNext }: SourceStepProps) => {
                         {t('loadTestFile')}
                     </Button>
                 )}
-                <Button onClick={onNext} disabled={!sourceFile}>
+                <Button 
+                    onClick={onNext} 
+                    disabled={!sourceFile || !isValid || isValidating}
+                >
                     {t('nextChooseVisualizations')}
                 </Button>
             </div>

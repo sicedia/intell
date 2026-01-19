@@ -77,6 +77,9 @@
     "title": "Generate Visualizations",
     "description": "Upload patent data and choose algorithms to generate visual insights.",
     "wizard": {
+      "title": "Generate Visualizations",
+      "reset": "Reset",
+      "resetTooltip": "Reset the process and start from the beginning",
       "steps": {
         "source": {
           "label": "Data Source",
@@ -104,7 +107,12 @@
       "failedToReadExcel": "Failed to read Excel file. Please ensure it is a valid format.",
       "showingFirstRows": "Showing first {count} rows.",
       "loadTestFile": "🧪 Load Test File",
-      "nextChooseVisualizations": "Next: Choose Visualizations"
+      "nextChooseVisualizations": "Next: Choose Visualizations",
+      "validatingExcel": "Validating Excel file...",
+      "excelValid": "✓ The Excel file is valid and has the expected Espacenet structure.",
+      "excelValidationFailed": "The Excel file does not have the expected Espacenet structure.",
+      "excelValidationError": "Error validating Excel file. Please try again.",
+      "clearAndTryAgain": "Clear and try again"
     },
     "visualization": {
       "selectVisualizations": "Select Visualizations",
@@ -147,7 +155,10 @@
       "imageTasks": "Image Tasks ({count})",
       "retry": "Retry",
       "waitForRunning": "Wait for running tasks",
-      "retryThisTask": "Retry this task"
+      "retryThisTask": "Retry this task",
+      "startOver": "Start Over",
+      "startOverTooltip": "Reset and start a new generation from the beginning",
+      "noActiveJob": "No active job. You can start a new generation."
     },
     "results": {
       "noImagesGenerated": "No images generated.",

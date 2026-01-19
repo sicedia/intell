@@ -40,6 +40,16 @@ export function useJobCreation(): UseJobCreationReturn {
         setIdempotencyKey(`job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
     }, []);
 
+    // Reset state when jobId is cleared (e.g., when wizard is reset)
+    useEffect(() => {
+        if (!jobId) {
+            setHasStarted(false);
+            setCreateError(null);
+            setIsCreating(false);
+            isSubmittingRef.current = false;
+        }
+    }, [jobId]);
+
     // Auto-start job creation when component mounts and conditions are met
     useEffect(() => {
         const startJob = async () => {
@@ -66,9 +76,25 @@ export function useJobCreation(): UseJobCreationReturn {
                 setJobId(res.job_id);
             } catch (err) {
                 console.error("Job Creation Failed:", err);
-                const errorMessage = err instanceof Error 
-                    ? err.message 
-                    : "Failed to create generation job";
+                let errorMessage = "Failed to create generation job";
+                
+                // Try to extract detailed error message from API response
+                if (err && typeof err === 'object' && 'data' in err) {
+                    const errorData = (err as { data?: unknown }).data;
+                    if (errorData && typeof errorData === 'object') {
+                        const data = errorData as Record<string, unknown>;
+                        if (typeof data.error === 'string') {
+                            errorMessage = data.error;
+                        } else if (typeof data.message === 'string') {
+                            errorMessage = data.message;
+                        } else if (Array.isArray(data.detail) && data.detail.length > 0) {
+                            errorMessage = String(data.detail[0]);
+                        }
+                    }
+                } else if (err instanceof Error) {
+                    errorMessage = err.message;
+                }
+                
                 setCreateError(errorMessage);
                 // Don't reset hasStarted so it doesn't retry automatically
             } finally {

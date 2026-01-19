@@ -8,7 +8,7 @@ import { JobResults } from "./JobResults";
 import { ActivityLog } from "./ActivityLog";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
-import { AlertCircle, Loader2, CheckCircle2, XCircle, Wifi, WifiOff, RotateCcw } from "lucide-react";
+import { AlertCircle, Loader2, CheckCircle2, XCircle, Wifi, WifiOff, RotateCcw, RefreshCw } from "lucide-react";
 import { JobStatus } from "../constants/job";
 import { statusHeaderPattern, loadingStatePattern, errorAlertPattern } from "@/shared/design-system";
 import { retryAllFailedTasks } from "../api/jobs";
@@ -176,9 +176,12 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                     <div className="flex-1 min-w-0">
                         <h5 className={errorAlertPattern.titleClasses}>{t('errorCreatingJob')}</h5>
                         <p className={errorAlertPattern.messageClasses}>{createError}</p>
-                        <div className="mt-3">
+                        <div className="mt-3 flex gap-2">
                             <Button onClick={handleRetry} variant="outline" size="sm">
                                 {t('tryAgain')}
+                            </Button>
+                            <Button onClick={onReset} variant="outline" size="sm">
+                                {t('startNewGeneration')}
                             </Button>
                         </div>
                     </div>
@@ -197,6 +200,17 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                             {t('uploadingData')}
                         </p>
                     </div>
+                </div>
+            )}
+
+            {/* No job state - show reset option */}
+            {!jobId && !isCreating && !createError && (
+                <div className="p-6 border rounded-lg bg-muted/50 text-center space-y-4">
+                    <p className="text-muted-foreground">{t('noActiveJob')}</p>
+                    <Button onClick={onReset} variant="default">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        {t('startNewGeneration')}
+                    </Button>
                 </div>
             )}
 
@@ -268,12 +282,16 @@ export const RunStep = ({ onReset }: RunStepProps) => {
                                     {tCommon('cancel')}
                                 </Button>
                             )}
-                            {/* Start New Generation - only when truly finished */}
-                            {isFinished && (
-                                <Button onClick={onReset} size="sm">
-                                    {t('startNewGeneration')}
-                                </Button>
-                            )}
+                            {/* Start New Generation - always visible, but with different text based on state */}
+                            <Button 
+                                onClick={onReset} 
+                                size="sm"
+                                variant={isFinished ? "default" : "outline"}
+                                title={isFinished ? t('startNewGeneration') : t('startOverTooltip')}
+                            >
+                                <RefreshCw className="h-4 w-4 mr-1.5" />
+                                {isFinished ? t('startNewGeneration') : t('startOver')}
+                            </Button>
                         </div>
                     </div>
 

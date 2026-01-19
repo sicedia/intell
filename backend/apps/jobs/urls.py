@@ -5,7 +5,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     JobViewSet, ImageTaskViewSet, DescriptionTaskViewSet, AIDescribeView,
-    TagViewSet, ImageGroupViewSet, serve_test_excel,
+    TagViewSet, ImageGroupViewSet, serve_test_excel, validate_excel,
     dashboard_stats, latest_published_images
 )
 from apps.ai_descriptions.views import get_available_models
@@ -22,6 +22,8 @@ urlpatterns = [
     path('', include(router.urls)),
     # TEMPORARY: Test endpoint - remove after testing
     path('test-excel/', serve_test_excel, name='test-excel'),
+    # Excel validation endpoint
+    path('validate-excel/', validate_excel, name='validate-excel'),
     # Dashboard endpoints
     path('dashboard/stats/', dashboard_stats, name='dashboard-stats'),
     path('dashboard/latest-images/', latest_published_images, name='dashboard-latest-images'),

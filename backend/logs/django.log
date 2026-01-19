@@ -49,3 +49,154 @@ WARNING 2026-01-16 15:55:46,439 runserver 13548 27600 [31;1mHTTP GET /api/auth/
 WARNING 2026-01-16 15:55:49,324 runserver 13548 27600 [31;1mHTTP GET /api/auth/me/ 403 [0.03, 127.0.0.1:61146][0m
 INFO 2026-01-16 15:55:53,032 apps 28992 29148 Waiting for database connection (timeout: 30.0s)...
 INFO 2026-01-16 15:55:53,081 apps 28992 29148 Database connection established successfully
+INFO 2026-01-16 16:08:13,393 views 13548 18160 Job 5 created successfully with 8 image tasks
+WARNING 2026-01-19 11:58:36,518 apps 19612 6528 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-19 11:58:48,992 apps 17448 8328 Waiting for database connection (timeout: 30.0s)...
+WARNING 2026-01-19 11:59:27,453 apps 17448 8328 Database not available after 30.0s. Server will start but database operations may fail.
+INFO 2026-01-19 12:00:16,681 apps 11940 9196 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:00:16,727 apps 11940 9196 Database connection established successfully
+INFO 2026-01-19 12:00:20,663 apps 6356 16252 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:00:20,695 apps 6356 16252 Database connection established successfully
+INFO 2026-01-19 12:02:58,349 apps 30808 33520 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:02:58,388 apps 30808 33520 Database connection established successfully
+ERROR 2026-01-19 12:03:43,122 views 30808 6724 Unexpected error during job creation
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 215, in create
+    temp_path.rename(excel_path)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\pathlib\_local.py", line 767, in rename
+    os.rename(self, target)
+    ~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Projects\\intell\\backend\\media\\temp\\temp_1e22ef5d.xlsx' -> 'C:\\Projects\\intell\\backend\\media\\uploads\\excel\\excel_65a904b0.xlsx'
+ERROR 2026-01-19 12:03:43,137 log 30808 8128 Internal Server Error: /api/jobs/
+ERROR 2026-01-19 12:03:43,139 runserver 30808 30288 [35;1mHTTP POST /api/jobs/ 500 [0.16, 127.0.0.1:60075][0m
+INFO 2026-01-19 12:04:15,778 apps 25076 29460 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:04:15,838 apps 25076 29460 Database connection established successfully
+ERROR 2026-01-19 12:04:28,047 views 30808 33468 Unexpected error during job creation
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 215, in create
+    temp_path.rename(excel_path)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\pathlib\_local.py", line 767, in rename
+    os.rename(self, target)
+    ~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Projects\\intell\\backend\\media\\temp\\temp_c53bc4fd.xlsx' -> 'C:\\Projects\\intell\\backend\\media\\uploads\\excel\\excel_66bf5782.xlsx'
+ERROR 2026-01-19 12:04:28,054 log 30808 8128 Internal Server Error: /api/jobs/
+ERROR 2026-01-19 12:04:28,055 runserver 30808 30288 [35;1mHTTP POST /api/jobs/ 500 [0.16, 127.0.0.1:60075][0m
+INFO 2026-01-19 12:04:41,299 apps 6132 9248 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:04:41,337 apps 6132 9248 Database connection established successfully
+INFO 2026-01-19 12:04:57,748 apps 29824 32300 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:04:57,790 apps 29824 32300 Database connection established successfully
+ERROR 2026-01-19 12:07:26,777 views 29824 4844 Failed to move Excel file from temp to permanent location: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Projects\\intell\\backend\\media\\temp\\temp_0de1b6c3.xlsx'
+ERROR 2026-01-19 12:07:26,840 log 29824 12772 Internal Server Error: /api/jobs/
+ERROR 2026-01-19 12:07:26,840 views 29824 3384 Failed to move Excel file from temp to permanent location: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Projects\\intell\\backend\\media\\temp\\temp_47b035d3.xlsx'
+ERROR 2026-01-19 12:07:26,841 runserver 29824 31104 [35;1mHTTP POST /api/jobs/ 500 [0.38, 127.0.0.1:64054][0m
+ERROR 2026-01-19 12:07:26,849 log 29824 12772 Internal Server Error: /api/jobs/
+ERROR 2026-01-19 12:07:26,850 runserver 29824 31104 [35;1mHTTP POST /api/jobs/ 500 [0.39, 127.0.0.1:65272][0m
+INFO 2026-01-19 12:08:17,063 apps 544 29156 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:08:17,102 apps 544 29156 Database connection established successfully
+INFO 2026-01-19 12:08:26,883 apps 22548 30952 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:08:26,923 apps 22548 30952 Database connection established successfully
+INFO 2026-01-19 12:08:37,799 apps 31264 19320 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:08:37,858 apps 31264 19320 Database connection established successfully
+INFO 2026-01-19 12:08:44,978 views 31264 15256 Job 6 created successfully with 1 image tasks
+ERROR 2026-01-19 12:08:44,990 views 31264 33352 Unexpected error during job creation: duplicate key value violates unique constraint "unique_job_idempotency_scoped"
+DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768842524013_4tdvrlyoy) already exists.
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "unique_job_idempotency_scoped"
+DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768842524013_4tdvrlyoy) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\backend\apps\jobs\views.py", line 329, in create
+    job = Job.objects.create(
+        dataset=main_dataset,
+    ...<3 lines>...
+        status=Job.Status.PENDING
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.IntegrityError: duplicate key value violates unique constraint "unique_job_idempotency_scoped"
+DETAIL:  Key (created_by_id, idempotency_key)=(1, job_1768842524013_4tdvrlyoy) already exists.
+
+ERROR 2026-01-19 12:08:45,108 log 31264 29960 Internal Server Error: /api/jobs/
+ERROR 2026-01-19 12:08:45,110 runserver 31264 2260 [35;1mHTTP POST /api/jobs/ 500 [0.78, 127.0.0.1:62956][0m
+INFO 2026-01-19 12:09:31,061 apps 1620 33336 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:09:31,102 apps 1620 33336 Database connection established successfully
+INFO 2026-01-19 12:11:00,092 apps 34064 16720 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 12:11:00,154 apps 34064 16720 Database connection established successfully
+WARNING 2026-01-19 12:11:39,760 apps 30808 19928 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-19 12:11:56,258 views 30808 14256 Job 8 created successfully with 8 image tasks
+INFO 2026-01-19 12:11:56,270 views 30808 14708 Job already exists (caught IntegrityError) for idempotency_key=job_1768842714177_evh5lm45g, returning existing job 8
+INFO 2026-01-19 12:12:18,226 views 30808 31680 Job 10 created successfully with 8 image tasks
+INFO 2026-01-19 12:12:18,235 views 30808 34348 Job already exists (caught IntegrityError) for idempotency_key=job_1768842736456_k61fhdu08, returning existing job 10
+INFO 2026-01-19 12:12:32,756 views 30808 32316 Job 12 created successfully with 8 image tasks
+INFO 2026-01-19 12:12:32,765 views 30808 29184 Job already exists (caught IntegrityError) for idempotency_key=job_1768842751320_1usuckzfq, returning existing job 12
