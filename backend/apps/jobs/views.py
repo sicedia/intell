@@ -663,33 +663,61 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
                     queryset = queryset.filter(is_published=(published_param.lower() == 'true'))
         
         # Custom search implementation - handles null values properly and searches across multiple fields
+        # Improved to search by individual words in the title and other fields
         search_param = self.request.query_params.get('search')
         if search_param:
             search_term = search_param.strip()
             if search_term:
+                # Split search term into individual words for more flexible searching
+                # This allows searching for "43" in "Image 43 - cpc_treemap"
+                # Each word is searched independently across all fields
+                search_words = search_term.split()
+                
                 # Build Q objects for case-insensitive search across multiple fields
                 # Django's icontains handles null values correctly (won't match null fields)
-                search_query = Q()
+                # We use OR logic between words: any word can match (more flexible for "any word" searches)
+                word_queries = []
                 
-                # Search in title (case-insensitive, handles null)
-                search_query |= Q(title__icontains=search_term)
+                for word in search_words:
+                    word_query = Q()
+                    
+                    # Search in title (case-insensitive, handles null)
+                    # This allows finding "43" in "Image 43 - cpc_treemap" or "Image 43"
+                    word_query |= Q(title__icontains=word)
+                    
+                    # If the word is a number, also search by image ID
+                    # This allows searching "43" to find image with ID 43 (which may have title "Image 43")
+                    try:
+                        image_id = int(word)
+                        word_query |= Q(id=image_id)
+                    except ValueError:
+                        # Not a number, skip ID search
+                        pass
+                    
+                    # Search in algorithm_key (always has a value)
+                    word_query |= Q(algorithm_key__icontains=word)
+                    
+                    # Search in user_description (case-insensitive, handles null)
+                    word_query |= Q(user_description__icontains=word)
+                    
+                    # Search in ai_context (case-insensitive, handles null)
+                    word_query |= Q(ai_context__icontains=word)
+                    
+                    # Search in tag names (through many-to-many relationship)
+                    word_query |= Q(tags__name__icontains=word)
+                    
+                    # Search in group name (through foreign key)
+                    word_query |= Q(group__name__icontains=word)
+                    
+                    word_queries.append(word_query)
                 
-                # Search in algorithm_key (always has a value)
-                search_query |= Q(algorithm_key__icontains=search_term)
-                
-                # Search in user_description (case-insensitive, handles null)
-                search_query |= Q(user_description__icontains=search_term)
-                
-                # Search in ai_context (case-insensitive, handles null)
-                search_query |= Q(ai_context__icontains=search_term)
-                
-                # Search in tag names (through many-to-many relationship)
-                search_query |= Q(tags__name__icontains=search_term)
-                
-                # Search in group name (through foreign key)
-                search_query |= Q(group__name__icontains=search_term)
-                
-                queryset = queryset.filter(search_query).distinct()
+                # Combine all word queries with OR logic: any word can match in any field
+                # This allows searching for "43" and finding "Image 43 - cpc_treemap" or "Image 43"
+                if word_queries:
+                    search_query = word_queries[0]
+                    for word_query in word_queries[1:]:
+                        search_query |= word_query
+                    queryset = queryset.filter(search_query).distinct()
         
         # Filter by tags
         tags_param = self.request.query_params.get('tags')
