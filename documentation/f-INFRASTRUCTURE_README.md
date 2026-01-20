@@ -239,26 +239,26 @@ docker-compose -f docker-compose.prod.yml --env-file .docker.env ps
 ### Backup Database
 
 ```bash
-# Usar script automatizado (recomendado)
+# Use automated script (recommended)
 ./backup-db.sh
 
-# O manualmente
+# Or manually
 docker-compose -f docker-compose.prod.yml --env-file .docker.env exec db pg_dump -U intell_user intell > backup.sql
 ```
 
 ### Restore Database
 
 ```bash
-# Usar script automatizado (recomendado)
+# Use automated script (recommended)
 ./restore-db.sh backups/intell_backup_YYYYMMDD_HHMMSS.sql.gz
 
-# O manualmente
+# Or manually
 docker-compose -f docker-compose.prod.yml --env-file .docker.env exec -T db psql -U intell_user intell < backup.sql
 ```
 
-## Scripts Disponibles
+## Available Scripts
 
-Para información completa sobre los scripts de deployment, consulta [c-DEPLOYMENT_SCRIPTS.md](../documentation/c-DEPLOYMENT_SCRIPTS.md).
+For complete information about deployment scripts, see [c-DEPLOYMENT_SCRIPTS.md](../documentation/c-DEPLOYMENT_SCRIPTS.md).
 
 ## Notes
 

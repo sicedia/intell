@@ -158,8 +158,15 @@ print('True' if User.objects.filter(is_superuser=True).exists() else 'False')
 
 if [ "$SUPERUSER_EXISTS" != "True" ]; then
     echo -e "${YELLOW}No superuser found. Creating one...${NC}"
-    echo "Please provide superuser credentials:"
-    docker compose -f docker-compose.prod.yml exec -T backend python manage.py createsuperuser
+    docker compose -f docker-compose.prod.yml exec -T backend python manage.py shell -c "
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='admin').exists():
+    User.objects.create_superuser('admin', 'admin@cedia.org.ec', 'admin')
+    print('Superuser created successfully')
+else:
+    print('User with username admin already exists')
+"
 else
     echo -e "${GREEN}Superuser already exists${NC}"
 fi

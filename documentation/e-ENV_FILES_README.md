@@ -1,125 +1,125 @@
-# Archivos de Variables de Entorno - Infrastructure
+# Environment Variable Files - Infrastructure
 
-## Estructura de Archivos
+## File Structure
 
 ```
 infrastructure/
-├── .docker.env.example    # Variables para Docker Compose (ejemplo)
-├── .django.env.example    # Variables para Django backend (ejemplo)
-├── .docker.env            # Tu archivo real de Docker (NO commitear)
-└── .django.env            # Tu archivo real de Django (NO commitear)
+├── .docker.env.example    # Variables for Docker Compose (example)
+├── .django.env.example    # Variables for Django backend (example)
+├── .docker.env            # Your actual Docker file (DO NOT commit)
+└── .django.env            # Your actual Django file (DO NOT commit)
 ```
 
-## Descripción de Archivos
+## File Description
 
 ### `.docker.env.example` / `.docker.env`
 
-**Propósito:** Variables de entorno para Docker Compose que se usan para configurar los servicios de infraestructura.
+**Purpose:** Environment variables for Docker Compose used to configure infrastructure services.
 
-**Contiene:**
-- `POSTGRES_DB` - Nombre de la base de datos
-- `POSTGRES_USER` - Usuario de PostgreSQL
-- `POSTGRES_PASSWORD` - Contraseña de PostgreSQL (¡cambiar en producción!)
-- `REDIS_PASSWORD` - Contraseña de Redis (opcional)
-- `NEXT_PUBLIC_API_BASE_URL` - URL de la API para el build del frontend
-- `NEXT_PUBLIC_WS_BASE_URL` - URL de WebSocket para el build del frontend
+**Contains:**
+- `POSTGRES_DB` - Database name
+- `POSTGRES_USER` - PostgreSQL user
+- `POSTGRES_PASSWORD` - PostgreSQL password (change in production!)
+- `REDIS_PASSWORD` - Redis password (optional)
+- `NEXT_PUBLIC_API_BASE_URL` - API URL for frontend build
+- `NEXT_PUBLIC_WS_BASE_URL` - WebSocket URL for frontend build
 
-**Uso:**
+**Usage:**
 ```bash
 cp .docker.env.example .docker.env
-# Editar .docker.env con tus valores
+# Edit .docker.env with your values
 ```
 
 ### `.django.env.example` / `.django.env`
 
-**Propósito:** Variables de entorno específicas para el servicio Django backend en Docker.
+**Purpose:** Environment variables specific to the Django backend service in Docker.
 
-**Contiene:**
-- `SECRET_KEY` - Clave secreta de Django (¡generar nueva para producción!)
-- `DEBUG` - Modo debug (False en producción)
-- `ALLOWED_HOSTS` - Hosts permitidos
-- `CORS_ALLOWED_ORIGINS` - Orígenes permitidos para CORS
-- `CSRF_TRUSTED_ORIGINS` - Orígenes confiables para CSRF
-- Configuración de seguridad SSL
-- Configuración de Microsoft OAuth
-- Configuración de email
-- Configuración de logging
+**Contains:**
+- `SECRET_KEY` - Django secret key (generate new for production!)
+- `DEBUG` - Debug mode (False in production)
+- `ALLOWED_HOSTS` - Allowed hosts
+- `CORS_ALLOWED_ORIGINS` - Allowed origins for CORS
+- `CSRF_TRUSTED_ORIGINS` - Trusted origins for CSRF
+- SSL security configuration
+- Microsoft OAuth configuration
+- Email configuration
+- Logging configuration
 
-**Uso:**
+**Usage:**
 ```bash
 cp .django.env.example .django.env
-# Editar .django.env con tus valores
+# Edit .django.env with your values
 ```
 
-## ¿Por qué dos archivos separados?
+## Why Two Separate Files?
 
-1. **`.docker.env`** - Usado por Docker Compose para:
-   - Configurar servicios de infraestructura (PostgreSQL, Redis)
-   - Pasar variables al build del frontend
-   - Variables compartidas entre servicios
+1. **`.docker.env`** - Used by Docker Compose to:
+   - Configure infrastructure services (PostgreSQL, Redis)
+   - Pass variables to frontend build
+   - Variables shared between services
 
-2. **`.django.env`** - Usado específicamente por el contenedor Django:
-   - Configuración de seguridad de Django
-   - Secretos específicos de la aplicación
-   - Variables que no deben estar en el archivo de Docker Compose
+2. **`.django.env`** - Used specifically by the Django container:
+   - Django security configuration
+   - Application-specific secrets
+   - Variables that should not be in the Docker Compose file
 
-**Ventajas:**
-- Separación clara de responsabilidades
-- Mejor organización y mantenibilidad
-- Facilita la gestión de secretos
-- Permite diferentes niveles de acceso
+**Advantages:**
+- Clear separation of responsibilities
+- Better organization and maintainability
+- Facilitates secret management
+- Allows different access levels
 
-## Configuración Inicial
+## Initial Configuration
 
-### Para Producción
+### For Production
 
 ```bash
 cd infrastructure
 
-# Copiar archivos de ejemplo
+# Copy example files
 cp .docker.env.example .docker.env
 cp .django.env.example .django.env
 
-# Editar con tus valores
+# Edit with your values
 nano .docker.env
 nano .django.env
 ```
 
-### Variables Críticas
+### Critical Variables
 
-**En `.docker.env`:**
-- `POSTGRES_PASSWORD` - **IMPORTANTE:** Usa una contraseña fuerte
-- `NEXT_PUBLIC_API_BASE_URL` - URL de tu API en producción
-- `NEXT_PUBLIC_WS_BASE_URL` - URL de WebSocket en producción
+**In `.docker.env`:**
+- `POSTGRES_PASSWORD` - **IMPORTANT:** Use a strong password
+- `NEXT_PUBLIC_API_BASE_URL` - Your API URL in production
+- `NEXT_PUBLIC_WS_BASE_URL` - Your WebSocket URL in production
 
-**En `.django.env`:**
-- `SECRET_KEY` - **CRÍTICO:** Genera una nueva clave única
-- `DEBUG` - **CRÍTICO:** Debe ser `False` en producción
-- `ALLOWED_HOSTS` - Tu dominio de producción
-- `CORS_ALLOWED_ORIGINS` - Tu dominio de producción con https://
+**In `.django.env`:**
+- `SECRET_KEY` - **CRITICAL:** Generate a new unique key
+- `DEBUG` - **CRITICAL:** Must be `False` in production
+- `ALLOWED_HOSTS` - Your production domain
+- `CORS_ALLOWED_ORIGINS` - Your production domain with https://
 
-## Generar SECRET_KEY
+## Generate SECRET_KEY
 
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-## Seguridad
+## Security
 
-⚠️ **NUNCA:**
-- Commitees `.docker.env` o `.django.env` al repositorio
-- Compartas estos archivos en texto plano
-- Uses los mismos valores en desarrollo y producción
+⚠️ **NEVER:**
+- Commit `.docker.env` or `.django.env` to the repository
+- Share these files in plain text
+- Use the same values in development and production
 
-✅ **SIEMPRE:**
-- Usa contraseñas fuertes y únicas
-- Genera nueva `SECRET_KEY` para producción
-- Verifica que `DEBUG=False` en producción
-- Mantén estos archivos fuera del control de versiones
+✅ **ALWAYS:**
+- Use strong and unique passwords
+- Generate new `SECRET_KEY` for production
+- Verify that `DEBUG=False` in production
+- Keep these files out of version control
 
-## Referencias en el Código
+## Code References
 
-- `docker-compose.prod.yml` - Usa `.django.env` para el servicio backend
-- `deploy.sh` - Verifica y crea estos archivos si no existen
-- `backup-db.sh` - Lee `.docker.env` para credenciales de PostgreSQL
-- `restore-db.sh` - Lee `.docker.env` para credenciales de PostgreSQL
+- `docker-compose.prod.yml` - Uses `.django.env` for the backend service
+- `deploy.sh` - Verifies and creates these files if they don't exist
+- `backup-db.sh` - Reads `.docker.env` for PostgreSQL credentials
+- `restore-db.sh` - Reads `.docker.env` for PostgreSQL credentials

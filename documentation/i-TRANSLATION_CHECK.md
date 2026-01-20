@@ -1,25 +1,25 @@
-# Verificación de Traducciones
+# Translation Verification
 
-## Resumen
+## Summary
 
-Se ha realizado una revisión exhaustiva de las traducciones para evitar errores de claves faltantes.
+A comprehensive review of translations has been performed to avoid missing key errors.
 
-## Clave Faltante Encontrada y Corregida
+## Missing Key Found and Fixed
 
-✅ **`generate.results.retry`** - Agregada en ambos archivos (en.json y es.json)
+✅ **`generate.results.retry`** - Added to both files (en.json and es.json)
 
-## Verificaciones Realizadas
+## Verifications Performed
 
-### 1. Archivos de Traducción
-- ✅ `messages/en.json` - 337 claves
-- ✅ `messages/es.json` - 337 claves
-- ✅ Ambas versiones tienen el mismo número de claves
+### 1. Translation Files
+- ✅ `messages/en.json` - 337 keys
+- ✅ `messages/es.json` - 337 keys
+- ✅ Both versions have the same number of keys
 
-### 2. Componentes Principales Verificados
+### 2. Main Components Verified
 
 #### `JobResults.tsx`
 - Namespace: `generate.results`
-- Todas las claves usadas existen:
+- All used keys exist:
   - `noImagesGenerated` ✅
   - `imagesStillBeingGenerated` ✅
   - `generatedImagesCount` ✅
@@ -54,40 +54,40 @@ Se ha realizado una revisión exhaustiva de las traducciones para evitar errores
   - `saveToLibrary` ✅
   - `cancelling` ✅
   - `retrying` ✅
-  - `retry` ✅ (CORREGIDA)
+  - `retry` ✅ (FIXED)
 
 #### `ImageDetailDialog.tsx`
 - Namespaces: `images`, `common`, `aiDescription`
-- Todas las claves usadas existen en sus respectivos namespaces ✅
+- All used keys exist in their respective namespaces ✅
 
 #### `ImageLibraryFilters.tsx`
 - Namespaces: `images`, `common`
-- Todas las claves usadas existen ✅
+- All used keys exist ✅
 
-## Script de Verificación
+## Verification Script
 
-Se creó un script de verificación en `scripts/check-translations.js` que:
-- Compara las claves entre en.json y es.json
-- Extrae claves usadas del código fuente
-- Identifica claves faltantes
+A verification script was created in `scripts/check-translations.js` that:
+- Compares keys between en.json and es.json
+- Extracts used keys from source code
+- Identifies missing keys
 
-**Nota:** El script puede tener falsos positivos debido a la complejidad de rastrear múltiples namespaces en el mismo archivo. Se recomienda revisión manual para confirmar.
+**Note:** The script may have false positives due to the complexity of tracking multiple namespaces in the same file. Manual review is recommended for confirmation.
 
-## Recomendaciones
+## Recommendations
 
-1. ✅ **Corrección aplicada**: Se agregó la clave `retry` faltante en `generate.results`
-2. 🔄 **Mantenimiento continuo**: Ejecutar el script de verificación antes de cada release
-3. 📝 **Documentación**: Mantener este archivo actualizado cuando se agreguen nuevas traducciones
-4. 🧪 **Testing**: Considerar agregar tests automatizados para verificar traducciones
+1. ✅ **Fix applied**: Missing `retry` key added in `generate.results`
+2. 🔄 **Continuous maintenance**: Run the verification script before each release
+3. 📝 **Documentation**: Keep this file updated when adding new translations
+4. 🧪 **Testing**: Consider adding automated tests to verify translations
 
-## Cómo Usar el Script
+## How to Use the Script
 
 ```bash
 cd frontend
 node scripts/check-translations.js
 ```
 
-El script mostrará:
-- Claves faltantes entre idiomas
-- Claves usadas en código que no existen en traducciones
-- Resumen estadístico
+The script will show:
+- Missing keys between languages
+- Keys used in code that don't exist in translations
+- Statistical summary

@@ -1,158 +1,158 @@
 # Deployment Scripts - Infrastructure
 
-Este documento describe los scripts disponibles en el directorio `infrastructure/` para el despliegue y mantenimiento de la aplicación en producción.
+This document describes the scripts available in the `infrastructure/` directory for deploying and maintaining the application in production.
 
-## Scripts Disponibles
+## Available Scripts
 
-### 1. `deploy.sh` - Deployment Inicial Automatizado
+### 1. `deploy.sh` - Automated Initial Deployment
 
-**Propósito:** Script principal para el despliegue inicial de la aplicación en producción.
+**Purpose:** Main script for the initial deployment of the application in production.
 
-**Uso:**
+**Usage:**
 ```bash
 cd /opt/intell/infrastructure
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
-**Qué hace:**
-1. Verifica que Docker y Docker Compose estén instalados
-2. Verifica que existan `.docker.env` y `.django.env`
-3. Verifica certificados SSL (opcional)
-4. Construye y arranca todos los servicios
-5. Espera a que los servicios estén saludables
-6. Ejecuta migraciones de base de datos
-7. Recopila archivos estáticos
-8. Crea superusuario si no existe
+**What it does:**
+1. Verifies that Docker and Docker Compose are installed
+2. Verifies that `.docker.env` and `.django.env` exist
+3. Verifies SSL certificates (optional)
+4. Builds and starts all services
+5. Waits for services to be healthy
+6. Runs database migrations
+7. Collects static files
+8. Creates superuser if it doesn't exist
 
-**Requisitos:**
-- Docker y Docker Compose instalados
-- Archivos `.docker.env` y `.django.env` configurados
-- Certificados SSL en `nginx/ssl/` (opcional, pero recomendado)
+**Requirements:**
+- Docker and Docker Compose installed
+- `.docker.env` and `.django.env` files configured
+- SSL certificates in `nginx/ssl/` (optional, but recommended)
 
 ---
 
-### 2. `setup-ssl.sh` - Configuración de Certificados SSL
+### 2. `setup-ssl.sh` - SSL Certificate Configuration
 
-**Propósito:** Script interactivo para configurar certificados SSL (Let's Encrypt o certificados personalizados).
+**Purpose:** Interactive script to configure SSL certificates (Let's Encrypt or custom certificates).
 
-**Uso:**
+**Usage:**
 ```bash
 cd /opt/intell/infrastructure
 chmod +x setup-ssl.sh
 ./setup-ssl.sh
 ```
 
-**Opciones:**
-- **Opción 1:** Let's Encrypt (automático) - Requiere que el DNS esté configurado correctamente
-- **Opción 2:** Certificado personalizado - Permite especificar rutas a certificados existentes
-- **Opción 3:** Saltar configuración SSL
+**Options:**
+- **Option 1:** Let's Encrypt (automatic) - Requires DNS to be configured correctly
+- **Option 2:** Custom certificate - Allows specifying paths to existing certificates
+- **Option 3:** Skip SSL configuration
 
-**Qué hace:**
-- Instala Certbot si es necesario (para Let's Encrypt)
-- Genera o copia certificados a `nginx/ssl/`
-- Configura permisos correctos
-- Configura renovación automática (para Let's Encrypt)
-- Valida configuración de nginx
+**What it does:**
+- Installs Certbot if necessary (for Let's Encrypt)
+- Generates or copies certificates to `nginx/ssl/`
+- Sets correct permissions
+- Configures automatic renewal (for Let's Encrypt)
+- Validates nginx configuration
 
 ---
 
-### 3. `backup-db.sh` - Backup de Base de Datos
+### 3. `backup-db.sh` - Database Backup
 
-**Propósito:** Crea backups timestamped de la base de datos PostgreSQL.
+**Purpose:** Creates timestamped backups of the PostgreSQL database.
 
-**Uso:**
+**Usage:**
 ```bash
 cd /opt/intell/infrastructure
 chmod +x backup-db.sh
 
-# Backup simple
+# Simple backup
 ./backup-db.sh
 
-# Backup con limpieza automática de backups antiguos (>30 días)
+# Backup with automatic cleanup of old backups (>30 days)
 ./backup-db.sh --cleanup
 ```
 
-**Qué hace:**
-1. Lee credenciales de `.docker.env`
-2. Crea directorio `backups/` si no existe
-3. Genera backup timestamped: `intell_backup_YYYYMMDD_HHMMSS.sql.gz`
-4. Lista backups recientes
-5. Opcionalmente limpia backups antiguos (>30 días)
+**What it does:**
+1. Reads credentials from `.docker.env`
+2. Creates `backups/` directory if it doesn't exist
+3. Generates timestamped backup: `intell_backup_YYYYMMDD_HHMMSS.sql.gz`
+4. Lists recent backups
+5. Optionally cleans up old backups (>30 days)
 
-**Ubicación de backups:**
+**Backup location:**
 - `infrastructure/backups/intell_backup_YYYYMMDD_HHMMSS.sql.gz`
 
-**Recomendación:**
-- Ejecutar diariamente via cron:
+**Recommendation:**
+- Run daily via cron:
 ```bash
-# Agregar a crontab: crontab -e
+# Add to crontab: crontab -e
 0 2 * * * cd /opt/intell/infrastructure && ./backup-db.sh --cleanup
 ```
 
 ---
 
-### 4. `restore-db.sh` - Restaurar Base de Datos
+### 4. `restore-db.sh` - Restore Database
 
-**Propósito:** Restaura la base de datos desde un archivo de backup.
+**Purpose:** Restores the database from a backup file.
 
-**Uso:**
+**Usage:**
 ```bash
 cd /opt/intell/infrastructure
 chmod +x restore-db.sh
 
-# Listar backups disponibles
+# List available backups
 ls -lh backups/
 
-# Restaurar desde backup
+# Restore from backup
 ./restore-db.sh backups/intell_backup_YYYYMMDD_HHMMSS.sql.gz
 ```
 
-**Qué hace:**
-1. Verifica que el archivo de backup exista
-2. Lee credenciales de `.docker.env`
-3. Detiene servicios que usan la base de datos (opcional)
-4. Restaura backup (soporta `.sql` y `.sql.gz`)
-5. Reinicia servicios
+**What it does:**
+1. Verifies that the backup file exists
+2. Reads credentials from `.docker.env`
+3. Stops services that use the database (optional)
+4. Restores backup (supports `.sql` and `.sql.gz`)
+5. Restarts services
 
-**⚠️ Advertencia:**
-- Este script **REEMPLAZA** la base de datos actual
-- Haz un backup antes de restaurar
-- Los servicios pueden estar inactivos durante la restauración
+**⚠️ Warning:**
+- This script **REPLACES** the current database
+- Make a backup before restoring
+- Services may be inactive during restoration
 
 ---
 
-### 5. `update.sh` - Actualizar Código en Producción
+### 5. `update.sh` - Update Code in Production
 
-**Propósito:** Actualiza el código desde git, reconstruye contenedores y reinicia servicios.
+**Purpose:** Updates code from git, rebuilds containers, and restarts services.
 
-**Uso:**
+**Usage:**
 ```bash
 cd /opt/intell/infrastructure
 chmod +x update.sh
 ./update.sh
 ```
 
-**Qué hace:**
-1. Hace `git pull` (si es un repositorio git)
-2. Crea backup de base de datos automático
-3. Detiene servicios
-4. Reconstruye imágenes Docker (`--no-cache`)
-5. Inicia servicios
-6. Ejecuta migraciones
-7. Recopila archivos estáticos
+**What it does:**
+1. Runs `git pull` (if it's a git repository)
+2. Creates automatic database backup
+3. Stops services
+4. Rebuilds Docker images (`--no-cache`)
+5. Starts services
+6. Runs migrations
+7. Collects static files
 
-**⚠️ Nota:**
-- Este script **reconstruye imágenes** en el servidor (consume recursos y tiempo)
-- **Método recomendado:** Usar `build-and-push.sh` para construir imágenes localmente y luego `docker compose pull` en el servidor
+**⚠️ Note:**
+- This script **rebuilds images** on the server (consumes resources and time)
+- **Recommended method:** Use `build-and-push.sh` to build images locally and then `docker compose pull` on the server
 
 ---
 
-### 6. `build-and-push.sh` / `build-and-push.ps1` - Construir y Subir Imágenes Docker
+### 6. `build-and-push.sh` / `build-and-push.ps1` - Build and Push Docker Images
 
-**Propósito:** Construye las imágenes Docker (backend y frontend) y las sube a Docker Hub.
+**Purpose:** Builds Docker images (backend and frontend) and pushes them to Docker Hub.
 
-**Uso:**
+**Usage:**
 ```bash
 # Linux/macOS
 cd infrastructure
@@ -164,78 +164,78 @@ cd infrastructure
 .\build-and-push.ps1 v1.0.1
 ```
 
-**Qué hace:**
-1. Lee configuración de `.build.env`
-2. Construye imagen backend: `sicedia/intell-backend:VERSION`
-3. Construye imagen frontend: `sicedia/intell-frontend:VERSION`
-4. Etiqueta ambas imágenes con `latest` también
-5. Las sube a Docker Hub
+**What it does:**
+1. Reads configuration from `.build.env`
+2. Builds backend image: `sicedia/intell-backend:VERSION`
+3. Builds frontend image: `sicedia/intell-frontend:VERSION`
+4. Tags both images with `latest` as well
+5. Pushes them to Docker Hub
 
-**Requisitos:**
-- Estar logueado en Docker Hub: `docker login`
-- Archivo `.build.env` configurado con `PRODUCTION_DOMAIN` o URLs de API/WS
+**Requirements:**
+- Logged into Docker Hub: `docker login`
+- `.build.env` file configured with `PRODUCTION_DOMAIN` or API/WS URLs
 
-**Workflow recomendado:**
+**Recommended workflow:**
 ```bash
-# 1. En desarrollo: construir y subir
+# 1. In development: build and push
 ./build-and-push.sh v1.0.2
 
-# 2. En servidor: actualizar .docker.env con IMAGE_TAG=v1.0.2
-# 3. En servidor: docker compose pull && docker compose up -d
+# 2. On server: update .docker.env with IMAGE_TAG=v1.0.2
+# 3. On server: docker compose pull && docker compose up -d
 ```
 
 ---
 
-## Scripts No Disponibles / Eliminados
+## Unavailable / Removed Scripts
 
-Los siguientes scripts **NO EXISTEN** y no deben ser referenciados en documentación:
+The following scripts **DO NOT EXIST** and should not be referenced in documentation:
 
-- ❌ `setup.sh` - No existe (usar `docker-compose up -d` manualmente)
-- ❌ `setup.ps1` - No existe (usar `docker-compose up -d` manualmente)
+- ❌ `setup.sh` - Does not exist (use `docker-compose up -d` manually)
+- ❌ `setup.ps1` - Does not exist (use `docker-compose up -d` manually)
 
 ---
 
-## Orden de Ejecución Recomendado (Primera Vez)
+## Recommended Execution Order (First Time)
 
 ```bash
 cd /opt/intell/infrastructure
 
-# 1. Configurar variables de entorno
+# 1. Configure environment variables
 cp .docker.env.example .docker.env
 cp .django.env.example .django.env
-nano .docker.env  # Editar valores
-nano .django.env  # Editar valores
+nano .docker.env  # Edit values
+nano .django.env  # Edit values
 
-# 2. Configurar SSL
+# 2. Configure SSL
 chmod +x setup-ssl.sh
 ./setup-ssl.sh
 
-# 3. Desplegar
+# 3. Deploy
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
 ---
 
-## Orden de Ejecución para Actualización
+## Execution Order for Updates
 
-**Método Recomendado (con imágenes Docker pre-construidas):**
+**Recommended Method (with pre-built Docker images):**
 
 ```bash
-# En desarrollo: construir y subir
+# In development: build and push
 cd infrastructure
 ./build-and-push.sh v1.0.2
 
-# En servidor: actualizar
+# On server: update
 cd /opt/intell/infrastructure
-nano .docker.env  # Cambiar IMAGE_TAG=v1.0.2
+nano .docker.env  # Change IMAGE_TAG=v1.0.2
 docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 ```
 
-**Método Alternativo (build en servidor):**
+**Alternative Method (build on server):**
 
 ```bash
 cd /opt/intell/infrastructure
@@ -244,9 +244,9 @@ cd /opt/intell/infrastructure
 
 ---
 
-## Permisos Requeridos
+## Required Permissions
 
-Todos los scripts deben ser ejecutables:
+All scripts must be executable:
 
 ```bash
 chmod +x deploy.sh setup-ssl.sh backup-db.sh restore-db.sh update.sh build-and-push.sh
@@ -254,47 +254,47 @@ chmod +x deploy.sh setup-ssl.sh backup-db.sh restore-db.sh update.sh build-and-p
 
 ---
 
-## Variables de Entorno Requeridas
+## Required Environment Variables
 
-Los scripts leen las siguientes variables de entorno:
+The scripts read the following environment variables:
 
-- **`.docker.env`**: Usado por `docker-compose.prod.yml`, `backup-db.sh`, `restore-db.sh`
-- **`.django.env`**: Usado por el contenedor backend (Django)
-- **`.build.env`**: Usado por `build-and-push.sh` para construir frontend con URLs correctas
+- **`.docker.env`**: Used by `docker-compose.prod.yml`, `backup-db.sh`, `restore-db.sh`
+- **`.django.env`**: Used by the backend container (Django)
+- **`.build.env`**: Used by `build-and-push.sh` to build frontend with correct URLs
 
-Ver [e-ENV_FILES_README.md](e-ENV_FILES_README.md) para más detalles sobre las variables de entorno.
+See [e-ENV_FILES_README.md](e-ENV_FILES_README.md) for more details about environment variables.
 
 ---
 
 ## Troubleshooting
 
-### Script no se ejecuta
+### Script won't execute
 
 ```bash
-# Verificar permisos
+# Verify permissions
 ls -la deploy.sh
 
-# Hacer ejecutable
+# Make executable
 chmod +x deploy.sh
 ```
 
-### Error de variables de entorno
+### Environment variable error
 
 ```bash
-# Verificar que los archivos existen
+# Verify that files exist
 ls -la .docker.env .django.env
 
-# Verificar sintaxis
+# Verify syntax
 cat .docker.env | grep -v '^#' | grep -v '^$'
 ```
 
-### Error de Docker Compose
+### Docker Compose error
 
 ```bash
-# Usar --env-file explícitamente
+# Use --env-file explicitly
 docker compose -f docker-compose.prod.yml --env-file .docker.env config
 ```
 
 ---
 
-Para más información sobre deployment en producción, consulta [b-DEPLOYMENT.md](b-DEPLOYMENT.md).
+For more information about production deployment, see [b-DEPLOYMENT.md](b-DEPLOYMENT.md).

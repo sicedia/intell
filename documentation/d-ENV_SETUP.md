@@ -1,198 +1,198 @@
-# Configuración de Variables de Entorno - Intelli
+# Environment Variables Configuration - Intelli
 
-Esta guía explica cómo configurar las variables de entorno para desarrollo y producción.
+This guide explains how to configure environment variables for development and production.
 
-## Estructura de Archivos .env
+## .env File Structure
 
 ### Backend (Django)
 
 ```
 backend/
-├── env.example              # Ejemplo general (referencia)
-├── env.development.example  # Para desarrollo local
-├── env.production.example   # Para producción
-└── .env                     # Tu archivo real (NO commitear)
+├── env.example              # General example (reference)
+├── env.development.example  # For local development
+├── env.production.example   # For production
+└── .env                     # Your actual file (DO NOT commit)
 ```
 
-**Para desarrollo:**
+**For development:**
 ```bash
 cd backend
 cp env.development.example .env
-# Editar .env con tus valores
+# Edit .env with your values
 ```
 
-**Para producción:**
+**For production:**
 ```bash
 cd backend
 cp env.production.example .env
-# Editar .env con valores de producción
+# Edit .env with production values
 ```
 
 ### Frontend (Next.js)
 
 ```
 frontend/
-├── env.example              # Ejemplo general (referencia)
-├── env.development.example  # Para desarrollo local
-├── env.production.example   # Para producción (referencia)
-└── .env.local               # Tu archivo real para desarrollo (NO commitear)
+├── env.example              # General example (reference)
+├── env.development.example  # For local development
+├── env.production.example   # For production (reference)
+└── .env.local               # Your actual file for development (DO NOT commit)
 ```
 
-**Para desarrollo:**
+**For development:**
 ```bash
 cd frontend
 cp env.development.example .env.local
-# Editar .env.local con tus valores
+# Edit .env.local with your values
 ```
 
-**Para producción:**
-Las variables de producción se configuran en `infrastructure/.env` y se pasan al contenedor Docker durante el build.
+**For production:**
+Production variables are configured in `infrastructure/.env` and passed to the Docker container during build.
 
 ### Infrastructure (Docker Compose)
 
 ```
 infrastructure/
-├── .docker.env.example      # Variables para Docker Compose
-├── .django.env.example      # Variables para Django en Docker
-├── .docker.env              # Tu archivo real (NO commitear)
-└── .django.env              # Tu archivo real (NO commitear)
+├── .docker.env.example      # Variables for Docker Compose
+├── .django.env.example      # Variables for Django in Docker
+├── .docker.env              # Your actual file (DO NOT commit)
+└── .django.env              # Your actual file (DO NOT commit)
 ```
 
-**Para producción:**
+**For production:**
 ```bash
 cd infrastructure
 cp .docker.env.example .docker.env
 cp .django.env.example .django.env
-# Editar ambos archivos con valores de producción
+# Edit both files with production values
 ```
 
-## Explicación de la Estructura
+## Structure Explanation
 
-### ¿Por qué dos archivos en infrastructure?
+### Why two files in infrastructure?
 
-1. **`infrastructure/.env`** - Variables para Docker Compose:
-   - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` - Configuración de PostgreSQL
-   - `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_WS_BASE_URL` - URLs para el build del frontend
-   - `REDIS_PASSWORD` (opcional) - Contraseña de Redis
+1. **`infrastructure/.docker.env`** - Variables for Docker Compose:
+   - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` - PostgreSQL configuration
+   - `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_WS_BASE_URL` - URLs for frontend build
+   - `REDIS_PASSWORD` (optional) - Redis password
 
-2. **`infrastructure/.django.env`** - Variables para Django backend en Docker:
-   - `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` - Configuración de Django
-   - `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS` - Seguridad
+2. **`infrastructure/.django.env`** - Variables for Django backend in Docker:
+   - `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` - Django configuration
+   - `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS` - Security
    - `MICROSOFT_CLIENT_ID`, etc. - OAuth
-   - Variables de email, logging, etc.
+   - Email, logging variables, etc.
 
-**Razón:** Docker Compose necesita variables para construir servicios, mientras que Django necesita sus propias variables de configuración. Separarlos hace la configuración más clara y mantenible.
+**Reason:** Docker Compose needs variables to build services, while Django needs its own configuration variables. Separating them makes configuration clearer and more maintainable.
 
-## Variables Importantes
+## Important Variables
 
-### Backend - Desarrollo
+### Backend - Development
 
-| Variable | Valor Desarrollo | Descripción |
+| Variable | Development Value | Description |
 |----------|------------------|-------------|
-| `DEBUG` | `True` | Habilita modo debug |
-| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Hosts permitidos |
-| `DATABASE_URL` | `postgresql://...@localhost:5432/intell` | Base de datos local |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Origen del frontend |
+| `DEBUG` | `True` | Enables debug mode |
+| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Allowed hosts |
+| `DATABASE_URL` | `postgresql://...@localhost:5432/intell` | Local database |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Frontend origin |
 
-### Backend - Producción
+### Backend - Production
 
-| Variable | Valor Producción | Descripción |
+| Variable | Production Value | Description |
 |----------|------------------|-------------|
-| `DEBUG` | `False` | **CRÍTICO:** Siempre False en producción |
-| `ALLOWED_HOSTS` | `intell.cedia.org.ec` | Tu dominio |
-| `SECRET_KEY` | `[generar nuevo]` | Clave secreta única y fuerte |
-| `SECURE_SSL_REDIRECT` | `True` | Redirigir HTTP a HTTPS |
-| `CORS_ALLOWED_ORIGINS` | `https://intell.cedia.org.ec` | Origen del frontend |
+| `DEBUG` | `False` | **CRITICAL:** Always False in production |
+| `ALLOWED_HOSTS` | `intell.cedia.org.ec` | Your domain |
+| `SECRET_KEY` | `[generate new]` | Unique and strong secret key |
+| `SECURE_SSL_REDIRECT` | `True` | Redirect HTTP to HTTPS |
+| `CORS_ALLOWED_ORIGINS` | `https://intell.cedia.org.ec` | Frontend origin |
 
-### Frontend - Desarrollo
+### Frontend - Development
 
-| Variable | Valor Desarrollo | Descripción |
+| Variable | Development Value | Description |
 |----------|------------------|-------------|
-| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:8000/api` | API backend local |
-| `NEXT_PUBLIC_WS_BASE_URL` | `ws://localhost:8000/ws` | WebSocket local |
-| `NEXT_PUBLIC_APP_ENV` | `development` | Entorno de la app |
+| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:8000/api` | Local backend API |
+| `NEXT_PUBLIC_WS_BASE_URL` | `ws://localhost:8000/ws` | Local WebSocket |
+| `NEXT_PUBLIC_APP_ENV` | `development` | App environment |
 
-### Frontend - Producción
+### Frontend - Production
 
-| Variable | Valor Producción | Descripción |
+| Variable | Production Value | Description |
 |----------|------------------|-------------|
-| `NEXT_PUBLIC_API_BASE_URL` | `https://intell.cedia.org.ec/api` | API en producción |
-| `NEXT_PUBLIC_WS_BASE_URL` | `wss://intell.cedia.org.ec/ws` | WebSocket seguro |
-| `NEXT_PUBLIC_APP_ENV` | `production` | Entorno de la app |
+| `NEXT_PUBLIC_API_BASE_URL` | `https://intell.cedia.org.ec/api` | API in production |
+| `NEXT_PUBLIC_WS_BASE_URL` | `wss://intell.cedia.org.ec/ws` | Secure WebSocket |
+| `NEXT_PUBLIC_APP_ENV` | `production` | App environment |
 
 ### Infrastructure - Docker Compose
 
-| Variable | Descripción |
+| Variable | Description |
 |----------|-------------|
-| `POSTGRES_DB` | Nombre de la base de datos |
-| `POSTGRES_USER` | Usuario de PostgreSQL |
-| `POSTGRES_PASSWORD` | **IMPORTANTE:** Contraseña fuerte |
-| `NEXT_PUBLIC_API_BASE_URL` | URL de API para build del frontend |
-| `NEXT_PUBLIC_WS_BASE_URL` | URL de WebSocket para build del frontend |
+| `POSTGRES_DB` | Database name |
+| `POSTGRES_USER` | PostgreSQL user |
+| `POSTGRES_PASSWORD` | **IMPORTANT:** Strong password |
+| `NEXT_PUBLIC_API_BASE_URL` | API URL for frontend build |
+| `NEXT_PUBLIC_WS_BASE_URL` | WebSocket URL for frontend build |
 
-## Generar SECRET_KEY
+## Generate SECRET_KEY
 
-Para producción, genera una nueva SECRET_KEY:
+For production, generate a new SECRET_KEY:
 
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-## Checklist de Configuración
+## Configuration Checklist
 
-### Desarrollo Local
+### Local Development
 
-- [ ] Copiar `backend/env.development.example` a `backend/.env`
-- [ ] Copiar `frontend/env.development.example` a `frontend/.env.local`
-- [ ] Configurar `DATABASE_URL` si usas PostgreSQL
-- [ ] Configurar Microsoft OAuth si lo usas
-- [ ] Verificar que `DEBUG=True` en backend
+- [ ] Copy `backend/env.development.example` to `backend/.env`
+- [ ] Copy `frontend/env.development.example` to `frontend/.env.local`
+- [ ] Configure `DATABASE_URL` if using PostgreSQL
+- [ ] Configure Microsoft OAuth if using it
+- [ ] Verify that `DEBUG=True` in backend
 
-### Producción
+### Production
 
-- [ ] Copiar `infrastructure/.docker.env.example` a `infrastructure/.docker.env`
-- [ ] Copiar `infrastructure/.django.env.example` a `infrastructure/.django.env`
-- [ ] Generar nueva `SECRET_KEY` para backend
-- [ ] Configurar contraseña fuerte para PostgreSQL
-- [ ] Verificar que `DEBUG=False` en backend
-- [ ] Configurar `ALLOWED_HOSTS` con tu dominio
-- [ ] Configurar `CORS_ALLOWED_ORIGINS` con tu dominio
-- [ ] Habilitar todas las configuraciones de seguridad SSL
-- [ ] Configurar Microsoft OAuth con URLs de producción
-- [ ] Configurar email SMTP si es necesario
+- [ ] Copy `infrastructure/.docker.env.example` to `infrastructure/.docker.env`
+- [ ] Copy `infrastructure/.django.env.example` to `infrastructure/.django.env`
+- [ ] Generate new `SECRET_KEY` for backend
+- [ ] Configure strong password for PostgreSQL
+- [ ] Verify that `DEBUG=False` in backend
+- [ ] Configure `ALLOWED_HOSTS` with your domain
+- [ ] Configure `CORS_ALLOWED_ORIGINS` with your domain
+- [ ] Enable all SSL security configurations
+- [ ] Configure Microsoft OAuth with production URLs
+- [ ] Configure SMTP email if necessary
 
-## Seguridad
+## Security
 
-⚠️ **NUNCA**:
-- Commitees archivos `.env`, `.env.local`, `.docker.env`, `.django.env` al repositorio
-- Compartas secretos en texto plano
-- Uses la misma `SECRET_KEY` en desarrollo y producción
-- Dejes `DEBUG=True` en producción
+⚠️ **NEVER**:
+- Commit `.env`, `.env.local`, `.docker.env`, `.django.env` files to the repository
+- Share secrets in plain text
+- Use the same `SECRET_KEY` in development and production
+- Leave `DEBUG=True` in production
 
-✅ **SIEMPRE**:
-- Usa contraseñas fuertes y únicas
-- Genera nueva `SECRET_KEY` para cada entorno
-- Revisa los archivos `.env.example` antes de crear los reales
-- Mantén los archivos `.env` fuera del control de versiones
+✅ **ALWAYS**:
+- Use strong and unique passwords
+- Generate new `SECRET_KEY` for each environment
+- Review `.env.example` files before creating the actual ones
+- Keep `.env` files out of version control
 
 ## Troubleshooting
 
-### Backend no lee variables de entorno
+### Backend not reading environment variables
 
-1. Verifica que el archivo se llama `.env` (no `env`)
-2. Verifica que está en el directorio `backend/`
-3. Reinicia el servidor Django
+1. Verify that the file is named `.env` (not `env`)
+2. Verify that it's in the `backend/` directory
+3. Restart the Django server
 
-### Frontend no lee variables de entorno
+### Frontend not reading environment variables
 
-1. Verifica que el archivo se llama `.env.local` (no `.env`)
-2. Verifica que está en el directorio `frontend/`
-3. Las variables deben empezar con `NEXT_PUBLIC_`
-4. Reinicia el servidor Next.js
+1. Verify that the file is named `.env.local` (not `.env`)
+2. Verify that it's in the `frontend/` directory
+3. Variables must start with `NEXT_PUBLIC_`
+4. Restart the Next.js server
 
-### Variables no se pasan en Docker
+### Variables not passed in Docker
 
-1. Verifica que `infrastructure/.docker.env` existe
-2. Verifica que `infrastructure/.django.env` existe
-3. Verifica la sintaxis en `docker-compose.prod.yml`
-4. Reconstruye los contenedores: `docker-compose build --no-cache`
+1. Verify that `infrastructure/.docker.env` exists
+2. Verify that `infrastructure/.django.env` exists
+3. Verify syntax in `docker-compose.prod.yml`
+4. Rebuild containers: `docker-compose build --no-cache`
