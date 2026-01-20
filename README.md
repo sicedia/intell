@@ -2,52 +2,64 @@
 
 Monorepo application for patent data analysis and visualization with Django backend (REST API + WebSocket), Next.js frontend (TypeScript), Celery workers, and Redis.
 
-## 📚 Documentación
+## 📚 Documentation
 
-Toda la documentación del proyecto se encuentra en la carpeta [`documentation/`](documentation/).
+All project documentation is located in the [`documentation/`](documentation/) folder.
 
-**Empieza aquí:**
-- **Primera vez:** Lee [`documentation/README.md`](documentation/README.md) para ver el orden de lectura recomendado
-- **Desarrollo:** Consulta [`documentation/a-README.md`](documentation/a-README.md) para Quick Start
-- **Producción:** Sigue la guía en [`documentation/b-DEPLOYMENT.md`](documentation/b-DEPLOYMENT.md)
+**Start here:**
+- **First time:** Read [`documentation/README.md`](documentation/README.md) to see the recommended reading order
+- **Development:** Check [`documentation/a-README.md`](documentation/a-README.md) for Quick Start
+- **Production:** Follow the guide in [`documentation/b-DEPLOYMENT.md`](documentation/b-DEPLOYMENT.md)
 
 ## 🚀 Quick Start
 
-Para comenzar rápidamente:
+To get started quickly:
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone <repo-url>
 cd intell
 
-# 2. Iniciar infraestructura (PostgreSQL, Redis)
+# 2. Start infrastructure (PostgreSQL, Redis)
 cd infrastructure
 docker-compose up -d
 
-# 3. Configurar backend
+# 3. Setup backend with Poetry
 cd ../backend
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+
+# Install Poetry if not already installed
+pip install poetry
+
+# Install dependencies
+poetry install
+
+# Activate Poetry shell (or use poetry run for commands)
+poetry shell
+
+# Copy environment file
 cp env.example .env
-# Editar .env con tus configuraciones
-python manage.py migrate
-python manage.py createsuperuser
+# Edit .env with your configurations
 
-# 4. Iniciar backend
-python manage.py runserver
+# Run migrations
+poetry run python manage.py migrate
 
-# 5. Configurar frontend (en otra terminal)
+# Create superuser
+poetry run python manage.py createsuperuser
+
+# 4. Start backend (in Poetry shell or use poetry run)
+poetry run python manage.py runserver
+
+# 5. Setup frontend (in another terminal)
 cd ../frontend
 npm install
 cp env.example .env.local
-# Editar .env.local con tus configuraciones
+# Edit .env.local with your configurations
 npm run dev
 ```
 
-Para una guía completa, consulta [`documentation/a-README.md`](documentation/a-README.md).
+For a complete guide, see [`documentation/a-README.md`](documentation/a-README.md).
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 intell/
@@ -57,14 +69,14 @@ intell/
 └── documentation/        # Toda la documentación organizada
 ```
 
-## 🔗 Enlaces Rápidos
+## 🔗 Quick Links
 
-- [Documentación Principal](documentation/README.md) - Índice de documentación
-- [Guía de Deployment](documentation/b-DEPLOYMENT.md) - Deployment en producción
-- [Scripts de Deployment](documentation/c-DEPLOYMENT_SCRIPTS.md) - Documentación de scripts
-- [Configuración de Variables](documentation/d-ENV_SETUP.md) - Variables de entorno
-- [Infraestructura](documentation/f-INFRASTRUCTURE_README.md) - Docker Compose y servicios
+- [Main Documentation](documentation/README.md) - Documentation index
+- [Deployment Guide](documentation/b-DEPLOYMENT.md) - Production deployment
+- [Deployment Scripts](documentation/c-DEPLOYMENT_SCRIPTS.md) - Script documentation
+- [Environment Variables](documentation/d-ENV_SETUP.md) - Environment configuration
+- [Infrastructure](documentation/f-INFRASTRUCTURE_README.md) - Docker Compose and services
 
-## 📖 Más Información
+## 📖 More Information
 
-Consulta [`documentation/README.md`](documentation/README.md) para ver todas las guías disponibles y el orden de lectura recomendado.
+See [`documentation/README.md`](documentation/README.md) to view all available guides and the recommended reading order.

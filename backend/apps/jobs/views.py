@@ -625,8 +625,7 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
     """ViewSet for ImageTask with library management capabilities."""
     queryset = ImageTask.objects.select_related('job', 'job__created_by', 'group', 'created_by').prefetch_related('tags').all()
     serializer_class = ImageTaskSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'algorithm_key', 'user_description']
+    filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at', 'algorithm_key']
     ordering = ['-created_at']
     
@@ -662,6 +661,35 @@ class ImageTaskViewSet(viewsets.ModelViewSet):
             if published_param is not None:
                 if published_param.lower() in ('true', 'false'):
                     queryset = queryset.filter(is_published=(published_param.lower() == 'true'))
+        
+        # Custom search implementation - handles null values properly and searches across multiple fields
+        search_param = self.request.query_params.get('search')
+        if search_param:
+            search_term = search_param.strip()
+            if search_term:
+                # Build Q objects for case-insensitive search across multiple fields
+                # Django's icontains handles null values correctly (won't match null fields)
+                search_query = Q()
+                
+                # Search in title (case-insensitive, handles null)
+                search_query |= Q(title__icontains=search_term)
+                
+                # Search in algorithm_key (always has a value)
+                search_query |= Q(algorithm_key__icontains=search_term)
+                
+                # Search in user_description (case-insensitive, handles null)
+                search_query |= Q(user_description__icontains=search_term)
+                
+                # Search in ai_context (case-insensitive, handles null)
+                search_query |= Q(ai_context__icontains=search_term)
+                
+                # Search in tag names (through many-to-many relationship)
+                search_query |= Q(tags__name__icontains=search_term)
+                
+                # Search in group name (through foreign key)
+                search_query |= Q(group__name__icontains=search_term)
+                
+                queryset = queryset.filter(search_query).distinct()
         
         # Filter by tags
         tags_param = self.request.query_params.get('tags')

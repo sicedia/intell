@@ -48,16 +48,17 @@ backend/
 ├── context/               # Test data and examples
 ├── media/                 # Generated artifacts (PNG/SVG)
 ├── Dockerfile.prod        # Production Dockerfile
-└── requirements.txt
+├── pyproject.toml         # Poetry dependencies
+└── poetry.lock            # Poetry lock file
 ```
 
 ## Setup
 
 ### Prerequisites
 
-- Python 3.11+ (recommended 3.13)
+- Python 3.12+ (required for Django 6.0)
+- Poetry (for dependency management)
 - Docker and Docker Compose (for PostgreSQL and Redis)
-- Virtual environment (venv)
 
 ### Installation
 
@@ -78,7 +79,11 @@ backend/
 2. **Install Python dependencies:**
    ```bash
    cd ../backend
-   pip install -r requirements.txt
+   # Install Poetry if not already installed
+   pip install poetry
+   
+   # Install all dependencies
+   poetry install
    ```
 
 3. **Set up environment variables:**
@@ -89,7 +94,7 @@ backend/
 
 4. **Run automated backend setup:**
    ```bash
-   python scripts/setup_dev.py
+   poetry run python scripts/setup_dev.py
    ```
    
    This script will:
@@ -100,8 +105,8 @@ backend/
    
    Options:
    ```bash
-   python scripts/setup_dev.py --skip-superuser  # Skip superuser creation
-   python scripts/setup_dev.py --skip-infrastructure-check  # Skip infrastructure check
+   poetry run python scripts/setup_dev.py --skip-superuser  # Skip superuser creation
+   poetry run python scripts/setup_dev.py --skip-infrastructure-check  # Skip infrastructure check
    ```
 
 #### Manual Setup (Alternative)
@@ -117,7 +122,11 @@ If you prefer to set up manually:
 2. **Install Python dependencies:**
    ```bash
    cd ../backend
-   pip install -r requirements.txt
+   # Install Poetry if not already installed
+   pip install poetry
+   
+   # Install all dependencies
+   poetry install
    ```
 
 3. **Set up environment variables:**
@@ -135,26 +144,35 @@ If you prefer to set up manually:
 
 4. **Verify infrastructure connectivity:**
    ```bash
-   python scripts/check_infrastructure.py
+   poetry run python scripts/check_infrastructure.py
    ```
 
 5. **Run migrations:**
    ```bash
-   python manage.py makemigrations
-   python manage.py migrate
+   poetry run python manage.py makemigrations
+   poetry run python manage.py migrate
    ```
 
 6. **Create superuser:**
    ```bash
-   python manage.py createsuperuser
+   poetry run python manage.py createsuperuser
    ```
 
 ## Running the Application
 
 ### Django Server
 
+**Using Poetry shell:**
 ```bash
+cd backend
+poetry shell
 python manage.py runserver
+```
+
+**Or using poetry run:**
+```bash
+cd backend
+poetry run python manage.py runserver
 ```
 
 Server runs at `http://localhost:8000`
@@ -169,11 +187,15 @@ Use the helper script to start all queues in one worker:
 
 **Windows PowerShell:**
 ```powershell
+cd backend
+poetry shell
 .\scripts\start_celery_worker.ps1
 ```
 
 **Linux/macOS:**
 ```bash
+cd backend
+poetry shell
 chmod +x scripts/start_celery_worker.sh
 ./scripts/start_celery_worker.sh
 ```
@@ -190,31 +212,31 @@ For better performance on Windows development, consider using WSL2 or Docker.
 
 Start a single worker for all queues:
 ```bash
-celery -A config worker -l info -Q ingestion_io,charts_cpu,ai
+poetry run celery -A config worker -l info -Q ingestion_io,charts_cpu,ai
 ```
 
 Or run separate workers for better isolation:
 
 **Terminal 1 - Ingestion I/O queue:**
 ```bash
-celery -A config worker -Q ingestion_io -c 4 --prefetch-multiplier=4 -l info
+poetry run celery -A config worker -Q ingestion_io -c 4 --prefetch-multiplier=4 -l info
 ```
 
 **Terminal 2 - Charts CPU queue:**
 ```bash
-celery -A config worker -Q charts_cpu -c 2 --prefetch-multiplier=1 -l info
+poetry run celery -A config worker -Q charts_cpu -c 2 --prefetch-multiplier=1 -l info
 ```
 
 **Terminal 3 - AI queue:**
 ```bash
-celery -A config worker -Q ai -c 2 --prefetch-multiplier=1 -l info
+poetry run celery -A config worker -Q ai -c 2 --prefetch-multiplier=1 -l info
 ```
 
 #### Verify Celery Setup
 
 Check that Redis is accessible and workers are running:
 ```bash
-python scripts/check_celery.py
+poetry run python scripts/check_celery.py
 ```
 
 This script verifies:
@@ -256,7 +278,7 @@ docker-compose exec redis redis-cli ping
 
 Or use the verification script:
 ```bash
-python scripts/check_infrastructure.py
+poetry run python scripts/check_infrastructure.py
 ```
 
 ## API Endpoints
@@ -476,27 +498,27 @@ The project uses **pytest** and **pytest-django** for testing. Tests are organiz
 
 **Run all tests:**
 ```bash
-pytest
+poetry run pytest
 ```
 
 **Run tests with migrations (required for integration tests):**
 ```bash
-pytest --migrations
+poetry run pytest --migrations
 ```
 
 **Run specific test file:**
 ```bash
-pytest apps/algorithms/tests/test_registry.py
+poetry run pytest apps/algorithms/tests/test_registry.py
 ```
 
 **Run specific test:**
 ```bash
-pytest apps/audit/tests/test_emit_event.py::TestEmitEvent::test_emit_event_for_job
+poetry run pytest apps/audit/tests/test_emit_event.py::TestEmitEvent::test_emit_event_for_job
 ```
 
 **Run with coverage:**
 ```bash
-pytest --cov=apps --cov-report=html
+poetry run pytest --cov=apps --cov-report=html
 ```
 
 ### Test Structure

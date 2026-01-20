@@ -1,47 +1,47 @@
-# Guía de Deployment en Producción - Intelli
+# Production Deployment Guide - Intelli
 
-Esta guía proporciona instrucciones paso a paso para desplegar Intelli en un servidor Ubuntu 24.04 LTS en producción.
+This guide provides step-by-step instructions for deploying Intelli on an Ubuntu 24.04 LTS server in production.
 
-## Tabla de Contenidos
+## Table of Contents
 
-1. [Requisitos Previos](#requisitos-previos)
-2. [Preparación del Servidor](#preparación-del-servidor)
-3. [Configuración Inicial](#configuración-inicial)
-4. [Configuración de SSL](#configuración-de-ssl)
+1. [Prerequisites](#prerequisites)
+2. [Server Preparation](#server-preparation)
+3. [Initial Configuration](#initial-configuration)
+4. [SSL Configuration](#ssl-configuration)
 5. [Deployment](#deployment)
-6. [Verificación](#verificación)
-7. [Mantenimiento](#mantenimiento)
+6. [Verification](#verification)
+7. [Maintenance](#maintenance)
 8. [Troubleshooting](#troubleshooting)
 
 ---
 
-## Requisitos Previos
+## Prerequisites
 
-### Hardware Mínimo Recomendado
+### Minimum Recommended Hardware
 
 - **CPU**: 4 cores
 - **RAM**: 8 GB
-- **Disco**: 50 GB SSD
-- **Red**: Conexión estable con puertos 80 y 443 abiertos
+- **Disk**: 50 GB SSD
+- **Network**: Stable connection with ports 80 and 443 open
 
-### Software Requerido
+### Required Software
 
-- **Sistema Operativo**: Ubuntu 24.04 LTS
-- **Docker**: Versión 24.0 o superior
-- **Docker Compose**: Versión 2.0 o superior
-- **Git**: Para clonar el repositorio
+- **Operating System**: Ubuntu 24.04 LTS
+- **Docker**: Version 24.0 or higher
+- **Docker Compose**: Version 2.0 or higher
+- **Git**: To clone the repository
 
-### Dominio y DNS
+### Domain and DNS
 
-- Dominio configurado: `intell.cedia.org.ec`
-- Registros DNS A/AAAA apuntando al servidor
-- Certificado SSL (wildcard `*.cedia.edu.ec` o específico)
+- Configured domain: `intell.cedia.org.ec`
+- DNS A/AAAA records pointing to the server
+- SSL certificate (wildcard `*.cedia.edu.ec` or specific)
 
 ---
 
-## Preparación del Servidor
+## Server Preparation
 
-### 1. Actualizar el Sistema
+### 1. Update the System
 
 ```bash
 sudo apt update
@@ -49,89 +49,89 @@ sudo apt upgrade -y
 sudo apt install -y curl wget git ufw
 ```
 
-### 2. Instalar Docker
+### 2. Install Docker
 
 ```bash
-# Instalar Docker
+# Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Agregar usuario al grupo docker (reemplazar 'usuario' con tu usuario)
+# Add user to docker group (replace 'user' with your username)
 sudo usermod -aG docker $USER
 
-# Instalar Docker Compose Plugin
+# Install Docker Compose Plugin
 sudo apt install -y docker-compose-plugin
 
-# Verificar instalación
+# Verify installation
 docker --version
 docker compose version
 ```
 
-**Nota**: Cierra sesión y vuelve a iniciar sesión para que los cambios de grupo surtan efecto.
+**Note**: Log out and log back in for group changes to take effect.
 
-### 3. Configurar Firewall (UFW)
+### 3. Configure Firewall (UFW)
 
 ```bash
-# Habilitar UFW
+# Enable UFW
 sudo ufw enable
 
-# Permitir SSH (IMPORTANTE: hacerlo antes de bloquear todo)
+# Allow SSH (IMPORTANT: do this before blocking everything)
 sudo ufw allow 22/tcp
 
-# Permitir HTTP y HTTPS
+# Allow HTTP and HTTPS
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 
-# Verificar estado
+# Verify status
 sudo ufw status
 ```
 
-### 4. Clonar el Repositorio
+### 4. Clone the Repository
 
 ```bash
-# Crear directorio para la aplicación
+# Create directory for the application
 sudo mkdir -p /opt/intell
 sudo chown $USER:$USER /opt/intell
 
-# Clonar repositorio (reemplazar con tu URL)
+# Clone repository (replace with your URL)
 cd /opt/intell
-git clone <tu-repositorio-url> .
+git clone <your-repository-url> .
 
-# O si ya tienes el código, copiarlo al servidor
+# Or if you already have the code, copy it to the server
 ```
 
 ---
 
-## Configuración Inicial
+## Initial Configuration
 
-### 1. Configurar Variables de Entorno
+### 1. Configure Environment Variables
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Copiar archivos de ejemplo
+# Copy example files
 cp .docker.env.example .docker.env
 cp .django.env.example .django.env
 
-# Editar con tus valores
+# Edit with your values
 nano .docker.env
 nano .django.env
 ```
 
-**Configuración mínima en `.docker.env`**:
+**Minimum configuration in `.docker.env`**:
 
 ```env
 POSTGRES_DB=intell
 POSTGRES_USER=intell_user
-POSTGRES_PASSWORD=<contraseña-fuerte-generada>
+POSTGRES_PASSWORD=<strong-generated-password>
 NEXT_PUBLIC_API_BASE_URL=https://intell.cedia.org.ec/api
 NEXT_PUBLIC_WS_BASE_URL=wss://intell.cedia.org.ec/ws
 ```
 
-**Configuración mínima en `.django.env`**:
+**Minimum configuration in `.django.env`**:
 
 ```env
-SECRET_KEY=<generar-nueva-clave-secreta>
+SECRET_KEY=<generate-new-secret-key>
 DEBUG=False
 ALLOWED_HOSTS=intell.cedia.org.ec
 CORS_ALLOWED_ORIGINS=https://intell.cedia.org.ec
@@ -146,109 +146,109 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS=True
 SECURE_HSTS_PRELOAD=True
 ```
 
-**Generar SECRET_KEY**:
+**Generate SECRET_KEY**:
 
 ```bash
 python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-### 2. Configurar Microsoft OAuth (si aplica)
+### 2. Configure Microsoft OAuth (if applicable)
 
-Si usas autenticación con Microsoft, actualiza en `.django.env`:
+If you use Microsoft authentication, update in `.django.env`:
 
 ```env
-MICROSOFT_CLIENT_ID=<tu-client-id>
-MICROSOFT_CLIENT_SECRET=<tu-client-secret>
-MICROSOFT_TENANT_ID=<tu-tenant-id>
+MICROSOFT_CLIENT_ID=<your-client-id>
+MICROSOFT_CLIENT_SECRET=<your-client-secret>
+MICROSOFT_TENANT_ID=<your-tenant-id>
 MICROSOFT_REDIRECT_URI=https://intell.cedia.org.ec/api/auth/microsoft/callback/
 MICROSOFT_LOGIN_REDIRECT_URL=https://intell.cedia.org.ec/en/dashboard
 MICROSOFT_LOGIN_ERROR_URL=https://intell.cedia.org.ec/en/login
 ```
 
-**Importante**: Configura estos mismos URLs en Azure Portal > App Registrations > Redirect URIs.
+**Important**: Configure these same URLs in Azure Portal > App Registrations > Redirect URIs.
 
 ---
 
-## Configuración de SSL
+## SSL Configuration
 
-### Opción 1: Certificado Wildcard Existente
+### Option 1: Existing Wildcard Certificate
 
-Si ya tienes un certificado wildcard `*.cedia.edu.ec`:
+If you already have a wildcard certificate `*.cedia.edu.ec`:
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Crear directorio para certificados
+# Create directory for certificates
 mkdir -p nginx/ssl
 
-# Copiar certificados (ajustar rutas según tu caso)
-cp /ruta/a/tu/fullchain.pem nginx/ssl/
-cp /ruta/a/tu/privkey.pem nginx/ssl/
+# Copy certificates (adjust paths according to your case)
+cp /path/to/your/fullchain.pem nginx/ssl/
+cp /path/to/your/privkey.pem nginx/ssl/
 
-# Establecer permisos correctos
+# Set correct permissions
 chmod 644 nginx/ssl/fullchain.pem
 chmod 600 nginx/ssl/privkey.pem
 ```
 
-### Opción 2: Let's Encrypt (Automático)
+### Option 2: Let's Encrypt (Automatic)
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Hacer ejecutable el script
+# Make script executable
 chmod +x setup-ssl.sh
 
-# Ejecutar script de configuración SSL
+# Run SSL configuration script
 ./setup-ssl.sh
 ```
 
-El script te guiará a través del proceso:
-1. Selecciona opción 1 para Let's Encrypt
-2. Asegúrate de que el DNS apunta correctamente al servidor
-3. El certificado se generará automáticamente
+The script will guide you through the process:
+1. Select option 1 for Let's Encrypt
+2. Make sure DNS points correctly to the server
+3. The certificate will be generated automatically
 
-### Opción 3: Certificado Personalizado
+### Option 3: Custom Certificate
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Ejecutar script
+# Run script
 ./setup-ssl.sh
 
-# Seleccionar opción 2
-# Proporcionar rutas a tus archivos de certificado
+# Select option 2
+# Provide paths to your certificate files
 ```
 
 ---
 
 ## Deployment
 
-### Método 1: Despliegue con Imágenes Pre-construidas (Recomendado)
+### Method 1: Deployment with Pre-built Images (Recommended)
 
-Este método utiliza imágenes Docker pre-construidas y subidas a Docker Hub, evitando builds en el servidor.
+This method uses pre-built Docker images uploaded to Docker Hub, avoiding builds on the server.
 
-#### Paso 1: Construir y Subir Imágenes Localmente
+#### Step 1: Build and Push Images Locally
 
-En tu máquina de desarrollo:
+On your development machine:
 
 ```bash
 cd infrastructure
 
-# Copiar archivo de configuración de build
+# Copy build configuration file
 cp .build.env.example .build.env
 
-# Editar .build.env con tus valores de producción
+# Edit .build.env with your production values
 nano .build.env
 ```
 
-**Configuración mínima en `.build.env`**:
+**Minimum configuration in `.build.env`**:
 ```env
 NEXT_PUBLIC_API_BASE_URL=https://intell.cedia.org.ec/api
 NEXT_PUBLIC_WS_BASE_URL=wss://intell.cedia.org.ec/ws
 NEXT_PUBLIC_APP_ENV=production
 ```
 
-**Construir y subir imágenes**:
+**Build and push images**:
 
 ```bash
 # Linux/macOS
@@ -258,228 +258,228 @@ NEXT_PUBLIC_APP_ENV=production
 .\build-and-push.ps1 v1.0.1
 ```
 
-El script:
-1. Construye las imágenes backend y frontend
-2. Las etiqueta con la versión especificada (ej: `v1.0.1`) y `latest`
-3. Las sube a Docker Hub (`sicedia/intell-backend` y `sicedia/intell-frontend`)
+The script:
+1. Builds backend and frontend images
+2. Tags them with the specified version (e.g., `v1.0.1`) and `latest`
+3. Pushes them to Docker Hub (`sicedia/intell-backend` and `sicedia/intell-frontend`)
 
-**Nota**: Asegúrate de estar logueado en Docker Hub:
+**Note**: Make sure you are logged into Docker Hub:
 ```bash
 docker login
 ```
 
-#### Paso 2: Configurar el Servidor
+#### Step 2: Configure the Server
 
-En el servidor de producción:
+On the production server:
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Copiar archivos de ejemplo
+# Copy example files
 cp .docker.env.example .docker.env
 cp .django.env.example .django.env
 
-# Editar .docker.env
+# Edit .docker.env
 nano .docker.env
 ```
 
-**Agregar en `.docker.env`**:
+**Add to `.docker.env`**:
 ```env
 # Docker Image Configuration
-IMAGE_TAG=v1.0.1  # o la versión que subiste
+IMAGE_TAG=v1.0.1  # or the version you uploaded
 ```
 
-#### Paso 3: Desplegar en el Servidor
+#### Step 3: Deploy on the Server
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Hacer ejecutable el script de deployment (opcional, si quieres usarlo)
+# Make deployment script executable (optional, if you want to use it)
 chmod +x deploy.sh
 
-# Opción A: Usar script de deployment automatizado
+# Option A: Use automated deployment script
 ./deploy.sh
 
-# Opción B: Deployment manual
-# Descargar imágenes desde Docker Hub
+# Option B: Manual deployment
+# Download images from Docker Hub
 docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 
-# Iniciar servicios
+# Start services
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
-# Esperar a que los servicios estén listos
+# Wait for services to be ready
 sleep 15
 
-# Ejecutar migraciones
+# Run migrations
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 
-# Recopilar archivos estáticos
+# Collect static files
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 
-# Crear superusuario (si no existe)
+# Create superuser (if it doesn't exist)
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py createsuperuser
 ```
 
-#### Actualizar a Nueva Versión
+#### Update to New Version
 
-Cuando tengas una nueva versión:
+When you have a new version:
 
 ```bash
-# 1. En desarrollo: construir y subir nueva versión
+# 1. In development: build and push new version
 ./build-and-push.sh v1.0.2
 
-# 2. En servidor: actualizar .docker.env
-# Cambiar IMAGE_TAG=v1.0.2
+# 2. On server: update .docker.env
+# Change IMAGE_TAG=v1.0.2
 
-# 3. En servidor: descargar y reiniciar
+# 3. On server: download and restart
 docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
-# 4. Ejecutar migraciones si hay cambios en la BD
+# 4. Run migrations if there are database changes
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 ```
 
-#### Rollback a Versión Anterior
+#### Rollback to Previous Version
 
-Si necesitas volver a una versión anterior:
+If you need to go back to a previous version:
 
 ```bash
-# Cambiar IMAGE_TAG en .docker.env a la versión anterior
-# Ejemplo: IMAGE_TAG=v1.0.1
+# Change IMAGE_TAG in .docker.env to the previous version
+# Example: IMAGE_TAG=v1.0.1
 
-# Descargar y reiniciar
+# Download and restart
 docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 ```
 
-### Método 2: Script Automatizado (Build en Servidor)
+### Method 2: Automated Script (Build on Server)
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Hacer ejecutables los scripts necesarios
+# Make necessary scripts executable
 chmod +x deploy.sh setup-ssl.sh backup-db.sh restore-db.sh
 
-# Ejecutar deployment
+# Run deployment
 ./deploy.sh
 ```
 
-El script realizará:
-1. Verificación de requisitos
-2. Validación de archivos de configuración
-3. Construcción de imágenes Docker
-4. Inicio de servicios
-5. Ejecución de migraciones
-6. Recopilación de archivos estáticos
-7. Creación de superusuario (si no existe)
+The script will:
+1. Verify requirements
+2. Validate configuration files
+3. Build Docker images
+4. Start services
+5. Run migrations
+6. Collect static files
+7. Create superuser (if it doesn't exist)
 
-### Método 3: Manual (Build en Servidor)
+### Method 3: Manual (Build on Server)
 
-**Nota**: Este método requiere construir las imágenes en el servidor, lo cual consume más recursos y tiempo.
+**Note**: This method requires building images on the server, which consumes more resources and time.
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Construir imágenes (requiere modificar docker-compose.prod.yml para usar build:)
+# Build images (requires modifying docker-compose.prod.yml to use build:)
 docker compose -f docker-compose.prod.yml --env-file .docker.env build
 
-# Iniciar servicios
+# Start services
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
-# Esperar a que los servicios estén listos
+# Wait for services to be ready
 sleep 15
 
-# Ejecutar migraciones
+# Run migrations
 docker compose -f docker-compose.prod.yml exec backend python manage.py migrate --noinput
 
-# Recopilar archivos estáticos
+# Collect static files
 docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
 
-# Crear superusuario
+# Create superuser
 docker compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
 ```
 
 ---
 
-## Verificación
+## Verification
 
-### 1. Verificar Estado de Servicios
+### 1. Verify Service Status
 
 ```bash
 cd /opt/intell/infrastructure
 docker compose -f docker-compose.prod.yml --env-file .docker.env ps
 ```
 
-Todos los servicios deben mostrar estado "Up" y "healthy".
+All services should show status "Up" and "healthy".
 
-### 2. Verificar Logs
+### 2. Verify Logs
 
 ```bash
-# Ver todos los logs
+# View all logs
 docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f
 
-# Ver logs de un servicio específico
+# View logs of a specific service
 docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f backend
 docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f frontend
 docker compose -f docker-compose.prod.yml --env-file .docker.env logs -f nginx
 ```
 
-### 3. Probar Endpoints
+### 3. Test Endpoints
 
 ```bash
 # Health check
 curl https://intell.cedia.org.ec/api/health/
 
-# Verificar HTTPS
+# Verify HTTPS
 curl -I https://intell.cedia.org.ec
 
-# Verificar redirección HTTP → HTTPS
+# Verify HTTP → HTTPS redirect
 curl -I http://intell.cedia.org.ec
 ```
 
-### 4. Verificar en Navegador
+### 4. Verify in Browser
 
-1. Abrir `https://intell.cedia.org.ec`
-2. Verificar que el certificado SSL es válido
-3. Probar login y funcionalidades principales
+1. Open `https://intell.cedia.org.ec`
+2. Verify that the SSL certificate is valid
+3. Test login and main functionalities
 
 ---
 
-## Mantenimiento
+## Maintenance
 
-### Actualizar la Aplicación
+### Update the Application
 
-**Método Recomendado (con imágenes Docker pre-construidas):**
+**Recommended Method (with pre-built Docker images):**
 
 ```bash
 cd /opt/intell/infrastructure
 
-# 1. En desarrollo: construir y subir nueva versión
+# 1. In development: build and push new version
 ./build-and-push.sh v1.0.2
 
-# 2. En servidor: actualizar .docker.env con nueva IMAGE_TAG
-nano .docker.env  # Cambiar IMAGE_TAG=v1.0.2
+# 2. On server: update .docker.env with new IMAGE_TAG
+nano .docker.env  # Change IMAGE_TAG=v1.0.2
 
-# 3. Descargar y reiniciar
+# 3. Download and restart
 docker compose -f docker-compose.prod.yml --env-file .docker.env pull
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
 
-# 4. Ejecutar migraciones si hay cambios en la BD
+# 4. Run migrations if there are database changes
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py migrate --noinput
 
-# 5. Recopilar archivos estáticos
+# 5. Collect static files
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 ```
 
-**Método Alternativo (build en servidor - solo si es necesario):**
+**Alternative Method (build on server - only if necessary):**
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Usar script automatizado (actualiza código desde git)
+# Use automated script (updates code from git)
 ./update.sh
 
-# O manualmente:
+# Or manually:
 git pull
 docker compose -f docker-compose.prod.yml --env-file .docker.env build --no-cache
 docker compose -f docker-compose.prod.yml --env-file .docker.env up -d
@@ -487,81 +487,81 @@ docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend py
 docker compose -f docker-compose.prod.yml --env-file .docker.env exec backend python manage.py collectstatic --noinput
 ```
 
-### Backup de Base de Datos
+### Database Backup
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Backup manual
+# Manual backup
 ./backup-db.sh
 
-# Backup con limpieza de backups antiguos
+# Backup with cleanup of old backups
 ./backup-db.sh --cleanup
 
-# Los backups se guardan en: infrastructure/backups/
+# Backups are saved in: infrastructure/backups/
 ```
 
-### Restaurar Base de Datos
+### Restore Database
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Listar backups disponibles
+# List available backups
 ls -lh backups/
 
-# Restaurar desde backup
+# Restore from backup
 ./restore-db.sh backups/intell_backup_YYYYMMDD_HHMMSS.sql.gz
 ```
 
-### Reiniciar Servicios
+### Restart Services
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Reiniciar todos los servicios
+# Restart all services
 docker compose -f docker-compose.prod.yml restart
 
-# Reiniciar un servicio específico
+# Restart a specific service
 docker compose -f docker-compose.prod.yml restart backend
 docker compose -f docker-compose.prod.yml restart frontend
 docker compose -f docker-compose.prod.yml restart nginx
 ```
 
-### Detener Servicios
+### Stop Services
 
 ```bash
 cd /opt/intell/infrastructure
 
-# Detener sin eliminar volúmenes
+# Stop without removing volumes
 docker compose -f docker-compose.prod.yml down
 
-# Detener y eliminar volúmenes (¡CUIDADO! Elimina datos)
+# Stop and remove volumes (WARNING! Deletes data)
 docker compose -f docker-compose.prod.yml down -v
 ```
 
-### Ver Uso de Recursos
+### View Resource Usage
 
 ```bash
-# Ver uso de recursos de contenedores
+# View container resource usage
 docker stats
 
-# Ver uso de disco
+# View disk usage
 docker system df
 
-# Limpiar recursos no utilizados
+# Clean unused resources
 docker system prune -a
 ```
 
-### Monitoreo de Logs
+### Log Monitoring
 
 ```bash
-# Ver logs en tiempo real
+# View logs in real time
 docker compose -f docker-compose.prod.yml logs -f
 
-# Ver últimos 100 líneas
+# View last 100 lines
 docker compose -f docker-compose.prod.yml logs --tail=100
 
-# Ver logs de un servicio específico
+# View logs of a specific service
 docker compose -f docker-compose.prod.yml logs -f backend
 ```
 
@@ -569,233 +569,233 @@ docker compose -f docker-compose.prod.yml logs -f backend
 
 ## Troubleshooting
 
-### Problema: Servicios no inician
+### Problem: Services Not Starting
 
-**Solución**:
+**Solution**:
 ```bash
-# Ver logs de errores
+# View error logs
 docker compose -f docker-compose.prod.yml logs
 
-# Verificar configuración
+# Verify configuration
 docker compose -f docker-compose.prod.yml config
 
-# Reiniciar Docker
+# Restart Docker
 sudo systemctl restart docker
 ```
 
-### Problema: Error de conexión a base de datos
+### Problem: Database Connection Error
 
-**Solución**:
+**Solution**:
 ```bash
-# Verificar que PostgreSQL está corriendo
+# Verify PostgreSQL is running
 docker compose -f docker-compose.prod.yml ps db
 
-# Verificar logs de PostgreSQL
+# Verify PostgreSQL logs
 docker compose -f docker-compose.prod.yml logs db
 
-# Verificar variables de entorno
+# Verify environment variables
 docker compose -f docker-compose.prod.yml exec backend env | grep DATABASE
 ```
 
-### Problema: Error 502 Bad Gateway
+### Problem: 502 Bad Gateway Error
 
-**Solución**:
+**Solution**:
 ```bash
-# Verificar que backend está corriendo
+# Verify backend is running
 docker compose -f docker-compose.prod.yml ps backend
 
-# Verificar logs de backend
+# Verify backend logs
 docker compose -f docker-compose.prod.yml logs backend
 
-# Verificar logs de nginx
+# Verify nginx logs
 docker compose -f docker-compose.prod.yml logs nginx
 
-# Reiniciar nginx
+# Restart nginx
 docker compose -f docker-compose.prod.yml restart nginx
 ```
 
-### Problema: Certificado SSL no funciona
+### Problem: SSL Certificate Not Working
 
-**Solución**:
+**Solution**:
 ```bash
-# Verificar que los certificados existen
+# Verify certificates exist
 ls -lh nginx/ssl/
 
-# Verificar permisos
+# Verify permissions
 chmod 644 nginx/ssl/fullchain.pem
 chmod 600 nginx/ssl/privkey.pem
 
-# Verificar configuración de nginx
+# Verify nginx configuration
 docker compose -f docker-compose.prod.yml exec nginx nginx -t
 
-# Reiniciar nginx
+# Restart nginx
 docker compose -f docker-compose.prod.yml restart nginx
 ```
 
-### Problema: Celery no procesa tareas
+### Problem: Celery Not Processing Tasks
 
-**Solución**:
+**Solution**:
 ```bash
-# Verificar que Celery worker está corriendo
+# Verify Celery worker is running
 docker compose -f docker-compose.prod.yml ps celery-worker
 
-# Ver logs de Celery
+# View Celery logs
 docker compose -f docker-compose.prod.yml logs celery-worker
 
-# Verificar conexión a Redis
+# Verify Redis connection
 docker compose -f docker-compose.prod.yml exec celery-worker celery -A config inspect active
 
-# Reiniciar Celery
+# Restart Celery
 docker compose -f docker-compose.prod.yml restart celery-worker
 ```
 
-### Problema: WebSocket no funciona
+### Problem: WebSocket Not Working
 
-**Solución**:
+**Solution**:
 ```bash
-# Verificar que Redis está corriendo (Channels usa Redis)
+# Verify Redis is running (Channels uses Redis)
 docker compose -f docker-compose.prod.yml ps redis
 
-# Verificar configuración de Channels
+# Verify Channels configuration
 docker compose -f docker-compose.prod.yml exec backend python manage.py shell -c "from channels.layers import get_channel_layer; print(get_channel_layer())"
 
-# Verificar logs de backend
+# Verify backend logs
 docker compose -f docker-compose.prod.yml logs backend | grep -i websocket
 ```
 
-### Problema: Archivos estáticos no se cargan
+### Problem: Static Files Not Loading
 
-**Solución**:
+**Solution**:
 ```bash
-# Recopilar archivos estáticos
+# Collect static files
 docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
 
-# Verificar que el volumen está montado
+# Verify volume is mounted
 docker compose -f docker-compose.prod.yml exec nginx ls -la /var/www/static/
 
-# Reiniciar nginx
+# Restart nginx
 docker compose -f docker-compose.prod.yml restart nginx
 ```
 
-### Problema: Alto uso de memoria
+### Problem: High Memory Usage
 
-**Solución**:
+**Solution**:
 ```bash
-# Ver uso de recursos
+# View resource usage
 docker stats
 
-# Ajustar límites en docker-compose.prod.yml
-# Reducir concurrency de Celery
-# Reiniciar servicios
+# Adjust limits in docker-compose.prod.yml
+# Reduce Celery concurrency
+# Restart services
 docker compose -f docker-compose.prod.yml restart
 ```
 
 ---
 
-## Comandos Útiles
+## Useful Commands
 
-### Gestión de Contenedores
+### Container Management
 
 ```bash
-# Ver estado de todos los servicios
+# View status of all services
 docker compose -f docker-compose.prod.yml ps
 
-# Ver logs en tiempo real
+# View logs in real time
 docker compose -f docker-compose.prod.yml logs -f
 
-# Ejecutar comando en contenedor
+# Execute command in container
 docker compose -f docker-compose.prod.yml exec backend python manage.py shell
 docker compose -f docker-compose.prod.yml exec backend python manage.py dbshell
 ```
 
-### Base de Datos
+### Database
 
 ```bash
-# Acceder a PostgreSQL
+# Access PostgreSQL
 docker compose -f docker-compose.prod.yml exec db psql -U intell_user -d intell
 
-# Backup manual
+# Manual backup
 docker compose -f docker-compose.prod.yml exec db pg_dump -U intell_user intell > backup.sql
 
-# Restaurar manual
+# Manual restore
 docker compose -f docker-compose.prod.yml exec -T db psql -U intell_user intell < backup.sql
 ```
 
 ### Django
 
 ```bash
-# Crear superusuario
+# Create superuser
 docker compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
 
-# Ejecutar migraciones
+# Run migrations
 docker compose -f docker-compose.prod.yml exec backend python manage.py migrate
 
-# Crear migraciones
+# Create migrations
 docker compose -f docker-compose.prod.yml exec backend python manage.py makemigrations
 
-# Shell de Django
+# Django shell
 docker compose -f docker-compose.prod.yml exec backend python manage.py shell
 ```
 
 ---
 
-## Seguridad Adicional
+## Additional Security
 
-### Configurar Backups Automáticos
+### Configure Automatic Backups
 
-Agregar a crontab:
+Add to crontab:
 
 ```bash
 crontab -e
 
-# Backup diario a las 2 AM
+# Daily backup at 2 AM
 0 2 * * * cd /opt/intell/infrastructure && ./backup-db.sh --cleanup >> /var/log/intell-backup.log 2>&1
 ```
 
-### Monitoreo de Logs
+### Log Monitoring
 
-Considerar configurar log rotation y monitoreo:
+Consider configuring log rotation and monitoring:
 
 ```bash
-# Configurar logrotate para logs de Docker
+# Configure logrotate for Docker logs
 sudo nano /etc/logrotate.d/docker-containers
 ```
 
-### Actualizaciones de Seguridad
+### Security Updates
 
 ```bash
-# Actualizar sistema regularmente
+# Update system regularly
 sudo apt update && sudo apt upgrade -y
 
-# Actualizar imágenes Docker
+# Update Docker images
 docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d
 ```
 
 ---
 
-## Soporte
+## Support
 
-Para problemas o preguntas:
-1. Revisar logs: `docker compose -f docker-compose.prod.yml logs`
-2. Verificar configuración: `docker compose -f docker-compose.prod.yml config`
-3. Consultar esta documentación
-4. Contactar al equipo de desarrollo
+For problems or questions:
+1. Review logs: `docker compose -f docker-compose.prod.yml logs`
+2. Verify configuration: `docker compose -f docker-compose.prod.yml config`
+3. Consult this documentation
+4. Contact the development team
 
 ---
 
-## Notas Finales
+## Final Notes
 
-- **Nunca** commits archivos `.docker.env` o `.django.env` al repositorio
-- **Siempre** haz backup antes de actualizar
-- **Monitorea** los logs regularmente
-- **Mantén** el sistema y las imágenes Docker actualizadas
-- **Revisa** los backups periódicamente
-- **Usa `--env-file .docker.env`** en todos los comandos de `docker compose` para asegurar que las variables se carguen correctamente
-- **nginx.conf** es el archivo de configuración usado en producción (no `nginx.conf.local`)
+- **Never** commit `.docker.env` or `.django.env` files to the repository
+- **Always** make a backup before updating
+- **Monitor** logs regularly
+- **Keep** the system and Docker images updated
+- **Review** backups periodically
+- **Use `--env-file .docker.env`** in all `docker compose` commands to ensure variables are loaded correctly
+- **nginx.conf** is the configuration file used in production (not `nginx.conf.local`)
 
-## Scripts Disponibles
+## Available Scripts
 
-Para más información sobre los scripts de deployment, consulta [c-DEPLOYMENT_SCRIPTS.md](c-DEPLOYMENT_SCRIPTS.md).
+For more information about deployment scripts, see [c-DEPLOYMENT_SCRIPTS.md](c-DEPLOYMENT_SCRIPTS.md).
 
-¡Buena suerte con tu deployment!
+Good luck with your deployment!

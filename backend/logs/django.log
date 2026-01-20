@@ -200,3 +200,126 @@ INFO 2026-01-19 12:12:18,226 views 30808 31680 Job 10 created successfully with 
 INFO 2026-01-19 12:12:18,235 views 30808 34348 Job already exists (caught IntegrityError) for idempotency_key=job_1768842736456_k61fhdu08, returning existing job 10
 INFO 2026-01-19 12:12:32,756 views 30808 32316 Job 12 created successfully with 8 image tasks
 INFO 2026-01-19 12:12:32,765 views 30808 29184 Job already exists (caught IntegrityError) for idempotency_key=job_1768842751320_1usuckzfq, returning existing job 12
+ERROR 2026-01-19 16:06:43,702 log 30808 18516 Internal Server Error: /admin/
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 246, in _get_session
+    return self._session_cache
+           ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SessionStore' object has no attribute '_session_cache'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 555, in thread_handler
+    raise exc_info[1]
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 504, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\asgiref\sync.py", line 559, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 266, in wrapper
+    return self.admin_view(view, cacheable)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 235, in inner
+    if not self.has_permission(request):
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\admin\sites.py", line 208, in has_permission
+    return request.user.is_active and request.user.is_staff
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\functional.py", line 251, in inner
+    self._setup()
+    ~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\functional.py", line 404, in _setup
+    self._wrapped = self._setupfunc()
+                    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 40, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+                                            ~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 20, in get_user
+    request._cached_user = auth.get_user(request)
+                           ~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 311, in get_user
+    user_id = _get_user_session_key(request)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 95, in _get_user_session_key
+    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+                                               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 55, in __getitem__
+    return self._session[key]
+           ^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 251, in _get_session
+    self._session_cache = self.load()
+                          ~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 55, in load
+    s = self._get_session_from_db()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 34, in _get_session_from_db
+    return self.model.objects.get(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        session_key=self.session_key, expire_date__gt=timezone.now()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1622, in execute_sql
+    cursor = self.connection.cursor()
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 320, in cursor
+    return self._cursor()
+           ~~~~~~~~~~~~^^
+  File "C:\Projects\intell\.venv\Lib\site-packages\django\db\backends\base\base.py", line 296, in _cursor
+    self.ensure_connection()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Projects\intell\backend\apps\core\db\backends\postgresql\base.py", line 88, in ensure_connection
+    raise DatabaseRetryExhaustedError(
+    ...<4 lines>...
+    )
+apps.core.db.exceptions.DatabaseRetryExhaustedError: Failed to ensure database connection after 5 attempts (attempts=5, total_time=21.90s, last_error=OperationalError)
+WARNING 2026-01-19 16:07:19,016 apps 32672 26564 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-19 16:07:26,182 apps 31076 37684 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-19 16:07:26,235 apps 31076 37684 Database connection established successfully
+WARNING 2026-01-19 16:07:55,915 runserver 31076 8340 [33mHTTP GET /static/admin/img/favicon.ico 404 [0.01, 127.0.0.1:62883][0m
+WARNING 2026-01-19 16:08:23,088 runserver 31076 8340 [33mHTTP GET /.well-known/appspecific/com.chrome.devtools.json 404 [0.02, 127.0.0.1:62883][0m
+WARNING 2026-01-19 16:08:35,540 runserver 31076 8340 [33mHTTP GET /.well-known/appspecific/com.chrome.devtools.json 404 [0.02, 127.0.0.1:62883][0m
+WARNING 2026-01-19 16:08:41,065 runserver 31076 8340 [33mHTTP GET /.well-known/appspecific/com.chrome.devtools.json 404 [0.02, 127.0.0.1:62883][0m
+WARNING 2026-01-19 16:08:48,956 runserver 31076 8340 [33mHTTP GET /.well-known/appspecific/com.chrome.devtools.json 404 [0.02, 127.0.0.1:62883][0m
+WARNING 2026-01-20 09:59:43,670 apps 12116 14112 Django apps not ready after 5.0s, skipping database check
+INFO 2026-01-20 09:59:59,695 apps 26580 22692 Waiting for database connection (timeout: 30.0s)...
+WARNING 2026-01-20 10:00:42,457 apps 26580 22692 Database not available after 30.0s. Server will start but database operations may fail.
+INFO 2026-01-20 10:01:13,971 apps 12640 26068 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-20 10:01:14,011 apps 12640 26068 Database connection established successfully
+INFO 2026-01-20 10:01:17,553 apps 24472 12072 Waiting for database connection (timeout: 30.0s)...
+INFO 2026-01-20 10:01:17,604 apps 24472 12072 Database connection established successfully

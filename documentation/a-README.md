@@ -56,26 +56,26 @@ This starts:
 ```bash
 cd backend
 
-# Create virtual environment
-python -m venv .venv
+# Install Poetry if not already installed
+pip install poetry
 
-# Activate virtual environment
+# Install dependencies (this creates a virtual environment automatically)
+poetry install
+
+# Activate Poetry shell (or use 'poetry run' for commands)
 # Windows:
-.venv\Scripts\activate
+poetry shell
 # Linux/macOS:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+poetry shell
 
 # Copy environment file
 cp env.example .env
 
 # Run migrations
-python manage.py migrate
+poetry run python manage.py migrate
 
 # Create superuser (optional)
-python manage.py createsuperuser
+poetry run python manage.py createsuperuser
 ```
 
 ### Step 3: Start Backend Services
@@ -85,26 +85,26 @@ You need **3 terminals** for full functionality:
 **Terminal 1 - Django Server:**
 ```bash
 cd backend
-.venv\Scripts\activate  # or source .venv/bin/activate
-python manage.py runserver
+poetry shell  # or use 'poetry run' prefix
+poetry run python manage.py runserver
 ```
 
 **Terminal 2 - Celery Worker:**
 ```bash
 cd backend
-.venv\Scripts\activate
+poetry shell
 
 # Windows (development):
-python -m celery -A config worker --loglevel=info --pool=solo
+poetry run celery -A config worker --loglevel=info --pool=solo
 
 # Linux/macOS (development):
-celery -A config worker --loglevel=info
+poetry run celery -A config worker --loglevel=info
 ```
 
 **Terminal 3 - (Optional) Multiple Queues:**
 ```bash
 # For separate queue processing:
-celery -A config worker -Q charts_cpu --loglevel=info
+poetry run celery -A config worker -Q charts_cpu --loglevel=info
 ```
 
 ### Step 4: Setup Frontend
@@ -134,29 +134,29 @@ npm run dev
 
 ### Environment Variables
 
-Para una guía completa de configuración de variables de entorno, consulta [d-ENV_SETUP.md](d-ENV_SETUP.md).
+For a complete guide on environment variable configuration, see [d-ENV_SETUP.md](d-ENV_SETUP.md).
 
-**Backend** - Desarrollo:
+**Backend** - Development:
 ```bash
 cd backend
 cp env.development.example .env
-# Editar .env con tus valores
+# Edit .env with your values
 ```
 
-**Frontend** - Desarrollo:
+**Frontend** - Development:
 ```bash
 cd frontend
 cp env.development.example .env.local
-# Editar .env.local con tus valores
+# Edit .env.local with your values
 ```
 
-**Archivos de ejemplo disponibles:**
-- `backend/env.development.example` - Variables para desarrollo local
-- `backend/env.production.example` - Variables para producción
-- `frontend/env.development.example` - Variables para desarrollo local
-- `frontend/env.production.example` - Variables para producción (referencia)
-- `infrastructure/.docker.env.example` - Variables para Docker Compose
-- `infrastructure/.django.env.example` - Variables para Django en Docker
+**Available example files:**
+- `backend/env.development.example` - Variables for local development
+- `backend/env.production.example` - Variables for production
+- `frontend/env.development.example` - Variables for local development
+- `frontend/env.production.example` - Variables for production (reference)
+- `infrastructure/.docker.env.example` - Variables for Docker Compose
+- `infrastructure/.django.env.example` - Variables for Django in Docker
 
 ---
 
@@ -180,7 +180,7 @@ nano .docker.env   # Database credentials, frontend URLs
 nano .django.env   # Django secret key, allowed hosts, etc.
 ```
 
-**Nota:** Para una guía detallada de configuración, consulta [d-ENV_SETUP.md](d-ENV_SETUP.md).
+**Note:** For a detailed configuration guide, see [d-ENV_SETUP.md](d-ENV_SETUP.md).
 
 **Important variables in `.django.env`:**
 ```env
@@ -355,26 +355,31 @@ docker-compose logs -f redis db
 ```bash
 cd backend
 
-# Django
-python manage.py runserver          # Start server
-python manage.py migrate            # Apply migrations
-python manage.py makemigrations     # Create migrations
-python manage.py createsuperuser    # Create admin user
-python manage.py collectstatic      # Collect static files
+# Django (using Poetry)
+poetry run python manage.py runserver          # Start server
+poetry run python manage.py migrate            # Apply migrations
+poetry run python manage.py makemigrations     # Create migrations
+poetry run python manage.py createsuperuser    # Create admin user
+poetry run python manage.py collectstatic      # Collect static files
+
+# Or activate Poetry shell first:
+poetry shell
+python manage.py runserver
+# ... etc
 
 # Celery (Development)
 # Windows:
-python -m celery -A config worker --loglevel=info --pool=solo
+poetry run celery -A config worker --loglevel=info --pool=solo
 
 # Linux/macOS:
-celery -A config worker --loglevel=info
+poetry run celery -A config worker --loglevel=info
 
 # Multiple queues:
-celery -A config worker -Q charts_cpu,ingestion_io --loglevel=info
+poetry run celery -A config worker -Q charts_cpu,ingestion_io --loglevel=info
 
 # Tests
-pytest                              # Run all tests
-pytest apps/jobs/tests/             # Run specific tests
+poetry run pytest                              # Run all tests
+poetry run pytest apps/jobs/tests/             # Run specific tests
 ```
 
 ### Frontend
@@ -420,8 +425,8 @@ docker-compose -f docker-compose.prod.yml down
 | Terminal | Command | Purpose |
 |----------|---------|---------|
 | 1 | `cd infrastructure && docker-compose up` | PostgreSQL + Redis |
-| 2 | `cd backend && python manage.py runserver` | Django API |
-| 3 | `cd backend && celery -A config worker --pool=solo -l info` | Celery worker |
+| 2 | `cd backend && poetry run python manage.py runserver` | Django API |
+| 3 | `cd backend && poetry run celery -A config worker --pool=solo -l info` | Celery worker |
 | 4 | `cd frontend && npm run dev` | Next.js frontend |
 
 ### API Endpoints
