@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import { cn } from "@/shared/lib/utils";
 import {
     LayoutDashboard,
@@ -28,7 +29,17 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
     const pathname = usePathname();
     const localeSegment = pathname?.split("/")[1] ?? "";
     const [collapsed, setCollapsed] = useState(false);
+    const { theme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
     const t = useTranslations('common');
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Use resolvedTheme to handle 'system' theme
+    const isDarkMode = mounted && (resolvedTheme === 'dark' || theme === 'dark');
+    const logoSrc = isDarkMode ? '/cedia-logo-blank.png' : '/cedia-logo.png';
 
     const navItems = [
         { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
@@ -152,7 +163,7 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                                 <TooltipTrigger asChild>
                                     <div className="relative w-10 h-10 cursor-pointer hover:opacity-80 transition-opacity">
                                         <Image
-                                            src="/cedia-logo.png"
+                                            src={logoSrc}
                                             alt="CEDIA"
                                             fill
                                             className="object-contain"
@@ -168,7 +179,7 @@ export function Sidebar({ className, onClose }: { className?: string, onClose?: 
                     ) : (
                         <div className="relative w-full h-12">
                             <Image
-                                src="/cedia-logo.png"
+                                src={logoSrc}
                                 alt="CEDIA"
                                 fill
                                 className="object-contain"
